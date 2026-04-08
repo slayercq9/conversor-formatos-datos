@@ -9,6 +9,10 @@ class PreviewTable(ttk.Frame):
 
     def __init__(self, master: tk.Misc) -> None:
         super().__init__(master)
+        self.empty_message_var = tk.StringVar(
+            value="La vista previa de los datos aparecera aqui."
+        )
+
         self.tree = ttk.Treeview(self, show="headings")
         self.tree.grid(row=0, column=0, sticky="nsew")
 
@@ -20,12 +24,27 @@ class PreviewTable(ttk.Frame):
         scrollbar_x.grid(row=1, column=0, sticky="ew")
         self.tree.configure(xscrollcommand=scrollbar_x.set)
 
+        self.empty_label = ttk.Label(
+            self,
+            textvariable=self.empty_message_var,
+            anchor="center",
+            justify="center",
+        )
+        self.empty_label.grid(row=0, column=0, sticky="nsew")
+
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.show_message("La vista previa de los datos aparecera aqui.")
 
     def update_data(self, columns: list[str], rows: list[tuple[str, ...]]) -> None:
         self.clear()
+        if not columns:
+            self.show_message("No se encontraron columnas para mostrar.")
+            return
+
         self.tree["columns"] = columns
+        self.empty_label.grid_remove()
+        self.tree.grid()
 
         for column in columns:
             self.tree.heading(column, text=column)
@@ -34,7 +53,15 @@ class PreviewTable(ttk.Frame):
         for row in rows:
             self.tree.insert("", "end", values=row)
 
+        if not rows:
+            self.show_message("El archivo no contiene filas para previsualizar.")
+
     def clear(self) -> None:
         for item in self.tree.get_children():
             self.tree.delete(item)
         self.tree["columns"] = ()
+
+    def show_message(self, message: str) -> None:
+        self.empty_message_var.set(message)
+        self.tree.grid_remove()
+        self.empty_label.grid()

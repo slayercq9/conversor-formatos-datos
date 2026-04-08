@@ -19,3 +19,7 @@ class ConversionError(AppError):
 
 class PreviewError(AppError):
     """Se lanza cuando no es posible generar la previsualizacion."""
+
+
+class PendingConversionError(AppError):
+    """Se lanza cuando se intenta guardar sin una conversion preparada."""

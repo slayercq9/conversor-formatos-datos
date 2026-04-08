@@ -23,7 +23,7 @@ HELP_TEXT = (
     "1. Selecciona un archivo de entrada.\n"
     "2. Elige el formato de salida.\n"
     "3. Previsualiza los datos si lo deseas.\n"
-    "4. Indica la ruta del archivo de salida.\n"
-    "5. Ejecuta la conversion.\n\n"
+    "4. Prepara la conversion con el boton Convertir.\n"
+    "5. Guarda el resultado con el boton Guardar convertido.\n\n"
     "La integracion con drag and drop quedo preparada para una fase futura."
 )

@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import pandas as pd
+
 from src.core.file_types import TabularFileType
 from src.core.reader import TabularReader
 from src.core.validators import (
@@ -20,6 +22,14 @@ class ConversionRequest:
     target_format: TabularFileType
 
 
+@dataclass(slots=True)
+class PreparedConversion:
+    source_path: Path
+    source_format: TabularFileType
+    target_format: TabularFileType
+    data_frame: pd.DataFrame
+
+
 class TabularConverter:
     """Coordina el flujo completo de lectura y escritura."""
 
@@ -31,11 +41,38 @@ class TabularConverter:
         self._reader = reader or TabularReader()
         self._writer = writer or TabularWriter()
 
-    def convert(self, request: ConversionRequest) -> Path:
-        source_path = validate_source_path(request.source_path)
-        target_path = validate_output_path(request.target_path)
-        source_type = TabularFileType.from_path(source_path)
-        validate_distinct_formats(source_type, request.target_format)
+    def prepare_conversion(
+        self,
+        source_path: str | Path,
+        target_format: TabularFileType,
+    ) -> PreparedConversion:
+        validated_source_path = validate_source_path(source_path)
+        source_type = TabularFileType.from_path(validated_source_path)
+        validate_distinct_formats(source_type, target_format)
 
-        data_frame = self._reader.read(source_path)
-        return self._writer.write(data_frame, target_path, request.target_format)
+        data_frame = self._reader.read(validated_source_path)
+        return PreparedConversion(
+            source_path=validated_source_path,
+            source_format=source_type,
+            target_format=target_format,
+            data_frame=data_frame,
+        )
+
+    def save_prepared_conversion(
+        self,
+        prepared_conversion: PreparedConversion,
+        target_path: str | Path,
+    ) -> Path:
+        validated_target_path = validate_output_path(target_path)
+        return self._writer.write(
+            prepared_conversion.data_frame,
+            validated_target_path,
+            prepared_conversion.target_format,
+        )
+
+    def convert(self, request: ConversionRequest) -> Path:
+        prepared_conversion = self.prepare_conversion(
+            request.source_path,
+            request.target_format,
+        )
+        return self.save_prepared_conversion(prepared_conversion, request.target_path)

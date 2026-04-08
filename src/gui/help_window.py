@@ -11,7 +11,7 @@ class HelpWindow(tk.Toplevel):
 
     def __init__(self, master: tk.Misc) -> None:
         super().__init__(master)
-        self.title("Ayuda")
+        self.title("Como usar")
         self.geometry("480x300")
 
         frame = ttk.Frame(self, padding=16)

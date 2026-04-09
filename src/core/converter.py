@@ -41,6 +41,21 @@ class TabularConverter:
         self._reader = reader or TabularReader()
         self._writer = writer or TabularWriter()
 
+    def read_as_dataframe(self, source_path: str | Path) -> pd.DataFrame:
+        """Lee cualquier archivo soportado y devuelve un DataFrame."""
+        validated_source_path = validate_source_path(source_path)
+        return self._reader.read(validated_source_path)
+
+    def write_dataframe(
+        self,
+        data_frame: pd.DataFrame,
+        target_path: str | Path,
+        target_format: TabularFileType | None = None,
+    ) -> Path:
+        """Escribe un DataFrame al formato deseado o al inferido por la extension."""
+        validated_target_path = validate_output_path(target_path)
+        return self._writer.write(data_frame, validated_target_path, target_format)
+
     def prepare_conversion(
         self,
         source_path: str | Path,
@@ -50,7 +65,7 @@ class TabularConverter:
         source_type = TabularFileType.from_path(validated_source_path)
         validate_distinct_formats(source_type, target_format)
 
-        data_frame = self._reader.read(validated_source_path)
+        data_frame = self.read_as_dataframe(validated_source_path)
         return PreparedConversion(
             source_path=validated_source_path,
             source_format=source_type,
@@ -63,10 +78,9 @@ class TabularConverter:
         prepared_conversion: PreparedConversion,
         target_path: str | Path,
     ) -> Path:
-        validated_target_path = validate_output_path(target_path)
-        return self._writer.write(
+        return self.write_dataframe(
             prepared_conversion.data_frame,
-            validated_target_path,
+            target_path,
             prepared_conversion.target_format,
         )
 

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.core.file_types import TabularFileType
-from src.utils.constants import SUPPORTED_FORMAT_LABELS
+from src.core.file_types import (
+    TabularFileType,
+    get_file_dialog_filters,
+)
 
 
 def normalize_extension(value: str) -> str:
@@ -23,12 +25,4 @@ def build_output_path(source_path: Path, target_format: TabularFileType) -> Path
 
 def format_file_dialog_types() -> list[tuple[str, str]]:
     """Devuelve filtros compatibles con filedialog."""
-    filters = [
-        ("Archivos tabulares", "*.csv *.xlsx *.json *.txt"),
-    ]
-    filters.extend(
-        (label, f"*.{extension}")
-        for extension, label in SUPPORTED_FORMAT_LABELS.items()
-    )
-    filters.append(("Todos los archivos", "*.*"))
-    return filters
+    return get_file_dialog_filters()

@@ -5,13 +5,6 @@ APP_MIN_SIZE = (960, 640)
 DEFAULT_TEXT_DELIMITER = "\t"
 PREVIEW_ROW_LIMIT = 50
 
-SUPPORTED_FORMAT_LABELS = {
-    "csv": "CSV",
-    "xlsx": "Excel (.xlsx)",
-    "json": "JSON",
-    "txt": "Texto delimitado (.txt)",
-}
-
 ABOUT_TEXT = (
     "Conversor de Formatos Tabulares\n\n"
     "Base modular para convertir archivos CSV, XLSX, JSON y TXT "

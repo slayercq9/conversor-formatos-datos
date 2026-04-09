@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 
@@ -13,29 +14,64 @@ from src.utils.helpers import ensure_parent_directory
 class TabularWriter:
     """Escribe DataFrames hacia distintos formatos tabulares."""
 
+    def __init__(self) -> None:
+        self._writers: dict[
+            TabularFileType,
+            Callable[[pd.DataFrame, Path], None],
+        ] = {
+            TabularFileType.CSV: self._write_csv,
+            TabularFileType.XLSX: self._write_xlsx,
+            TabularFileType.JSON: self._write_json,
+            TabularFileType.TXT: self._write_txt,
+        }
+
+    def register_writer(
+        self,
+        file_type: TabularFileType,
+        writer: Callable[[pd.DataFrame, Path], None],
+    ) -> None:
+        """Permite extender el escritor con nuevos formatos sin romper la API."""
+        self._writers[file_type] = writer
+
+    def supports(self, file_type: TabularFileType) -> bool:
+        return file_type in self._writers
+
     def write(
         self,
         data_frame: pd.DataFrame,
         target_path: str | Path,
-        target_type: TabularFileType,
+        target_type: TabularFileType | None = None,
     ) -> Path:
         path = Path(target_path)
+        resolved_target_type = target_type or TabularFileType.from_path(path)
+        writer = self._writers.get(resolved_target_type)
+        if writer is None:
+            raise ConversionError(
+                f"No hay escritor configurado para: {resolved_target_type.value}"
+            )
+
         ensure_parent_directory(path)
 
         try:
-            if target_type == TabularFileType.CSV:
-                data_frame.to_csv(path, index=False)
-            elif target_type == TabularFileType.XLSX:
-                data_frame.to_excel(path, index=False)
-            elif target_type == TabularFileType.JSON:
-                data_frame.to_json(path, orient="records", indent=2, force_ascii=False)
-            elif target_type == TabularFileType.TXT:
-                data_frame.to_csv(path, sep=DEFAULT_TEXT_DELIMITER, index=False)
-            else:
-                raise ConversionError(
-                    f"No hay escritor configurado para: {target_type.value}"
-                )
+            writer(data_frame, path)
         except Exception as exc:
             raise ConversionError(f"No se pudo escribir el archivo: {path.name}") from exc
 
         return path
+
+    def _write_csv(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        data_frame.to_csv(target_path, index=False)
+
+    def _write_xlsx(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        data_frame.to_excel(target_path, index=False)
+
+    def _write_json(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        data_frame.to_json(
+            target_path,
+            orient="records",
+            indent=2,
+            force_ascii=False,
+        )
+
+    def _write_txt(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        data_frame.to_csv(target_path, sep=DEFAULT_TEXT_DELIMITER, index=False)

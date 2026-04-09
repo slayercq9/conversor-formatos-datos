@@ -46,23 +46,12 @@ class MainWindow(tk.Tk):
         self.drop_area: ttk.LabelFrame | None = None
 
         self._configure_layout()
-        self._build_menu()
         self._build_content()
         self.drag_drop_manager.attach(self, self.drop_area)
 
     def _configure_layout(self) -> None:
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-
-    def _build_menu(self) -> None:
-        menu = tk.Menu(self)
-
-        help_menu = tk.Menu(menu, tearoff=False)
-        help_menu.add_command(label="Como usar", command=self.open_help)
-        help_menu.add_command(label="Acerca de", command=self.open_about)
-
-        menu.add_cascade(label="Informacion", menu=help_menu)
-        self.config(menu=menu)
 
     def _build_content(self) -> None:
         container = ttk.Frame(self, padding=16)

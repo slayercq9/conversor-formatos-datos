@@ -47,6 +47,7 @@ class MainWindow(tk.Tk):
 
         self._configure_layout()
         self._build_content()
+        # TODO: Reemplazar NullDragDropManager por una implementacion real.
         self.drag_drop_manager.attach(self, self.drop_area)
 
     def _configure_layout(self) -> None:

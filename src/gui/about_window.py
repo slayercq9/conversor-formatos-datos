@@ -3,7 +3,7 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
-from src.utils.constants import ABOUT_TEXT, APP_TITLE, APP_VERSION
+from src.utils.constants import ABOUT_TEXT, APP_AUTHOR, APP_TITLE, APP_VERSION
 
 
 class AboutWindow(tk.Toplevel):
@@ -30,7 +30,7 @@ class AboutWindow(tk.Toplevel):
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=14)
         ttk.Label(
             frame,
-            text="Creado por Fernando Corrales Quiros",
+            text=f"Creado por {APP_AUTHOR}",
             justify="left",
         ).pack(anchor="w")
         ttk.Button(frame, text="Cerrar", command=self.destroy).pack(

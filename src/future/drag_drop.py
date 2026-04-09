@@ -17,4 +17,5 @@ class NullDragDropManager:
     def attach(self, window: tk.Misc, drop_target: tk.Misc | None = None) -> None:
         _ = window
         _ = drop_target
-        # Punto de extension reservado para una futura integracion real.
+        # TODO: Integrar una libreria de drag and drop compatible con Tkinter.
+        # TODO: Conectar el archivo soltado con el flujo de seleccion actual.

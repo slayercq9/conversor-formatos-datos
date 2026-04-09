@@ -5,7 +5,7 @@ from pathlib import Path
 from src.core.reader import TabularReader
 from src.core.validators import validate_source_path
 from src.utils.constants import PREVIEW_ROW_LIMIT
-from src.utils.errors import PreviewError
+from src.utils.errors import AppError, PreviewError
 
 
 class PreviewService:
@@ -23,6 +23,8 @@ class PreviewService:
 
         try:
             data_frame = self._reader.read(path).head(max_rows).fillna("")
+        except AppError as exc:
+            raise PreviewError(str(exc)) from exc
         except Exception as exc:
             raise PreviewError("No se pudo cargar la vista previa.") from exc
 

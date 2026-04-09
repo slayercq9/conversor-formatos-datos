@@ -37,7 +37,7 @@ class MainWindow(tk.Tk):
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar(value="Ningun archivo cargado todavia.")
-        self.target_format_var = tk.StringVar(value=TabularFileType.CSV.value)
+        self.target_format_var = tk.StringVar(value="")
         self.status_var = tk.StringVar(value="Selecciona un archivo para comenzar.")
         self.ready_to_save_var = tk.StringVar(
             value="Todavia no hay una conversion lista para guardar."
@@ -139,6 +139,12 @@ class MainWindow(tk.Tk):
         format_selector.grid(row=0, column=1, sticky="w", padx=(8, 0))
         format_selector.bind("<<ComboboxSelected>>", self._on_target_format_changed)
 
+        ttk.Label(
+            config_frame,
+            text="Selecciona un formato antes de convertir.",
+            foreground="#444444",
+        ).grid(row=0, column=2, sticky="w", padx=(12, 0))
+
         actions = ttk.Frame(config_frame)
         actions.grid(row=1, column=0, columnspan=2, sticky="w", pady=(16, 0))
 
@@ -185,6 +191,7 @@ class MainWindow(tk.Tk):
         self.ready_to_save_var.set(
             "Selecciona Convertir para preparar el archivo en el formato elegido."
         )
+        self.status_var.set("Formato de salida actualizado.")
 
     def select_source_file(self) -> None:
         path = ask_open_path(format_file_dialog_types())
@@ -200,6 +207,8 @@ class MainWindow(tk.Tk):
                 "Archivo cargado. Usa Vista previa para revisar los datos."
             )
             self.status_var.set(f"Archivo seleccionado: {Path(path).name}")
+        else:
+            self.status_var.set("No se selecciono ningun archivo.")
 
     def preview_file(self) -> None:
         if not self._ensure_source_selected():
@@ -217,6 +226,8 @@ class MainWindow(tk.Tk):
 
     def convert_file(self) -> None:
         if not self._ensure_source_selected():
+            return
+        if not self._ensure_target_format_selected():
             return
 
         try:
@@ -250,6 +261,8 @@ class MainWindow(tk.Tk):
                 "Primero usa el boton Convertir para preparar el archivo.",
             )
             self.status_var.set("Aun no hay una conversion lista para guardar.")
+            return
+        if not self._ensure_target_format_selected():
             return
 
         default_path = self.file_service.build_default_output_path(
@@ -295,6 +308,17 @@ class MainWindow(tk.Tk):
             "Todavia no has cargado un archivo. Usa 'Seleccionar archivo' para continuar.",
         )
         self.status_var.set("Esperando un archivo de entrada.")
+        return False
+
+    def _ensure_target_format_selected(self) -> bool:
+        if self.target_format_var.get().strip():
+            return True
+
+        show_warning(
+            "Formato requerido",
+            "Todavia no has elegido un formato de salida. Selecciona uno para continuar.",
+        )
+        self.status_var.set("Esperando seleccion del formato de salida.")
         return False
 
     def _refresh_preview_after_conversion(self) -> None:

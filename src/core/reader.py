@@ -7,8 +7,9 @@ from typing import Callable
 import pandas as pd
 
 from src.core.file_types import TabularFileType
+from src.core.validators import validate_dataframe_not_empty, validate_source_path
 from src.utils.constants import DEFAULT_TEXT_DELIMITER
-from src.utils.errors import ConversionError
+from src.utils.errors import ConversionError, ReadError
 
 
 class TabularReader:
@@ -34,16 +35,20 @@ class TabularReader:
         return file_type in self._readers
 
     def read(self, source_path: str | Path) -> pd.DataFrame:
-        path = Path(source_path)
+        path = validate_source_path(source_path)
         file_type = TabularFileType.from_path(path)
         reader = self._readers.get(file_type)
         if reader is None:
-            raise ConversionError(f"No hay lector configurado para: {file_type.value}")
+            raise ReadError(f"No hay lector configurado para: {file_type.value}")
 
         try:
-            return reader(path)
+            data_frame = reader(path)
         except Exception as exc:
-            raise ConversionError(f"No se pudo leer el archivo: {path.name}") from exc
+            raise ReadError(
+                f"No se pudo leer el archivo '{path.name}'. Verifica que no este dañado o en uso."
+            ) from exc
+
+        return validate_dataframe_not_empty(data_frame)
 
     def _read_csv(self, source_path: Path) -> pd.DataFrame:
         return pd.read_csv(source_path)

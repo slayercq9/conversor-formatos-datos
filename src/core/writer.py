@@ -6,8 +6,9 @@ from typing import Callable
 import pandas as pd
 
 from src.core.file_types import TabularFileType
+from src.core.validators import validate_dataframe_not_empty, validate_output_path
 from src.utils.constants import DEFAULT_TEXT_DELIMITER
-from src.utils.errors import ConversionError
+from src.utils.errors import WriteError
 from src.utils.helpers import ensure_parent_directory
 
 
@@ -42,11 +43,12 @@ class TabularWriter:
         target_path: str | Path,
         target_type: TabularFileType | None = None,
     ) -> Path:
-        path = Path(target_path)
+        path = validate_output_path(target_path)
+        validate_dataframe_not_empty(data_frame)
         resolved_target_type = target_type or TabularFileType.from_path(path)
         writer = self._writers.get(resolved_target_type)
         if writer is None:
-            raise ConversionError(
+            raise WriteError(
                 f"No hay escritor configurado para: {resolved_target_type.value}"
             )
 
@@ -55,7 +57,9 @@ class TabularWriter:
         try:
             writer(data_frame, path)
         except Exception as exc:
-            raise ConversionError(f"No se pudo escribir el archivo: {path.name}") from exc
+            raise WriteError(
+                f"No se pudo guardar el archivo '{path.name}'. Revisa permisos, ruta y si el archivo esta abierto."
+            ) from exc
 
         return path
 

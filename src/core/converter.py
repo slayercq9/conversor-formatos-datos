@@ -11,6 +11,7 @@ from src.core.validators import (
     validate_distinct_formats,
     validate_output_path,
     validate_source_path,
+    validate_target_format,
 )
 from src.core.writer import TabularWriter
 
@@ -59,17 +60,22 @@ class TabularConverter:
     def prepare_conversion(
         self,
         source_path: str | Path,
-        target_format: TabularFileType,
+        target_format: str | TabularFileType,
     ) -> PreparedConversion:
         validated_source_path = validate_source_path(source_path)
         source_type = TabularFileType.from_path(validated_source_path)
-        validate_distinct_formats(source_type, target_format)
+        resolved_target_format = (
+            target_format
+            if isinstance(target_format, TabularFileType)
+            else validate_target_format(target_format)
+        )
+        validate_distinct_formats(source_type, resolved_target_format)
 
         data_frame = self.read_as_dataframe(validated_source_path)
         return PreparedConversion(
             source_path=validated_source_path,
             source_format=source_type,
-            target_format=target_format,
+            target_format=resolved_target_format,
             data_frame=data_frame,
         )
 

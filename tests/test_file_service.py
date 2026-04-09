@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from src.services.file_service import FileService
-from src.utils.errors import PendingConversionError
+from src.utils.errors import MissingTargetFormatError, PendingConversionError
 
 
 class FakeConverter:
@@ -42,3 +42,10 @@ def test_prepare_conversion_enables_later_save() -> None:
 
     assert result == Path("salidas/ventas.csv")
     assert converter.saved_target_path == Path("salidas/ventas.csv")
+
+
+def test_prepare_conversion_requires_target_format() -> None:
+    service = FileService(converter=FakeConverter())
+
+    with pytest.raises(MissingTargetFormatError):
+        service.prepare_conversion("datos/ventas.xlsx", "")

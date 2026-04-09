@@ -4,6 +4,7 @@ from pathlib import Path
 
 from src.core.converter import ConversionRequest, PreparedConversion, TabularConverter
 from src.core.file_types import TabularFileType
+from src.core.validators import validate_target_format
 from src.utils.errors import PendingConversionError
 from src.utils.helpers import build_output_path
 
@@ -23,7 +24,7 @@ class FileService:
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)
-            else TabularFileType.from_extension(target_format)
+            else validate_target_format(target_format)
         )
         return build_output_path(Path(source_path), target_type)
 
@@ -35,7 +36,7 @@ class FileService:
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)
-            else TabularFileType.from_extension(target_format)
+            else validate_target_format(target_format)
         )
         self._prepared_conversion = self._converter.prepare_conversion(
             source_path=source_path,
@@ -72,7 +73,7 @@ class FileService:
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)
-            else TabularFileType.from_extension(target_format)
+            else validate_target_format(target_format)
         )
         request = ConversionRequest(
             source_path=Path(source_path),

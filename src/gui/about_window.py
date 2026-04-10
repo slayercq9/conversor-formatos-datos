@@ -1,7 +1,8 @@
 """Ventana auxiliar con informacion general de la aplicacion.
 
 Su responsabilidad es mostrar datos estaticos como nombre, version,
-descripcion y autoria sin depender de la logica de conversion.
+fecha de actualizacion, descripcion y autoria sin depender de la logica
+de conversion.
 """
 
 from __future__ import annotations
@@ -9,7 +10,13 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
-from src.utils.constants import ABOUT_TEXT, APP_AUTHOR, APP_TITLE, APP_VERSION
+from src.utils.constants import (
+    APP_AUTHOR,
+    APP_DESCRIPTION,
+    APP_LAST_UPDATED,
+    APP_TITLE,
+    APP_VERSION,
+)
 
 
 class AboutWindow(tk.Toplevel):
@@ -27,11 +34,17 @@ class AboutWindow(tk.Toplevel):
         frame.pack(fill="both", expand=True)
 
         ttk.Label(frame, text=APP_TITLE, font=("Segoe UI", 15, "bold")).pack(anchor="w")
-        ttk.Label(frame, text=f"Version {APP_VERSION}", foreground="#555555").pack(
-            anchor="w",
-            pady=(4, 12),
-        )
-        ttk.Label(frame, text=ABOUT_TEXT, justify="left", wraplength=420).pack(
+        ttk.Label(
+            frame,
+            text=f"Versión actual: {APP_VERSION}",
+            foreground="#555555",
+        ).pack(anchor="w", pady=(4, 2))
+        ttk.Label(
+            frame,
+            text=f"Última actualización: {APP_LAST_UPDATED}",
+            foreground="#555555",
+        ).pack(anchor="w", pady=(0, 12))
+        ttk.Label(frame, text=APP_DESCRIPTION, justify="left", wraplength=420).pack(
             anchor="w"
         )
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=14)

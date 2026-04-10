@@ -1,3 +1,9 @@
+"""Validaciones reutilizables para entradas y estados del dominio.
+
+Mantener estas comprobaciones fuera de la GUI evita duplicacion y ayuda
+a que los mensajes de error sean consistentes en toda la aplicacion.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -15,7 +21,7 @@ from src.utils.errors import (
 
 
 def validate_required_file_path(file_path: str | Path) -> Path:
-    """Valida que el usuario haya indicado una ruta de archivo."""
+    """Verifica que exista un valor de ruta antes de procesarlo."""
     raw_path = str(file_path).strip()
     if not raw_path:
         raise MissingFileError("Todavia no has cargado un archivo.")
@@ -23,7 +29,7 @@ def validate_required_file_path(file_path: str | Path) -> Path:
 
 
 def validate_source_path(file_path: str | Path) -> Path:
-    """Valida que el archivo de entrada exista y sea soportado."""
+    """Valida existencia, tipo, tamano y extension del archivo de entrada."""
     path = validate_required_file_path(file_path)
     if not path.exists():
         raise MissingFileError("El archivo seleccionado no existe.")
@@ -41,7 +47,7 @@ def validate_source_path(file_path: str | Path) -> Path:
 
 
 def validate_target_format(value: str) -> TabularFileType:
-    """Valida el formato de salida solicitado."""
+    """Valida que el formato de salida exista y sea soportado."""
     if not str(value).strip():
         raise MissingTargetFormatError(
             "Debes elegir un formato de salida antes de convertir."
@@ -58,13 +64,13 @@ def validate_distinct_formats(
     source_type: TabularFileType,
     target_type: TabularFileType,
 ) -> None:
-    """Evita conversiones redundantes al mismo formato."""
+    """Evita conversiones redundantes al mismo formato de archivo."""
     if source_type == target_type:
         raise ValidationError("El formato de salida debe ser distinto al de entrada.")
 
 
 def validate_output_path(file_path: str | Path) -> Path:
-    """Valida una ruta de salida basica."""
+    """Comprueba que la ruta de salida tenga al menos un nombre valido."""
     path = Path(file_path)
     if not path.name:
         raise ValidationError("Debes indicar un nombre de archivo de salida.")
@@ -72,7 +78,7 @@ def validate_output_path(file_path: str | Path) -> Path:
 
 
 def validate_dataframe_not_empty(data_frame: pd.DataFrame) -> pd.DataFrame:
-    """Valida que el DataFrame contenga datos o al menos columnas utilizables."""
+    """Verifica que el DataFrame tenga contenido procesable."""
     if data_frame.empty and len(data_frame.columns) == 0:
         raise EmptyFileError("El archivo seleccionado no contiene datos para procesar.")
     return data_frame

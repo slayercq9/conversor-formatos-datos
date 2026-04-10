@@ -1,3 +1,9 @@
+"""Ventana auxiliar con informacion general de la aplicacion.
+
+Su responsabilidad es mostrar datos estaticos como nombre, version,
+descripcion y autoria sin depender de la logica de conversion.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -7,9 +13,10 @@ from src.utils.constants import ABOUT_TEXT, APP_AUTHOR, APP_TITLE, APP_VERSION
 
 
 class AboutWindow(tk.Toplevel):
-    """Ventana simple de informacion de la aplicacion."""
+    """Muestra informacion resumida del proyecto en una ventana modal."""
 
     def __init__(self, master: tk.Misc) -> None:
+        """Construye una ventana ligera enfocada en informacion fija."""
         super().__init__(master)
         self.title("Acerca de")
         self.resizable(False, False)

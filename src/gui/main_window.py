@@ -1,3 +1,9 @@
+"""Ventana principal de la interfaz de usuario.
+
+Este modulo compone los widgets principales y delega la logica real de
+conversion y vista previa a servicios especializados.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -24,9 +30,10 @@ from src.utils.helpers import format_file_dialog_types
 
 
 class MainWindow(tk.Tk):
-    """Ventana principal del conversor."""
+    """Coordina el flujo principal de uso desde la interfaz grafica."""
 
     def __init__(self) -> None:
+        """Inicializa estado visual, servicios y puntos de extension futuros."""
         super().__init__()
         self.title(APP_TITLE)
         self.minsize(*APP_MIN_SIZE)
@@ -51,10 +58,12 @@ class MainWindow(tk.Tk):
         self.drag_drop_manager.attach(self, self.drop_area)
 
     def _configure_layout(self) -> None:
+        """Configura el contenedor raiz para permitir redimensionamiento."""
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
     def _build_content(self) -> None:
+        """Construye los bloques visuales principales de la ventana."""
         container = ttk.Frame(self, padding=16)
         container.grid(row=0, column=0, sticky="nsew")
         container.grid_columnconfigure(0, weight=1)
@@ -176,6 +185,7 @@ class MainWindow(tk.Tk):
         ).grid(row=4, column=0, sticky="ew", pady=(12, 0))
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        """Limpia el estado pendiente al cambiar el formato de salida."""
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
@@ -184,6 +194,7 @@ class MainWindow(tk.Tk):
         self.status_var.set("Formato de salida actualizado.")
 
     def select_source_file(self) -> None:
+        """Abre el selector de archivos y actualiza el estado visual."""
         path = ask_open_path(format_file_dialog_types())
         if path:
             self.source_path_var.set(path)
@@ -201,6 +212,7 @@ class MainWindow(tk.Tk):
             self.status_var.set("No se selecciono ningun archivo.")
 
     def preview_file(self) -> None:
+        """Carga una vista previa de las primeras filas del archivo."""
         if not self._ensure_source_selected():
             return
 
@@ -215,6 +227,7 @@ class MainWindow(tk.Tk):
         self.status_var.set(f"Vista previa cargada con {len(rows)} filas.")
 
     def convert_file(self) -> None:
+        """Prepara la conversion en memoria sin escribir todavia a disco."""
         if not self._ensure_source_selected():
             return
         if not self._ensure_target_format_selected():
@@ -245,6 +258,7 @@ class MainWindow(tk.Tk):
         self._refresh_preview_after_conversion()
 
     def save_converted_file(self) -> None:
+        """Solicita una ruta y guarda el archivo convertido preparado."""
         if not self.file_service.has_prepared_conversion():
             show_info(
                 "Guardar archivo",
@@ -281,12 +295,15 @@ class MainWindow(tk.Tk):
         )
 
     def open_about(self) -> None:
+        """Abre la ventana informativa 'Acerca de'."""
         AboutWindow(self)
 
     def open_help(self) -> None:
+        """Abre la ventana informativa 'Como usar'."""
         HelpWindow(self)
 
     def _ensure_source_selected(self) -> bool:
+        """Valida desde la GUI que exista un archivo elegido por el usuario."""
         if self.source_path_var.get().strip():
             return True
 
@@ -301,6 +318,7 @@ class MainWindow(tk.Tk):
         return False
 
     def _ensure_target_format_selected(self) -> bool:
+        """Valida desde la GUI que haya un formato de salida seleccionado."""
         if self.target_format_var.get().strip():
             return True
 
@@ -312,6 +330,7 @@ class MainWindow(tk.Tk):
         return False
 
     def _refresh_preview_after_conversion(self) -> None:
+        """Refresca la vista previa luego de preparar la conversion."""
         try:
             columns, rows = self.preview_service.load_preview(self.source_path_var.get())
         except AppError:
@@ -323,6 +342,7 @@ class MainWindow(tk.Tk):
         self.preview_table.update_data(columns, rows)
 
     def _set_save_enabled(self, enabled: bool) -> None:
+        """Activa o desactiva el boton de guardado segun el estado actual."""
         if self.save_button is None:
             return
         self.save_button.config(state="normal" if enabled else "disabled")

@@ -1,3 +1,9 @@
+"""Lectura de archivos tabulares hacia DataFrames de pandas.
+
+La clase principal encapsula la seleccion del lector segun extension y
+actua como punto de extension para agregar formatos adicionales.
+"""
+
 from __future__ import annotations
 
 import csv
@@ -13,9 +19,10 @@ from src.utils.errors import ConversionError, ReadError
 
 
 class TabularReader:
-    """Lee archivos tabulares y los normaliza como DataFrame."""
+    """Lee archivos soportados y los entrega como DataFrames de pandas."""
 
     def __init__(self) -> None:
+        """Registra los lectores por defecto disponibles en la aplicacion."""
         self._readers: dict[TabularFileType, Callable[[Path], pd.DataFrame]] = {
             TabularFileType.CSV: self._read_csv,
             TabularFileType.XLSX: self._read_xlsx,
@@ -28,13 +35,15 @@ class TabularReader:
         file_type: TabularFileType,
         reader: Callable[[Path], pd.DataFrame],
     ) -> None:
-        """Permite extender el lector con nuevos formatos sin cambiar su interfaz."""
+        """Agrega o reemplaza el lector asociado a un formato dado."""
         self._readers[file_type] = reader
 
     def supports(self, file_type: TabularFileType) -> bool:
+        """Indica si existe un lector registrado para el formato indicado."""
         return file_type in self._readers
 
     def read(self, source_path: str | Path) -> pd.DataFrame:
+        """Valida la ruta, selecciona el lector y devuelve un DataFrame listo."""
         path = validate_source_path(source_path)
         file_type = TabularFileType.from_path(path)
         reader = self._readers.get(file_type)
@@ -51,15 +60,19 @@ class TabularReader:
         return validate_dataframe_not_empty(data_frame)
 
     def _read_csv(self, source_path: Path) -> pd.DataFrame:
+        """Lee un archivo CSV usando la configuracion por defecto de pandas."""
         return pd.read_csv(source_path)
 
     def _read_xlsx(self, source_path: Path) -> pd.DataFrame:
+        """Lee la primera hoja de un archivo Excel soportado."""
         return pd.read_excel(source_path)
 
     def _read_json(self, source_path: Path) -> pd.DataFrame:
+        """Lee un archivo JSON tabularizable mediante pandas."""
         return pd.read_json(source_path)
 
     def _read_txt(self, source_path: Path) -> pd.DataFrame:
+        """Lee texto delimitado detectando el separador cuando es posible."""
         delimiter = self._detect_text_delimiter(source_path)
         return pd.read_csv(source_path, sep=delimiter)
 

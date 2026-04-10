@@ -1,3 +1,9 @@
+"""Servicios de archivo para la capa de interfaz.
+
+Este modulo ofrece una API mas cercana a la GUI para preparar, guardar
+y reutilizar conversiones sin exponer detalles de la capa core.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,9 +16,10 @@ from src.utils.helpers import build_output_path
 
 
 class FileService:
-    """Expone operaciones de conversion para la capa de interfaz."""
+    """Adapta el conversor central al flujo interactivo de la interfaz."""
 
     def __init__(self, converter: TabularConverter | None = None) -> None:
+        """Inicializa el servicio y el estado de conversion pendiente."""
         self._converter = converter or TabularConverter()
         self._prepared_conversion: PreparedConversion | None = None
 
@@ -21,6 +28,7 @@ class FileService:
         source_path: str | Path,
         target_format: str | TabularFileType,
     ) -> Path:
+        """Construye una ruta sugerida segun el formato de salida elegido."""
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)
@@ -33,6 +41,7 @@ class FileService:
         source_path: str | Path,
         target_format: str | TabularFileType,
     ) -> PreparedConversion:
+        """Prepara la conversion y conserva el resultado en memoria."""
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)
@@ -45,6 +54,7 @@ class FileService:
         return self._prepared_conversion
 
     def save_prepared_conversion(self, target_path: str | Path) -> Path:
+        """Guarda la conversion pendiente previamente preparada por la GUI."""
         if self._prepared_conversion is None:
             raise PendingConversionError(
                 "Primero convierte el archivo antes de intentar guardarlo."
@@ -55,13 +65,16 @@ class FileService:
         )
 
     def clear_prepared_conversion(self) -> None:
+        """Descarta cualquier conversion pendiente almacenada en memoria."""
         self._prepared_conversion = None
 
     def has_prepared_conversion(self) -> bool:
+        """Indica si ya existe una conversion lista para guardarse."""
         return self._prepared_conversion is not None
 
     @property
     def prepared_conversion(self) -> PreparedConversion | None:
+        """Expone el estado actual solo para lectura."""
         return self._prepared_conversion
 
     def convert_file(
@@ -70,6 +83,7 @@ class FileService:
         target_path: str | Path,
         target_format: str | TabularFileType,
     ) -> Path:
+        """Ejecuta el flujo completo en un solo llamado cuando se necesita."""
         target_type = (
             target_format
             if isinstance(target_format, TabularFileType)

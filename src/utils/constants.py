@@ -1,3 +1,9 @@
+"""Constantes compartidas por la interfaz y servicios auxiliares.
+
+Centralizar estos valores evita cadenas dispersas y facilita mantener
+textos visibles o configuraciones base desde un solo lugar.
+"""
+
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"

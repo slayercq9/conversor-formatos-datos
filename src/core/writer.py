@@ -1,3 +1,9 @@
+"""Escritura de DataFrames de pandas a formatos tabulares.
+
+Este modulo abstrae la exportacion por extension y mantiene una API
+estable para que la capa superior no dependa de detalles de pandas.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,9 +19,10 @@ from src.utils.helpers import ensure_parent_directory
 
 
 class TabularWriter:
-    """Escribe DataFrames hacia distintos formatos tabulares."""
+    """Escribe DataFrames a disco segun el formato de salida requerido."""
 
     def __init__(self) -> None:
+        """Registra los escritores por defecto disponibles en la aplicacion."""
         self._writers: dict[
             TabularFileType,
             Callable[[pd.DataFrame, Path], None],
@@ -31,10 +38,11 @@ class TabularWriter:
         file_type: TabularFileType,
         writer: Callable[[pd.DataFrame, Path], None],
     ) -> None:
-        """Permite extender el escritor con nuevos formatos sin romper la API."""
+        """Agrega o reemplaza el escritor asociado a un formato dado."""
         self._writers[file_type] = writer
 
     def supports(self, file_type: TabularFileType) -> bool:
+        """Indica si existe un escritor registrado para el formato indicado."""
         return file_type in self._writers
 
     def write(
@@ -43,6 +51,7 @@ class TabularWriter:
         target_path: str | Path,
         target_type: TabularFileType | None = None,
     ) -> Path:
+        """Valida datos y ruta de salida antes de exportar el DataFrame."""
         path = validate_output_path(target_path)
         validate_dataframe_not_empty(data_frame)
         resolved_target_type = target_type or TabularFileType.from_path(path)
@@ -53,6 +62,8 @@ class TabularWriter:
             )
 
         ensure_parent_directory(path)
+        # Se crea el directorio de salida antes de escribir para evitar fallos
+        # cuando el usuario elige una carpeta nueva.
 
         try:
             writer(data_frame, path)
@@ -64,12 +75,15 @@ class TabularWriter:
         return path
 
     def _write_csv(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a CSV sin incluir el indice."""
         data_frame.to_csv(target_path, index=False)
 
     def _write_xlsx(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a un archivo Excel simple."""
         data_frame.to_excel(target_path, index=False)
 
     def _write_json(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a JSON orientado a registros."""
         data_frame.to_json(
             target_path,
             orient="records",
@@ -78,4 +92,5 @@ class TabularWriter:
         )
 
     def _write_txt(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a texto delimitado por tabulaciones."""
         data_frame.to_csv(target_path, sep=DEFAULT_TEXT_DELIMITER, index=False)

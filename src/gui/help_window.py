@@ -1,3 +1,9 @@
+"""Ventana auxiliar con instrucciones de uso para el usuario final.
+
+Este modulo encapsula la ayuda visual para que la ventana principal
+solo tenga que abrirla cuando sea necesario.
+"""
+
 from __future__ import annotations
 
 import tkinter as tk
@@ -7,9 +13,10 @@ from src.utils.constants import HELP_TEXT
 
 
 class HelpWindow(tk.Toplevel):
-    """Ventana de ayuda basica."""
+    """Muestra instrucciones de uso en una ventana separada y legible."""
 
     def __init__(self, master: tk.Misc) -> None:
+        """Construye una ventana modal con recomendaciones de uso."""
         super().__init__(master)
         self.title("Como usar")
         self.geometry("620x420")

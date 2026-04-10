@@ -1,45 +1,51 @@
+"""Jerarquia de excepciones controladas de la aplicacion.
+
+Estas clases permiten que la GUI capture errores del dominio y muestre
+mensajes consistentes sin depender de excepciones genericas.
+"""
+
 from __future__ import annotations
 
 
 class AppError(Exception):
-    """Error base de la aplicacion."""
+    """Clase base para errores controlados de la aplicacion."""
 
 
 class ValidationError(AppError):
-    """Error de validacion de entradas."""
+    """Agrupa errores relacionados con datos o entradas invalidas."""
 
 
 class MissingFileError(ValidationError):
-    """Se lanza cuando no se ha indicado un archivo requerido."""
+    """Se usa cuando el usuario aun no ha indicado un archivo necesario."""
 
 
 class EmptyFileError(ValidationError):
-    """Se lanza cuando el archivo existe pero no contiene datos utiles."""
+    """Se usa cuando el archivo existe, pero no aporta datos procesables."""
 
 
 class MissingTargetFormatError(ValidationError):
-    """Se lanza cuando no se ha seleccionado un formato de salida."""
+    """Se usa cuando el formato de salida aun no fue seleccionado."""
 
 
 class UnsupportedFormatError(AppError):
-    """Se lanza cuando el formato no es soportado."""
+    """Se usa cuando la extension o formato solicitado no esta registrado."""
 
 
 class ConversionError(AppError):
-    """Se lanza cuando la conversion falla."""
+    """Error base para fallos ocurridos durante una conversion."""
 
 
 class ReadError(ConversionError):
-    """Se lanza cuando un archivo no puede leerse correctamente."""
+    """Representa un fallo controlado al leer un archivo de entrada."""
 
 
 class WriteError(ConversionError):
-    """Se lanza cuando un archivo no puede escribirse correctamente."""
+    """Representa un fallo controlado al guardar un archivo de salida."""
 
 
 class PreviewError(AppError):
-    """Se lanza cuando no es posible generar la previsualizacion."""
+    """Se usa cuando la aplicacion no puede construir la vista previa."""
 
 
 class PendingConversionError(AppError):
-    """Se lanza cuando se intenta guardar sin una conversion preparada."""
+    """Se usa al intentar guardar sin haber preparado una conversion antes."""

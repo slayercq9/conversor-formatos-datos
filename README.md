@@ -2,7 +2,11 @@
 
 Aplicacion de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversion y guardar el archivo convertido.
 
-Autor: Fernando Corrales Quirós
+Version actual: 1.2.0
+
+Autor: Fernando Corrales Quiros
+
+Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
 
 ## Formatos Soportados
 
@@ -19,8 +23,6 @@ Formatos de salida:
 - Excel (`.xlsx`)
 - JSON (`.json`)
 - Texto delimitado (`.txt`)
-
-No se incluye soporte para SQL en esta version base.
 
 ## Requisitos
 
@@ -52,6 +54,8 @@ Desde la raiz del proyecto:
 python app.py
 ```
 
+Para una guia paso a paso orientada a usuarios no tecnicos, consulta el manual de usuario en [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
+
 ## Como Convertir Archivos
 
 1. Abrir la aplicacion con `python app.py`.
@@ -62,7 +66,7 @@ python app.py
 6. Presionar `Convertir` para preparar el archivo.
 7. Presionar `Guardar convertido` para elegir la ubicacion final.
 
-La app muestra mensajes claros si el archivo esta vacio, si el formato no es soportado o si ocurre un error de lectura/escritura.
+La app muestra mensajes claros si el archivo esta vacio, si el formato no es soportado o si ocurre un error de lectura o escritura.
 
 ## Pruebas
 
@@ -102,6 +106,7 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 .
 |-- app.py
 |-- ConversorFormatos.spec
+|-- MANUAL_USUARIO.md
 |-- README.md
 |-- requirements.txt
 |-- scripts/
@@ -146,7 +151,7 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 
 ## Estado del Proyecto
 
-Esta es una version base lista para continuar desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, logica de conversion, validaciones, utilidades y pruebas.
+Esta es una base lista para continuar desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, logica de conversion, validaciones, utilidades y pruebas.
 
 Pendientes sugeridos:
 

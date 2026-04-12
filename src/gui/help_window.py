@@ -52,3 +52,17 @@ class HelpWindow(tk.Toplevel):
             sticky="e",
             pady=(16, 0),
         )
+        self._center_on_parent(master)
+
+    def _center_on_parent(self, master: tk.Misc) -> None:
+        """Centra la ventana respecto a la principal para evitar aperturas bruscas."""
+        self.update_idletasks()
+        parent_x = master.winfo_rootx()
+        parent_y = master.winfo_rooty()
+        parent_width = master.winfo_width()
+        parent_height = master.winfo_height()
+        width = self.winfo_width()
+        height = self.winfo_height()
+        pos_x = parent_x + max((parent_width - width) // 2, 0)
+        pos_y = parent_y + max((parent_height - height) // 2, 0)
+        self.geometry(f"+{pos_x}+{pos_y}")

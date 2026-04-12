@@ -61,14 +61,16 @@ class MainWindow(tk.Tk):
     def _configure_styles(self) -> None:
         """Define una paleta visual sobria y estilos reutilizables."""
         palette = {
-            "bg": "#f3f5f7",
-            "surface": "#ffffff",
-            "surface_alt": "#eef2f6",
-            "border": "#d7dde4",
-            "text": "#1f2933",
-            "muted": "#5b6773",
-            "accent": "#1f5f8b",
-            "accent_hover": "#174a6c",
+            "bg": "#dfe8f6",
+            "surface": "#f8fbff",
+            "surface_alt": "#edf3fb",
+            "border": "#93a7c0",
+            "border_soft": "#c0cede",
+            "text": "#1f2d3d",
+            "muted": "#5e6d7d",
+            "accent": "#3f78b5",
+            "accent_hover": "#2f6297",
+            "accent_light": "#eaf2fc",
         }
         self._palette = palette
 
@@ -82,14 +84,16 @@ class MainWindow(tk.Tk):
         style.configure(
             "Hero.TFrame",
             background=palette["surface"],
-            relief="solid",
+            relief="raised",
             borderwidth=1,
+            lightcolor="#ffffff",
+            darkcolor=palette["border"],
         )
         style.configure(
             "Card.TLabelframe",
             background=palette["surface"],
             bordercolor=palette["border"],
-            relief="solid",
+            relief="raised",
             borderwidth=1,
             padding=14,
         )
@@ -129,7 +133,7 @@ class MainWindow(tk.Tk):
             foreground=palette["text"],
             font=("Segoe UI", 9),
             padding=(10, 8),
-            relief="solid",
+            relief="sunken",
             borderwidth=1,
         )
         style.configure(
@@ -138,19 +142,29 @@ class MainWindow(tk.Tk):
             foreground=palette["muted"],
             font=("Segoe UI", 9),
             padding=(12, 9),
-            relief="solid",
+            relief="sunken",
             borderwidth=1,
         )
         style.configure(
+            "Toolbar.TFrame",
+            background=palette["surface"],
+        )
+        style.configure(
             "TButton",
-            padding=(12, 8),
+            padding=(12, 7),
             font=("Segoe UI", 9),
+            relief="raised",
+            borderwidth=1,
+            focusthickness=1,
+            focuscolor=palette["border_soft"],
         )
         style.configure(
             "Accent.TButton",
             background=palette["accent"],
             foreground="#ffffff",
-            borderwidth=0,
+            borderwidth=1,
+            lightcolor="#7ea7d5",
+            darkcolor="#2a5077",
         )
         style.map(
             "Accent.TButton",
@@ -159,13 +173,15 @@ class MainWindow(tk.Tk):
         )
         style.configure(
             "Secondary.TButton",
-            background=palette["surface"],
+            background=palette["accent_light"],
             foreground=palette["text"],
             bordercolor=palette["border"],
+            lightcolor="#ffffff",
+            darkcolor=palette["border"],
         )
         style.map(
             "Secondary.TButton",
-            background=[("active", palette["surface_alt"])],
+            background=[("active", "#dce9f8")],
         )
         style.configure(
             "Preview.Treeview",
@@ -180,7 +196,7 @@ class MainWindow(tk.Tk):
             background=palette["surface_alt"],
             foreground=palette["text"],
             font=("Segoe UI", 9, "bold"),
-            relief="flat",
+            relief="raised",
             padding=(8, 6),
         )
         style.map(
@@ -215,25 +231,20 @@ class MainWindow(tk.Tk):
             style="HeroSubtitle.TLabel",
         ).pack(anchor="w", pady=(4, 0))
 
-        quick_access = ttk.Frame(header, style="Hero.TFrame")
+        quick_access = ttk.Frame(header, style="Toolbar.TFrame", padding=(0, 2, 0, 2))
         quick_access.grid(row=0, column=1, sticky="e")
         ttk.Button(
             quick_access,
             text="Como usar",
             command=self.open_help,
             style="Secondary.TButton",
-        ).pack(
-            side="left"
-        )
+        ).grid(row=0, column=0, padx=(0, 10))
         ttk.Button(
             quick_access,
             text="Acerca de",
             command=self.open_about,
             style="Secondary.TButton",
-        ).pack(
-            side="left",
-            padx=(8, 0),
-        )
+        ).grid(row=0, column=1)
 
         top_sections = ttk.Frame(container)
         top_sections.grid(row=1, column=0, sticky="ew", pady=(18, 14))

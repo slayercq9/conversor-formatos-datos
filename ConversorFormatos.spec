@@ -9,7 +9,8 @@ hiddenimports = collect_submodules("pandas") + collect_submodules("openpyxl")
 icon_file = Path("assets/icon.ico")
 datas = []
 
-# Reemplaza `assets/icon.ico` por el icono definitivo manteniendo este nombre o ajustando la ruta aqui.
+# `assets/icon.ico` es el icono principal del ejecutable.
+# Si en el futuro cambia la ubicacion o el nombre, ajusta esta referencia.
 if icon_file.exists():
     datas.append((str(icon_file), "assets"))
 

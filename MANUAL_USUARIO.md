@@ -16,7 +16,7 @@ El objetivo principal de la aplicacion es facilitar la conversion de archivos ta
 
 ## Fecha de ultima actualizacion
 
-2026-04-10
+2026-04-12
 
 ## Requisitos de uso
 
@@ -138,3 +138,4 @@ No. La aplicacion evita conversiones redundantes al mismo formato de origen.
 - Se crea el manual de usuario inicial.
 - Se documenta el flujo completo de uso de la aplicacion.
 - Se alinean version y fecha visibles con la documentacion del proyecto.
+- Se confirma la integracion del icono definitivo `assets/icon.ico`.

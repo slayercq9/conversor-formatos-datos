@@ -23,7 +23,7 @@ def resolve_asset_path(relative_path: str) -> Path:
 
 def main() -> None:
     """Crea la ventana principal y entrega el control a Tkinter."""
-    # Reemplaza `assets/icon.ico` por el icono definitivo cuando este listo.
+    # La app usa `assets/icon.ico` como icono principal si el archivo esta disponible.
     icon_path = resolve_asset_path("assets/icon.ico")
     app = MainWindow(icon_path=icon_path)
     app.mainloop()

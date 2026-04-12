@@ -9,3 +9,4 @@ Notas:
 - La aplicacion ya esta preparada para cargar `assets/icon.ico` de forma segura.
 - Si el archivo no existe, la app seguira funcionando con el icono por defecto.
 - PyInstaller tambien usara este archivo automaticamente si esta presente.
+- El archivo `icon.ico` actual es el icono definitivo y puede reemplazarse en el futuro manteniendo el mismo nombre.

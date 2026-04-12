@@ -8,12 +8,12 @@ class PreviewTable(ttk.Frame):
     """Tabla reutilizable para mostrar una vista previa tabular."""
 
     def __init__(self, master: tk.Misc) -> None:
-        super().__init__(master)
+        super().__init__(master, padding=2)
         self.empty_message_var = tk.StringVar(
             value="La vista previa de los datos aparecera aqui."
         )
 
-        self.tree = ttk.Treeview(self, show="headings")
+        self.tree = ttk.Treeview(self, show="headings", style="Preview.Treeview")
         self.tree.grid(row=0, column=0, sticky="nsew")
 
         scrollbar_y = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -29,6 +29,7 @@ class PreviewTable(ttk.Frame):
             textvariable=self.empty_message_var,
             anchor="center",
             justify="center",
+            style="SectionHint.TLabel",
         )
         self.empty_label.grid(row=0, column=0, sticky="nsew")
 
@@ -48,7 +49,7 @@ class PreviewTable(ttk.Frame):
 
         for column in columns:
             self.tree.heading(column, text=column)
-            self.tree.column(column, width=140, minwidth=100, anchor="w")
+            self.tree.column(column, width=160, minwidth=110, anchor="w")
 
         for row in rows:
             self.tree.insert("", "end", values=row)

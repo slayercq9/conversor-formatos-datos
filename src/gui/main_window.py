@@ -52,10 +52,141 @@ class MainWindow(tk.Tk):
         self.save_button: ttk.Button | None = None
         self.drop_area: ttk.LabelFrame | None = None
 
+        self._configure_styles()
         self._configure_layout()
         self._build_content()
         # TODO: Reemplazar NullDragDropManager por una implementacion real.
         self.drag_drop_manager.attach(self, self.drop_area)
+
+    def _configure_styles(self) -> None:
+        """Define una paleta visual sobria y estilos reutilizables."""
+        palette = {
+            "bg": "#f3f5f7",
+            "surface": "#ffffff",
+            "surface_alt": "#eef2f6",
+            "border": "#d7dde4",
+            "text": "#1f2933",
+            "muted": "#5b6773",
+            "accent": "#1f5f8b",
+            "accent_hover": "#174a6c",
+        }
+        self._palette = palette
+
+        self.configure(background=palette["bg"])
+        style = ttk.Style(self)
+        if "clam" in style.theme_names():
+            style.theme_use("clam")
+
+        style.configure("TFrame", background=palette["bg"])
+        style.configure("Surface.TFrame", background=palette["surface"])
+        style.configure(
+            "Hero.TFrame",
+            background=palette["surface"],
+            relief="solid",
+            borderwidth=1,
+        )
+        style.configure(
+            "Card.TLabelframe",
+            background=palette["surface"],
+            bordercolor=palette["border"],
+            relief="solid",
+            borderwidth=1,
+            padding=14,
+        )
+        style.configure(
+            "Card.TLabelframe.Label",
+            background=palette["surface"],
+            foreground=palette["text"],
+            font=("Segoe UI", 10, "bold"),
+        )
+        style.configure("TLabel", background=palette["bg"], foreground=palette["text"])
+        style.configure(
+            "Surface.TLabel",
+            background=palette["surface"],
+            foreground=palette["text"],
+        )
+        style.configure(
+            "HeroTitle.TLabel",
+            background=palette["surface"],
+            foreground=palette["text"],
+            font=("Segoe UI", 18, "bold"),
+        )
+        style.configure(
+            "HeroSubtitle.TLabel",
+            background=palette["surface"],
+            foreground=palette["muted"],
+            font=("Segoe UI", 10),
+        )
+        style.configure(
+            "SectionHint.TLabel",
+            background=palette["surface"],
+            foreground=palette["muted"],
+            font=("Segoe UI", 9),
+        )
+        style.configure(
+            "InfoValue.TLabel",
+            background=palette["surface_alt"],
+            foreground=palette["text"],
+            font=("Segoe UI", 9),
+            padding=(10, 8),
+            relief="solid",
+            borderwidth=1,
+        )
+        style.configure(
+            "Status.TLabel",
+            background=palette["surface_alt"],
+            foreground=palette["muted"],
+            font=("Segoe UI", 9),
+            padding=(12, 9),
+            relief="solid",
+            borderwidth=1,
+        )
+        style.configure(
+            "TButton",
+            padding=(12, 8),
+            font=("Segoe UI", 9),
+        )
+        style.configure(
+            "Accent.TButton",
+            background=palette["accent"],
+            foreground="#ffffff",
+            borderwidth=0,
+        )
+        style.map(
+            "Accent.TButton",
+            background=[("active", palette["accent_hover"]), ("disabled", "#9fb3c1")],
+            foreground=[("disabled", "#f4f7fa")],
+        )
+        style.configure(
+            "Secondary.TButton",
+            background=palette["surface"],
+            foreground=palette["text"],
+            bordercolor=palette["border"],
+        )
+        style.map(
+            "Secondary.TButton",
+            background=[("active", palette["surface_alt"])],
+        )
+        style.configure(
+            "Preview.Treeview",
+            background=palette["surface"],
+            fieldbackground=palette["surface"],
+            foreground=palette["text"],
+            bordercolor=palette["border"],
+            rowheight=28,
+        )
+        style.configure(
+            "Preview.Treeview.Heading",
+            background=palette["surface_alt"],
+            foreground=palette["text"],
+            font=("Segoe UI", 9, "bold"),
+            relief="flat",
+            padding=(8, 6),
+        )
+        style.map(
+            "Preview.Treeview.Heading",
+            background=[("active", "#e4ebf1")],
+        )
 
     def _configure_layout(self) -> None:
         """Configura el contenedor raiz para permitir redimensionamiento."""
@@ -64,37 +195,57 @@ class MainWindow(tk.Tk):
 
     def _build_content(self) -> None:
         """Construye los bloques visuales principales de la ventana."""
-        container = ttk.Frame(self, padding=16)
+        container = ttk.Frame(self, padding=22)
         container.grid(row=0, column=0, sticky="nsew")
         container.grid_columnconfigure(0, weight=1)
-        container.grid_rowconfigure(3, weight=1)
+        container.grid_rowconfigure(2, weight=1)
 
-        header = ttk.Frame(container)
+        header = ttk.Frame(container, style="Hero.TFrame", padding=18)
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(0, weight=1)
 
-        title_block = ttk.Frame(header)
+        title_block = ttk.Frame(header, style="Hero.TFrame")
         title_block.grid(row=0, column=0, sticky="w")
-        ttk.Label(title_block, text=APP_TITLE, font=("Segoe UI", 16, "bold")).pack(
+        ttk.Label(title_block, text=APP_TITLE, style="HeroTitle.TLabel").pack(
             anchor="w"
         )
         ttk.Label(
             title_block,
             text="Convierte archivos tabulares y revisa una vista previa antes de guardarlos.",
+            style="HeroSubtitle.TLabel",
         ).pack(anchor="w", pady=(4, 0))
 
-        quick_access = ttk.Frame(header)
+        quick_access = ttk.Frame(header, style="Hero.TFrame")
         quick_access.grid(row=0, column=1, sticky="e")
-        ttk.Button(quick_access, text="Como usar", command=self.open_help).pack(
+        ttk.Button(
+            quick_access,
+            text="Como usar",
+            command=self.open_help,
+            style="Secondary.TButton",
+        ).pack(
             side="left"
         )
-        ttk.Button(quick_access, text="Acerca de", command=self.open_about).pack(
+        ttk.Button(
+            quick_access,
+            text="Acerca de",
+            command=self.open_about,
+            style="Secondary.TButton",
+        ).pack(
             side="left",
             padx=(8, 0),
         )
 
-        self.drop_area = ttk.LabelFrame(container, text="Carga de archivo")
-        self.drop_area.grid(row=1, column=0, sticky="ew", pady=(16, 12))
+        top_sections = ttk.Frame(container)
+        top_sections.grid(row=1, column=0, sticky="ew", pady=(18, 14))
+        top_sections.grid_columnconfigure(0, weight=3)
+        top_sections.grid_columnconfigure(1, weight=2)
+
+        self.drop_area = ttk.LabelFrame(
+            top_sections,
+            text="Carga de archivo",
+            style="Card.TLabelframe",
+        )
+        self.drop_area.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
         self.drop_area.grid_columnconfigure(0, weight=1)
         self.drop_area.grid_columnconfigure(1, weight=0)
 
@@ -103,27 +254,33 @@ class MainWindow(tk.Tk):
             text="Selecciona un archivo desde el explorador. El soporte drag and drop quedo listo para integrarse aqui mas adelante.",
             wraplength=760,
             justify="left",
-        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
+            style="SectionHint.TLabel",
+        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 14))
 
         ttk.Button(
             self.drop_area,
             text="Seleccionar archivo",
             command=self.select_source_file,
+            style="Accent.TButton",
         ).grid(row=1, column=0, sticky="w")
 
         ttk.Label(
             self.drop_area,
             textvariable=self.source_label_var,
-            foreground="#444444",
             wraplength=760,
             justify="left",
-        ).grid(row=2, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+            style="InfoValue.TLabel",
+        ).grid(row=2, column=0, columnspan=2, sticky="ew", pady=(14, 0))
 
-        config_frame = ttk.LabelFrame(container, text="Configuracion")
-        config_frame.grid(row=2, column=0, sticky="ew", pady=(0, 12))
+        config_frame = ttk.LabelFrame(
+            top_sections,
+            text="Configuracion",
+            style="Card.TLabelframe",
+        )
+        config_frame.grid(row=0, column=1, sticky="nsew")
         config_frame.grid_columnconfigure(1, weight=1)
 
-        ttk.Label(config_frame, text="Formato de salida").grid(
+        ttk.Label(config_frame, text="Formato de salida", style="Surface.TLabel").grid(
             row=0,
             column=0,
             sticky="w",
@@ -141,16 +298,26 @@ class MainWindow(tk.Tk):
         ttk.Label(
             config_frame,
             text="Selecciona un formato antes de convertir.",
-            foreground="#444444",
+            style="SectionHint.TLabel",
         ).grid(row=0, column=2, sticky="w", padx=(12, 0))
 
-        actions = ttk.Frame(config_frame)
-        actions.grid(row=1, column=0, columnspan=2, sticky="w", pady=(16, 0))
+        actions = ttk.Frame(config_frame, style="Surface.TFrame")
+        actions.grid(row=1, column=0, columnspan=3, sticky="w", pady=(18, 0))
 
-        ttk.Button(actions, text="Vista previa", command=self.preview_file).pack(
+        ttk.Button(
+            actions,
+            text="Vista previa",
+            command=self.preview_file,
+            style="Secondary.TButton",
+        ).pack(
             side="left"
         )
-        ttk.Button(actions, text="Convertir", command=self.convert_file).pack(
+        ttk.Button(
+            actions,
+            text="Convertir",
+            command=self.convert_file,
+            style="Accent.TButton",
+        ).pack(
             side="left",
             padx=(8, 0),
         )
@@ -159,19 +326,24 @@ class MainWindow(tk.Tk):
             text="Guardar convertido",
             command=self.save_converted_file,
             state="disabled",
+            style="Secondary.TButton",
         )
         self.save_button.pack(side="left", padx=(8, 0))
 
         ttk.Label(
             config_frame,
             textvariable=self.ready_to_save_var,
-            foreground="#444444",
             wraplength=760,
             justify="left",
-        ).grid(row=2, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+            style="InfoValue.TLabel",
+        ).grid(row=2, column=0, columnspan=3, sticky="ew", pady=(16, 0))
 
-        preview_frame = ttk.LabelFrame(container, text="Vista previa")
-        preview_frame.grid(row=3, column=0, sticky="nsew")
+        preview_frame = ttk.LabelFrame(
+            container,
+            text="Vista previa",
+            style="Card.TLabelframe",
+        )
+        preview_frame.grid(row=2, column=0, sticky="nsew")
         preview_frame.grid_rowconfigure(0, weight=1)
         preview_frame.grid_columnconfigure(0, weight=1)
 
@@ -182,7 +354,8 @@ class MainWindow(tk.Tk):
             container,
             textvariable=self.status_var,
             anchor="w",
-        ).grid(row=4, column=0, sticky="ew", pady=(12, 0))
+            style="Status.TLabel",
+        ).grid(row=3, column=0, sticky="ew", pady=(14, 0))
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
         """Limpia el estado pendiente al cambiar el formato de salida."""

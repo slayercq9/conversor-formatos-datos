@@ -32,7 +32,7 @@ from src.utils.helpers import format_file_dialog_types
 class MainWindow(tk.Tk):
     """Coordina el flujo principal de uso desde la interfaz grafica."""
 
-    def __init__(self) -> None:
+    def __init__(self, icon_path: Path | None = None) -> None:
         """Inicializa estado visual, servicios y puntos de extension futuros."""
         super().__init__()
         self.title(APP_TITLE)
@@ -55,6 +55,7 @@ class MainWindow(tk.Tk):
         self._configure_styles()
         self._configure_layout()
         self._build_content()
+        self._apply_window_icon(icon_path)
         # TODO: Reemplazar NullDragDropManager por una implementacion real.
         self.drag_drop_manager.attach(self, self.drop_area)
 
@@ -208,6 +209,18 @@ class MainWindow(tk.Tk):
         """Configura el contenedor raiz para permitir redimensionamiento."""
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+
+    def _apply_window_icon(self, icon_path: Path | None) -> None:
+        """Intenta aplicar un icono personalizado sin fallar si aun no existe."""
+        if icon_path is None or not icon_path.exists():
+            return
+
+        try:
+            # Usa un `.ico` clasico para conservar compatibilidad con Windows y PyInstaller.
+            self.iconbitmap(default=str(icon_path))
+        except tk.TclError:
+            # Si el sistema no soporta el formato o la ruta, la app sigue usando el icono por defecto.
+            pass
 
     def _build_content(self) -> None:
         """Construye los bloques visuales principales de la ventana."""

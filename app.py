@@ -6,12 +6,26 @@ Mantenerlo pequeno facilita localizar el inicio real de la app.
 
 from __future__ import annotations
 
+from pathlib import Path
+import sys
+
 from src.gui.main_window import MainWindow
+
+
+def resolve_asset_path(relative_path: str) -> Path:
+    """Resuelve rutas de assets tanto en desarrollo como en ejecutable empaquetado."""
+    if hasattr(sys, "_MEIPASS"):
+        base_path = Path(sys._MEIPASS)
+    else:
+        base_path = Path(__file__).resolve().parent
+    return base_path / relative_path
 
 
 def main() -> None:
     """Crea la ventana principal y entrega el control a Tkinter."""
-    app = MainWindow()
+    # Reemplaza `assets/icon.ico` por el icono definitivo cuando este listo.
+    icon_path = resolve_asset_path("assets/icon.ico")
+    app = MainWindow(icon_path=icon_path)
     app.mainloop()
 
 

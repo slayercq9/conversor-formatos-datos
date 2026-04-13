@@ -45,6 +45,8 @@ Al iniciar, se abrira la ventana principal de la aplicacion.
 
 Si no seleccionas ningun archivo, la aplicacion seguira abierta y mostrara un mensaje de orientacion.
 
+Tambien puedes arrastrar y soltar un archivo compatible directamente sobre la zona de carga de la ventana principal. Si el archivo es valido, la aplicacion lo cargara automaticamente y actualizara la vista previa.
+
 ## Como elegir el formato de salida
 
 1. Ubica el campo `Formato de salida`.
@@ -126,7 +128,6 @@ No. La aplicacion evita conversiones redundantes al mismo formato de origen.
 
 ## Mejoras futuras previstas
 
-- Soporte para arrastrar y soltar archivos en la ventana principal.
 - Mas pruebas con archivos reales de ejemplo.
 - Mejora visual del empaquetado y distribucion.
 - Posible ampliacion de formatos soportados en futuras versiones.
@@ -139,3 +140,4 @@ No. La aplicacion evita conversiones redundantes al mismo formato de origen.
 - Se documenta el flujo completo de uso de la aplicacion.
 - Se alinean version y fecha visibles con la documentacion del proyecto.
 - Se confirma la integracion del icono definitivo `assets/icon.ico`.
+- Se agrega soporte de drag and drop para cargar archivos compatibles.

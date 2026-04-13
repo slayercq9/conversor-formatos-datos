@@ -36,12 +36,12 @@ class AboutWindow(tk.Toplevel):
         ttk.Label(frame, text=APP_TITLE, font=("Segoe UI", 15, "bold")).pack(anchor="w")
         ttk.Label(
             frame,
-            text=f"Versión actual: {APP_VERSION}",
+            text=f"Version actual: {APP_VERSION}",
             foreground="#555555",
         ).pack(anchor="w", pady=(4, 2))
         ttk.Label(
             frame,
-            text=f"Última actualización: {APP_LAST_UPDATED}",
+            text=f"Ultima actualizacion: {APP_LAST_UPDATED}",
             foreground="#555555",
         ).pack(anchor="w", pady=(0, 12))
         ttk.Label(frame, text=APP_DESCRIPTION, justify="left", wraplength=420).pack(

@@ -59,7 +59,7 @@ Para una guia paso a paso orientada a usuarios no tecnicos, consulta el manual d
 ## Como Convertir Archivos
 
 1. Abrir la aplicacion con `python app.py`.
-2. Presionar el boton `Seleccionar archivo`.
+2. Presionar el boton `Seleccionar archivo` o arrastrar y soltar un archivo compatible en la ventana principal.
 3. Elegir un archivo compatible: `.csv`, `.xlsx`, `.json` o `.txt`.
 4. Usar `Vista previa` para revisar los datos cargados.
 5. Seleccionar el formato de salida.
@@ -135,6 +135,7 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 |       `-- helpers.py
 `-- tests/
     |-- test_converter.py
+    |-- test_drag_drop.py
     |-- test_file_service.py
     |-- test_file_types.py
     `-- test_validators.py
@@ -151,11 +152,9 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 
 ## Estado del Proyecto
 
-Esta es una base lista para continuar desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, logica de conversion, validaciones, utilidades y pruebas.
+Esta es una base lista para continuar desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, logica de conversion, validaciones, utilidades y pruebas, e incluye soporte para seleccion manual y drag and drop de archivos compatibles.
 
 Pendientes sugeridos:
 
-- Integrar drag and drop para cargar archivos desde la interfaz.
 - Agregar mas pruebas de integracion con archivos reales de ejemplo.
-- Incorporar icono de aplicacion para el empaquetado.
 - Agregar pipeline de CI para ejecutar pruebas automaticamente.

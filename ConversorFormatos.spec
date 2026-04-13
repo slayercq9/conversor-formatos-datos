@@ -2,12 +2,16 @@
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
-hiddenimports = collect_submodules("pandas") + collect_submodules("openpyxl")
+hiddenimports = (
+    collect_submodules("pandas")
+    + collect_submodules("openpyxl")
+    + collect_submodules("tkinterdnd2")
+)
 icon_file = Path("assets/icon.ico")
-datas = []
+datas = collect_data_files("tkinterdnd2")
 
 # `assets/icon.ico` es el icono principal del ejecutable.
 # Si en el futuro cambia la ubicacion o el nombre, ajusta esta referencia.

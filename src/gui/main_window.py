@@ -11,7 +11,8 @@ from pathlib import Path
 from tkinter import ttk
 
 from src.core.file_types import TabularFileType
-from src.future.drag_drop import NullDragDropManager
+from src.core.validators import validate_source_path
+from src.future.drag_drop import create_drag_drop_manager, get_main_window_base
 from src.gui.about_window import AboutWindow
 from src.gui.dialogs import (
     ask_open_path,
@@ -29,7 +30,7 @@ from src.utils.errors import AppError
 from src.utils.helpers import format_file_dialog_types
 
 
-class MainWindow(tk.Tk):
+class MainWindow(get_main_window_base()):
     """Coordina el flujo principal de uso desde la interfaz grafica."""
 
     def __init__(self, icon_path: Path | None = None) -> None:
@@ -40,7 +41,7 @@ class MainWindow(tk.Tk):
 
         self.file_service = FileService()
         self.preview_service = PreviewService()
-        self.drag_drop_manager = NullDragDropManager()
+        self.drag_drop_manager = create_drag_drop_manager()
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar(value="Ningun archivo cargado todavia.")
@@ -56,8 +57,7 @@ class MainWindow(tk.Tk):
         self._configure_layout()
         self._build_content()
         self._apply_window_icon(icon_path)
-        # TODO: Reemplazar NullDragDropManager por una implementacion real.
-        self.drag_drop_manager.attach(self, self.drop_area)
+        self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
     def _configure_styles(self) -> None:
         """Define una paleta visual sobria y estilos reutilizables."""
@@ -146,10 +146,7 @@ class MainWindow(tk.Tk):
             relief="sunken",
             borderwidth=1,
         )
-        style.configure(
-            "Toolbar.TFrame",
-            background=palette["surface"],
-        )
+        style.configure("Toolbar.TFrame", background=palette["surface"])
         style.configure(
             "TButton",
             padding=(12, 7),
@@ -216,10 +213,8 @@ class MainWindow(tk.Tk):
             return
 
         try:
-            # Usa un `.ico` clasico para conservar compatibilidad con Windows y PyInstaller.
             self.iconbitmap(default=str(icon_path))
         except tk.TclError:
-            # Si el sistema no soporta el formato o la ruta, la app sigue usando el icono por defecto.
             pass
 
     def _build_content(self) -> None:
@@ -275,7 +270,10 @@ class MainWindow(tk.Tk):
 
         ttk.Label(
             self.drop_area,
-            text="Selecciona un archivo desde el explorador. El soporte drag and drop quedo listo para integrarse aqui mas adelante.",
+            text=(
+                "Selecciona un archivo desde el explorador o arrastralo a esta "
+                "seccion para cargarlo automaticamente."
+            ),
             wraplength=760,
             justify="left",
             style="SectionHint.TLabel",
@@ -333,18 +331,13 @@ class MainWindow(tk.Tk):
             text="Vista previa",
             command=self.preview_file,
             style="Secondary.TButton",
-        ).pack(
-            side="left"
-        )
+        ).pack(side="left")
         ttk.Button(
             actions,
             text="Convertir",
             command=self.convert_file,
             style="Accent.TButton",
-        ).pack(
-            side="left",
-            padx=(8, 0),
-        )
+        ).pack(side="left", padx=(8, 0))
         self.save_button = ttk.Button(
             actions,
             text="Guardar convertido",
@@ -394,19 +387,50 @@ class MainWindow(tk.Tk):
         """Abre el selector de archivos y actualiza el estado visual."""
         path = ask_open_path(format_file_dialog_types())
         if path:
-            self.source_path_var.set(path)
-            self.source_label_var.set(path)
-            self.file_service.clear_prepared_conversion()
-            self._set_save_enabled(False)
-            self.ready_to_save_var.set(
-                "Archivo cargado. Puedes revisar la vista previa o preparar la conversion."
+            try:
+                self._load_source_file(path, refresh_preview=False)
+            except AppError as exc:
+                show_error("Archivo", str(exc))
+                self.status_var.set("No se pudo cargar el archivo seleccionado.")
+        else:
+            self.status_var.set("No se selecciono ningun archivo.")
+
+    def load_dropped_file(self, source_path: Path) -> None:
+        """Carga un archivo soltado en la interfaz y refresca la vista previa."""
+        try:
+            self._load_source_file(source_path, refresh_preview=True)
+            self.status_var.set(f"Archivo cargado mediante arrastre: {source_path.name}")
+        except AppError as exc:
+            show_error("Drag and drop", str(exc))
+            self.preview_table.show_message(
+                "No se pudo cargar el archivo soltado. Intenta con otro archivo."
             )
+            self.status_var.set("El archivo soltado no es valido.")
+
+    def _load_source_file(
+        self,
+        source_path: str | Path,
+        refresh_preview: bool,
+    ) -> None:
+        """Centraliza la carga visual de un archivo desde cualquier origen."""
+        validated_path = validate_source_path(source_path)
+        path_text = str(validated_path)
+
+        self.source_path_var.set(path_text)
+        self.source_label_var.set(path_text)
+        self.file_service.clear_prepared_conversion()
+        self._set_save_enabled(False)
+        self.ready_to_save_var.set(
+            "Archivo cargado. Puedes revisar la vista previa o preparar la conversion."
+        )
+        self.status_var.set(f"Archivo seleccionado: {validated_path.name}")
+
+        if refresh_preview:
+            self._refresh_preview_from_source()
+        else:
             self.preview_table.show_message(
                 "Archivo cargado. Usa Vista previa para revisar los datos."
             )
-            self.status_var.set(f"Archivo seleccionado: {Path(path).name}")
-        else:
-            self.status_var.set("No se selecciono ningun archivo.")
 
     def preview_file(self) -> None:
         """Carga una vista previa de las primeras filas del archivo."""
@@ -528,11 +552,15 @@ class MainWindow(tk.Tk):
 
     def _refresh_preview_after_conversion(self) -> None:
         """Refresca la vista previa luego de preparar la conversion."""
+        self._refresh_preview_from_source()
+
+    def _refresh_preview_from_source(self) -> None:
+        """Carga la vista previa desde el archivo actualmente seleccionado."""
         try:
             columns, rows = self.preview_service.load_preview(self.source_path_var.get())
         except AppError:
             self.preview_table.show_message(
-                "La conversion quedo preparada, pero la vista previa no se pudo actualizar."
+                "No se pudo actualizar la vista previa del archivo actual."
             )
             return
 

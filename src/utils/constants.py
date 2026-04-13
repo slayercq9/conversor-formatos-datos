@@ -7,8 +7,9 @@ textos visibles o configuraciones base desde un solo lugar.
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "1.2.0"
-APP_LAST_UPDATED = "2026-04-12"
+APP_VERSION = "2.0.0"
+APP_LAST_UPDATED = "2026-04-13"
+APP_LAST_UPDATED_LABEL = "Lunes, 13 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quiros"
 APP_MIN_SIZE = (960, 640)
 DEFAULT_TEXT_DELIMITER = "\t"
@@ -24,10 +25,12 @@ HELP_TEXT = (
     "1. Selecciona un archivo con el boton 'Seleccionar archivo'.\n"
     "   Tambien puedes arrastrar y soltar un archivo compatible en la ventana principal.\n"
     "2. La aplicacion acepta archivos de entrada CSV, XLSX, JSON y TXT.\n"
-    "3. Elige el formato de salida en el selector correspondiente.\n"
-    "4. Usa 'Vista previa' para revisar los datos antes de convertir.\n"
-    "5. Pulsa 'Convertir' para preparar el resultado.\n"
-    "6. Pulsa 'Guardar convertido' para elegir la ubicacion final y guardar.\n\n"
+    "3. Revisa la informacion del archivo cargado para confirmar nombre, extension y tamano aproximado.\n"
+    "4. Elige el formato de salida en el selector correspondiente.\n"
+    "5. Usa 'Vista previa' para revisar los datos antes de convertir.\n"
+    "6. Pulsa 'Convertir' para preparar el resultado.\n"
+    "7. Pulsa 'Guardar convertido' para elegir la ubicacion final y guardar.\n"
+    "8. Si deseas comenzar otra tarea sin cerrar la app, usa el boton 'Limpiar'.\n\n"
     "Advertencias:\n"
     "- Si el archivo esta vacio, la aplicacion lo indicara con un mensaje claro.\n"
     "- Si el formato no es compatible o el archivo tiene errores, se mostrara un dialogo informativo.\n"

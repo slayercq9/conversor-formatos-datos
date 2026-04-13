@@ -2,7 +2,7 @@
 
 Aplicacion de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversion y guardar el archivo convertido.
 
-Version actual: 1.2.0
+Version actual: 2.0.0
 
 Autor: Fernando Corrales Quiros
 
@@ -60,11 +60,13 @@ Para una guia paso a paso orientada a usuarios no tecnicos, consulta el manual d
 
 1. Abrir la aplicacion con `python app.py`.
 2. Presionar el boton `Seleccionar archivo` o arrastrar y soltar un archivo compatible en la ventana principal.
-3. Elegir un archivo compatible: `.csv`, `.xlsx`, `.json` o `.txt`.
-4. Usar `Vista previa` para revisar los datos cargados.
-5. Seleccionar el formato de salida.
-6. Presionar `Convertir` para preparar el archivo.
-7. Presionar `Guardar convertido` para elegir la ubicacion final.
+3. Revisar la informacion visible del archivo cargado: nombre, extension, tamano aproximado y filas cuando aplique.
+4. Elegir un archivo compatible: `.csv`, `.xlsx`, `.json` o `.txt`.
+5. Usar `Vista previa` para revisar los datos cargados.
+6. Seleccionar el formato de salida.
+7. Presionar `Convertir` para preparar el archivo.
+8. Presionar `Guardar convertido` para elegir la ubicacion final.
+9. Usar `Limpiar` si deseas reiniciar la interfaz sin cerrar la aplicacion.
 
 La app muestra mensajes claros si el archivo esta vacio, si el formato no es soportado o si ocurre un error de lectura o escritura.
 

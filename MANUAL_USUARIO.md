@@ -12,11 +12,11 @@ El objetivo principal de la aplicacion es facilitar la conversion de archivos ta
 
 ## Version actual
 
-1.2.0
+2.0.0
 
 ## Fecha de ultima actualizacion
 
-2026-04-12
+2026-04-13
 
 ## Requisitos de uso
 
@@ -42,6 +42,7 @@ Al iniciar, se abrira la ventana principal de la aplicacion.
 2. Busca el archivo que deseas convertir.
 3. Seleccionalo y confirma la apertura.
 4. La aplicacion mostrara la ruta o nombre del archivo cargado.
+5. Cuando sea posible, tambien mostrara informacion util como extension, tamano aproximado y cantidad de filas.
 
 Si no seleccionas ningun archivo, la aplicacion seguira abierta y mostrara un mensaje de orientacion.
 
@@ -62,6 +63,7 @@ Debes elegir un formato antes de convertir. Si no lo haces, la aplicacion mostra
 3. Cuando la conversion este lista, presiona `Guardar convertido`.
 4. Elige la carpeta de destino y el nombre del archivo.
 5. Confirma el guardado.
+6. Si deseas comenzar una nueva tarea sin cerrar la aplicacion, usa el boton `Limpiar`.
 
 Si ocurre un problema durante la lectura o escritura, la aplicacion mostrara un dialogo explicando el motivo.
 
@@ -101,6 +103,9 @@ Suele significar que el archivo esta danado, en uso por otro programa o no tiene
 `No se pudo guardar el archivo ...`
 Suele indicar problemas de permisos, rutas invalidas o que el archivo de destino esta abierto en otro programa.
 
+`Interfaz reiniciada.`
+Indica que se limpio el estado visual de la app sin cerrar la ventana. El formato de salida puede mantenerse durante la sesion para agilizar nuevas conversiones.
+
 ## Preguntas frecuentes
 
 ### La aplicacion modifica mi archivo original?
@@ -133,6 +138,13 @@ No. La aplicacion evita conversiones redundantes al mismo formato de origen.
 - Posible ampliacion de formatos soportados en futuras versiones.
 
 ## Historial de versiones del manual
+
+### Version 2.0.0
+
+- Se actualiza la experiencia de usuario con boton `Limpiar`.
+- Se mantiene el ultimo formato de salida durante la sesion actual.
+- Se agrega informacion resumida del archivo cargado en la interfaz.
+- Se actualizan version y fecha visibles del proyecto.
 
 ### Version 1.2.0
 

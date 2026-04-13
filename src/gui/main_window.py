@@ -11,6 +11,7 @@ from pathlib import Path
 from tkinter import ttk
 
 from src.core.file_types import TabularFileType
+from src.core.reader import TabularReader
 from src.core.validators import validate_source_path
 from src.gui.about_window import AboutWindow
 from src.gui.drag_drop import create_drag_drop_manager, get_main_window_base
@@ -41,15 +42,20 @@ class MainWindow(get_main_window_base()):
 
         self.file_service = FileService()
         self.preview_service = PreviewService()
+        self.reader = TabularReader()
         self.drag_drop_manager = create_drag_drop_manager()
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar(value="Ningun archivo cargado todavia.")
+        self.file_info_var = tk.StringVar(
+            value="Cuando cargues un archivo, aqui veras un resumen util para revisarlo rapidamente."
+        )
         self.target_format_var = tk.StringVar(value="")
         self.status_var = tk.StringVar(value="Selecciona un archivo para comenzar.")
         self.ready_to_save_var = tk.StringVar(
             value="Todavia no hay una conversion lista para guardar."
         )
+        self.last_target_format = ""
         self.save_button: ttk.Button | None = None
         self.drop_area: ttk.LabelFrame | None = None
 
@@ -292,6 +298,13 @@ class MainWindow(get_main_window_base()):
             justify="left",
             style="InfoValue.TLabel",
         ).grid(row=2, column=0, columnspan=2, sticky="ew", pady=(14, 0))
+        ttk.Label(
+            self.drop_area,
+            textvariable=self.file_info_var,
+            wraplength=760,
+            justify="left",
+            style="SectionHint.TLabel",
+        ).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
 
         config_frame = ttk.LabelFrame(
             top_sections,
@@ -337,6 +350,12 @@ class MainWindow(get_main_window_base()):
             command=self.convert_file,
             style="Accent.TButton",
         ).pack(side="left", padx=(8, 0))
+        ttk.Button(
+            actions,
+            text="Limpiar",
+            command=self.clear_interface,
+            style="Secondary.TButton",
+        ).pack(side="left", padx=(8, 0))
         self.save_button = ttk.Button(
             actions,
             text="Guardar convertido",
@@ -379,6 +398,7 @@ class MainWindow(get_main_window_base()):
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
         """Limpia el estado pendiente al cambiar el formato de salida."""
+        self.last_target_format = self.target_format_var.get().strip()
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
@@ -421,6 +441,7 @@ class MainWindow(get_main_window_base()):
 
         self.source_path_var.set(path_text)
         self.source_label_var.set(path_text)
+        self.file_info_var.set(self._build_file_summary(validated_path))
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
@@ -474,7 +495,7 @@ class MainWindow(get_main_window_base()):
 
         self._set_save_enabled(True)
         self.ready_to_save_var.set(
-            "Conversion preparada. Ya puedes guardar el archivo convertido."
+            "Conversion preparada con exito. Ya puedes guardar el archivo convertido."
         )
         self.status_var.set(
             f"Conversion lista a {prepared_conversion.target_format.value.upper()}."
@@ -510,12 +531,17 @@ class MainWindow(get_main_window_base()):
             return
 
         show_info(
-            "Archivo guardado",
-            f"El archivo convertido se guardo correctamente en:\n{result_path}",
+            "Conversion completada",
+            (
+                "La conversion se completo correctamente.\n\n"
+                f"Archivo original: {Path(self.source_path_var.get()).name}\n"
+                f"Formato de salida: {self.target_format_var.get().upper()}\n"
+                f"Archivo guardado en:\n{result_path}"
+            ),
         )
         self.status_var.set(f"Archivo guardado: {Path(result_path).name}")
         self.ready_to_save_var.set(
-            "Archivo guardado. Puedes cambiar el formato o convertir otro archivo."
+            "Archivo guardado correctamente. Puedes convertir otro archivo o mantener este formato para la siguiente tarea."
         )
 
     def open_about(self) -> None:
@@ -574,3 +600,65 @@ class MainWindow(get_main_window_base()):
         if self.save_button is None:
             return
         self.save_button.config(state="normal" if enabled else "disabled")
+
+    def clear_interface(self) -> None:
+        """Reinicia el estado visual manteniendo preferencias de la sesion."""
+
+        self.source_path_var.set("")
+        self.source_label_var.set("Ningun archivo cargado todavia.")
+        self.file_info_var.set(
+            "Cuando cargues un archivo, aqui veras un resumen util para revisarlo rapidamente."
+        )
+        self.file_service.clear_prepared_conversion()
+        self._set_save_enabled(False)
+        self.ready_to_save_var.set(
+            "Todavia no hay una conversion lista para guardar."
+        )
+        self.preview_table.show_message(
+            "Interfaz reiniciada. Selecciona o arrastra un archivo para comenzar."
+        )
+        if self.last_target_format:
+            self.target_format_var.set(self.last_target_format)
+            self.status_var.set(
+                f"Interfaz reiniciada. Se mantuvo el formato de salida {self.last_target_format.upper()}."
+            )
+        else:
+            self.target_format_var.set("")
+            self.status_var.set("Interfaz reiniciada. Selecciona un archivo para comenzar.")
+
+    def _build_file_summary(self, source_path: Path) -> str:
+        """Construye un resumen legible del archivo actualmente cargado."""
+
+        details = [
+            f"Nombre: {source_path.name}",
+            f"Extension: {source_path.suffix.lower() or 'sin extension'}",
+            f"Tamano aproximado: {self._format_file_size(source_path.stat().st_size)}",
+        ]
+
+        row_count = self._try_get_row_count(source_path)
+        if row_count is not None:
+            details.append(f"Registros o filas: {row_count}")
+
+        return " | ".join(details)
+
+    def _try_get_row_count(self, source_path: Path) -> int | None:
+        """Intenta obtener la cantidad de filas sin interrumpir la carga del archivo."""
+
+        try:
+            data_frame = self.reader.read(source_path)
+        except AppError:
+            return None
+        return len(data_frame.index)
+
+    def _format_file_size(self, size_in_bytes: int) -> str:
+        """Convierte bytes a un formato corto y amigable para la interfaz."""
+
+        size = float(size_in_bytes)
+        units = ("B", "KB", "MB", "GB")
+        for unit in units:
+            if size < 1024 or unit == units[-1]:
+                if unit == "B":
+                    return f"{int(size)} {unit}"
+                return f"{size:.1f} {unit}"
+            size /= 1024
+        return f"{size_in_bytes} B"

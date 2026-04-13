@@ -13,7 +13,7 @@ from tkinter import ttk
 from src.utils.constants import (
     APP_AUTHOR,
     APP_DESCRIPTION,
-    APP_LAST_UPDATED,
+    APP_LAST_UPDATED_LABEL,
     APP_TITLE,
     APP_VERSION,
 )
@@ -41,7 +41,7 @@ class AboutWindow(tk.Toplevel):
         ).pack(anchor="w", pady=(4, 2))
         ttk.Label(
             frame,
-            text=f"Ultima actualizacion: {APP_LAST_UPDATED}",
+            text=f"Ultima actualizacion: {APP_LAST_UPDATED_LABEL}",
             foreground="#555555",
         ).pack(anchor="w", pady=(0, 12))
         ttk.Label(frame, text=APP_DESCRIPTION, justify="left", wraplength=420).pack(

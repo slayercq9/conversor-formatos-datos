@@ -12,8 +12,8 @@ from tkinter import ttk
 
 from src.core.file_types import TabularFileType
 from src.core.validators import validate_source_path
-from src.future.drag_drop import create_drag_drop_manager, get_main_window_base
 from src.gui.about_window import AboutWindow
+from src.gui.drag_drop import create_drag_drop_manager, get_main_window_base
 from src.gui.dialogs import (
     ask_open_path,
     ask_save_path,
@@ -57,7 +57,6 @@ class MainWindow(get_main_window_base()):
         self._configure_layout()
         self._build_content()
         self._apply_window_icon(icon_path)
-        self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
     def _configure_styles(self) -> None:
         """Define una paleta visual sobria y estilos reutilizables."""
@@ -373,6 +372,10 @@ class MainWindow(get_main_window_base()):
             anchor="w",
             style="Status.TLabel",
         ).grid(row=3, column=0, sticky="ew", pady=(14, 0))
+
+        # Registramos drag and drop al final para incluir todos los widgets
+        # interactivos ya creados dentro del area visible de carga.
+        self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
         """Limpia el estado pendiente al cambiar el formato de salida."""

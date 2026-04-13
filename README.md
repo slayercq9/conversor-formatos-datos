@@ -108,6 +108,7 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 |-- ConversorFormatos.spec
 |-- MANUAL_USUARIO.md
 |-- README.md
+|-- hook-tkinterdnd2.py
 |-- requirements.txt
 |-- scripts/
 |   `-- build.ps1
@@ -118,11 +119,10 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 |   |   |-- reader.py
 |   |   |-- validators.py
 |   |   `-- writer.py
-|   |-- future/
-|   |   `-- drag_drop.py
 |   |-- gui/
 |   |   |-- about_window.py
 |   |   |-- dialogs.py
+|   |   |-- drag_drop.py
 |   |   |-- help_window.py
 |   |   |-- main_window.py
 |   |   `-- preview_table.py
@@ -144,10 +144,10 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 ## Arquitectura
 
 - `src/gui`: ventanas, dialogos y componentes visuales de Tkinter.
+- `src/gui/drag_drop.py`: integracion real de arrastre y suelta con `tkinterdnd2`.
 - `src/core`: logica central de lectura, escritura, conversion, tipos de archivo y validaciones.
 - `src/services`: capa de coordinacion entre la interfaz y la logica de negocio.
 - `src/utils`: constantes, helpers y excepciones personalizadas.
-- `src/future`: puntos preparados para extensiones futuras, como drag and drop.
 - `tests`: pruebas unitarias de la base del proyecto.
 
 ## Estado del Proyecto

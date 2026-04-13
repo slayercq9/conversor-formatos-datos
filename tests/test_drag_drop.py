@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.future.drag_drop import split_drop_paths
+from src.gui.drag_drop import split_drop_paths
 
 
 def test_split_drop_paths_supports_braced_windows_paths() -> None:

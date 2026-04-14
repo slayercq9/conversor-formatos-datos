@@ -7,7 +7,7 @@ textos visibles o configuraciones base desde un solo lugar.
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.2.0"
 APP_LAST_UPDATED = "2026-04-13"
 APP_LAST_UPDATED_LABEL = "Lunes, 13 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quirós"
@@ -35,5 +35,5 @@ HELP_TEXT = (
     "- Si el archivo está vacío, la aplicación lo indicará con un mensaje claro.\n"
     "- Si el formato no es compatible o el archivo tiene errores, se mostrará un diálogo informativo.\n"
     "- La app no se cierra por errores comunes; solo informa el problema.\n\n"
-    "Nota: la aplicación ya permite arrastrar y soltar archivos compatibles en la ventana principal."
+    "Nota: la aplicación recuerda el último formato de salida y puede restaurar el tamaño y la posición de la ventana."
 )

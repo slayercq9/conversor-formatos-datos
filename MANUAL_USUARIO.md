@@ -12,7 +12,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-2.1.0
+2.2.0
 
 ## Fecha de última actualización
 
@@ -106,6 +106,9 @@ Suele indicar problemas de permisos, rutas inválidas o que el archivo de destin
 `Interfaz reiniciada.`
 Indica que se limpió el estado visual de la app sin cerrar la ventana. El formato de salida puede mantenerse durante la sesión para agilizar nuevas conversiones.
 
+`La aplicación recuerda preferencias de la sesión anterior.`
+Indica que el formato de salida y, cuando sea posible, la geometría de la ventana principal pueden restaurarse automáticamente al volver a abrir la app.
+
 ## Preguntas frecuentes
 
 ### ¿La aplicación modifica mi archivo original?
@@ -138,6 +141,12 @@ No. La aplicación evita conversiones redundantes al mismo formato de origen.
 - Posible ampliación de formatos soportados en futuras versiones.
 
 ## Historial de versiones del manual
+
+### Versión 2.2.0
+
+- Se agrega persistencia simple de preferencias en un archivo JSON portable.
+- La aplicación recuerda el último formato de salida entre sesiones.
+- La aplicación puede restaurar el tamaño y la posición de la ventana principal cuando la información es válida.
 
 ### Versión 2.1.0
 

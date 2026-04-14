@@ -29,13 +29,14 @@ from src.services.preview_service import PreviewService
 from src.utils.constants import APP_MIN_SIZE, APP_TITLE
 from src.utils.errors import AppError
 from src.utils.helpers import format_file_dialog_types
+from src.utils.preferences import AppPreferences, PreferencesManager
 
 
 class MainWindow(get_main_window_base()):
     """Coordina el flujo principal de uso desde la interfaz gráfica."""
 
     def __init__(self, icon_path: Path | None = None) -> None:
-        """Inicializa estado visual, servicios y preferencias de la sesión."""
+        """Inicializa estado visual, servicios y preferencias persistentes."""
         super().__init__()
         self.title(APP_TITLE)
         self.minsize(*APP_MIN_SIZE)
@@ -44,18 +45,22 @@ class MainWindow(get_main_window_base()):
         self.preview_service = PreviewService()
         self.reader = TabularReader()
         self.drag_drop_manager = create_drag_drop_manager()
+        self.preferences_manager = PreferencesManager()
+        self.preferences = self.preferences_manager.load()
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar(value="Ningún archivo cargado todavía.")
         self.file_info_var = tk.StringVar(
             value="Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
         )
-        self.target_format_var = tk.StringVar(value="")
+        self.target_format_var = tk.StringVar(
+            value=self.preferences.last_target_format.strip()
+        )
         self.status_var = tk.StringVar(value="Selecciona un archivo para comenzar.")
         self.ready_to_save_var = tk.StringVar(
             value="Todavía no hay una conversión lista para guardar."
         )
-        self.last_target_format = ""
+        self.last_target_format = self.target_format_var.get().strip()
         self.save_button: ttk.Button | None = None
         self.drop_area: ttk.LabelFrame | None = None
 
@@ -63,6 +68,8 @@ class MainWindow(get_main_window_base()):
         self._configure_layout()
         self._build_content()
         self._apply_window_icon(icon_path)
+        self._restore_window_preferences()
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _configure_styles(self) -> None:
         """Define una paleta visual sobria y estilos reutilizables."""
@@ -401,6 +408,24 @@ class MainWindow(get_main_window_base()):
 
         self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
+    def _restore_window_preferences(self) -> None:
+        """Restaura geometría guardada si existe y parece válida.
+
+        La persistencia se aplica después de construir la interfaz para que Tk
+        ya conozca el tamaño mínimo y pueda respetar mejor la geometría final.
+        """
+
+        width = self.preferences.window_width
+        height = self.preferences.window_height
+        pos_x = self.preferences.window_x
+        pos_y = self.preferences.window_y
+
+        if width and height and width >= APP_MIN_SIZE[0] and height >= APP_MIN_SIZE[1]:
+            geometry = f"{width}x{height}"
+            if pos_x is not None and pos_y is not None:
+                geometry += f"+{pos_x}+{pos_y}"
+            self.geometry(geometry)
+
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
         """Limpia el estado pendiente al cambiar el formato de salida."""
         self.last_target_format = self.target_format_var.get().strip()
@@ -663,3 +688,21 @@ class MainWindow(get_main_window_base()):
                 return f"{size:.1f} {unit}"
             size /= 1024
         return f"{size_in_bytes} B"
+
+    def _capture_preferences(self) -> AppPreferences:
+        """Construye el snapshot de preferencias actual para guardar al salir."""
+
+        self.update_idletasks()
+        return AppPreferences(
+            last_target_format=self.target_format_var.get().strip(),
+            window_width=self.winfo_width(),
+            window_height=self.winfo_height(),
+            window_x=self.winfo_x(),
+            window_y=self.winfo_y(),
+        )
+
+    def _on_close(self) -> None:
+        """Guarda preferencias livianas antes de cerrar la ventana principal."""
+
+        self.preferences_manager.save(self._capture_preferences())
+        self.destroy()

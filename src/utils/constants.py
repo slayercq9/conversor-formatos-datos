@@ -10,30 +10,30 @@ APP_TITLE = "Conversor de Formatos Tabulares"
 APP_VERSION = "2.0.0"
 APP_LAST_UPDATED = "2026-04-13"
 APP_LAST_UPDATED_LABEL = "Lunes, 13 de abril de 2026"
-APP_AUTHOR = "Fernando Corrales Quiros"
+APP_AUTHOR = "Fernando Corrales Quirós"
 APP_MIN_SIZE = (960, 640)
 DEFAULT_TEXT_DELIMITER = "\t"
 PREVIEW_ROW_LIMIT = 50
 
 APP_DESCRIPTION = (
-    "Aplicacion de escritorio para convertir archivos tabulares entre "
+    "Aplicación de escritorio para convertir archivos tabulares entre "
     "CSV, XLSX, JSON y TXT usando una interfaz clara y modular construida "
     "con Tkinter."
 )
 
 HELP_TEXT = (
-    "1. Selecciona un archivo con el boton 'Seleccionar archivo'.\n"
-    "   Tambien puedes arrastrar y soltar un archivo compatible en la ventana principal.\n"
-    "2. La aplicacion acepta archivos de entrada CSV, XLSX, JSON y TXT.\n"
-    "3. Revisa la informacion del archivo cargado para confirmar nombre, extension y tamano aproximado.\n"
+    "1. Selecciona un archivo con el botón 'Seleccionar archivo'.\n"
+    "   También puedes arrastrar y soltar un archivo compatible en la ventana principal.\n"
+    "2. La aplicación acepta archivos de entrada CSV, XLSX, JSON y TXT.\n"
+    "3. Revisa la información del archivo cargado para confirmar nombre, extensión y tamaño aproximado.\n"
     "4. Elige el formato de salida en el selector correspondiente.\n"
     "5. Usa 'Vista previa' para revisar los datos antes de convertir.\n"
     "6. Pulsa 'Convertir' para preparar el resultado.\n"
-    "7. Pulsa 'Guardar convertido' para elegir la ubicacion final y guardar.\n"
-    "8. Si deseas comenzar otra tarea sin cerrar la app, usa el boton 'Limpiar'.\n\n"
+    "7. Pulsa 'Guardar convertido' para elegir la ubicación final y guardar.\n"
+    "8. Si deseas comenzar otra tarea sin cerrar la app, usa el botón 'Limpiar'.\n\n"
     "Advertencias:\n"
-    "- Si el archivo esta vacio, la aplicacion lo indicara con un mensaje claro.\n"
-    "- Si el formato no es compatible o el archivo tiene errores, se mostrara un dialogo informativo.\n"
+    "- Si el archivo está vacío, la aplicación lo indicará con un mensaje claro.\n"
+    "- Si el formato no es compatible o el archivo tiene errores, se mostrará un diálogo informativo.\n"
     "- La app no se cierra por errores comunes; solo informa el problema.\n\n"
-    "Nota: la aplicacion ya permite arrastrar y soltar archivos compatibles en la ventana principal."
+    "Nota: la aplicación ya permite arrastrar y soltar archivos compatibles en la ventana principal."
 )

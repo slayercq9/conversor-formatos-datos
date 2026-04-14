@@ -18,7 +18,7 @@ class HelpWindow(tk.Toplevel):
     def __init__(self, master: tk.Misc) -> None:
         """Construye una ventana modal con recomendaciones de uso."""
         super().__init__(master)
-        self.title("Como usar")
+        self.title("Cómo usar")
         self.geometry("620x420")
         self.minsize(560, 380)
         self.transient(master)
@@ -28,7 +28,7 @@ class HelpWindow(tk.Toplevel):
         frame.pack(fill="both", expand=True)
         frame.columnconfigure(0, weight=1)
 
-        ttk.Label(frame, text="Como usar", font=("Segoe UI", 15, "bold")).grid(
+        ttk.Label(frame, text="Cómo usar", font=("Segoe UI", 15, "bold")).grid(
             row=0,
             column=0,
             sticky="w",

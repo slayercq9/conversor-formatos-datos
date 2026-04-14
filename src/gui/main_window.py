@@ -46,14 +46,14 @@ class MainWindow(get_main_window_base()):
         self.drag_drop_manager = create_drag_drop_manager()
 
         self.source_path_var = tk.StringVar()
-        self.source_label_var = tk.StringVar(value="Ningun archivo cargado todavia.")
+        self.source_label_var = tk.StringVar(value="Ningún archivo cargado todavía.")
         self.file_info_var = tk.StringVar(
-            value="Cuando cargues un archivo, aqui veras un resumen util para revisarlo rapidamente."
+            value="Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
         )
         self.target_format_var = tk.StringVar(value="")
         self.status_var = tk.StringVar(value="Selecciona un archivo para comenzar.")
         self.ready_to_save_var = tk.StringVar(
-            value="Todavia no hay una conversion lista para guardar."
+            value="Todavía no hay una conversión lista para guardar."
         )
         self.last_target_format = ""
         self.save_button: ttk.Button | None = None
@@ -248,7 +248,7 @@ class MainWindow(get_main_window_base()):
         quick_access.grid(row=0, column=1, sticky="e")
         ttk.Button(
             quick_access,
-            text="Como usar",
+            text="Cómo usar",
             command=self.open_help,
             style="Secondary.TButton",
         ).grid(row=0, column=0, padx=(0, 10))
@@ -276,8 +276,8 @@ class MainWindow(get_main_window_base()):
         ttk.Label(
             self.drop_area,
             text=(
-                "Selecciona un archivo desde el explorador o arrastralo a esta "
-                "seccion para cargarlo automaticamente."
+                "Selecciona un archivo desde el explorador o arrástralo a esta "
+                "sección para cargarlo automáticamente."
             ),
             wraplength=760,
             justify="left",
@@ -308,7 +308,7 @@ class MainWindow(get_main_window_base()):
 
         config_frame = ttk.LabelFrame(
             top_sections,
-            text="Configuracion",
+            text="Configuración",
             style="Card.TLabelframe",
         )
         config_frame.grid(row=0, column=1, sticky="nsew")
@@ -416,7 +416,7 @@ class MainWindow(get_main_window_base()):
                 show_error("Archivo", str(exc))
                 self.status_var.set("No se pudo cargar el archivo seleccionado.")
         else:
-            self.status_var.set("No se selecciono ningun archivo.")
+            self.status_var.set("No se seleccionó ningún archivo.")
 
     def load_dropped_file(self, source_path: Path) -> None:
         """Carga un archivo soltado en la interfaz y refresca la vista previa."""
@@ -428,7 +428,7 @@ class MainWindow(get_main_window_base()):
             self.preview_table.show_message(
                 "No se pudo cargar el archivo soltado. Intenta con otro archivo."
             )
-            self.status_var.set("El archivo soltado no es valido.")
+            self.status_var.set("El archivo soltado no es válido.")
 
     def _load_source_file(
         self,
@@ -445,7 +445,7 @@ class MainWindow(get_main_window_base()):
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
-            "Archivo cargado. Puedes revisar la vista previa o preparar la conversion."
+            "Archivo cargado. Puedes revisar la vista previa o preparar la conversión."
         )
         self.status_var.set(f"Archivo seleccionado: {validated_path.name}")
 
@@ -484,21 +484,21 @@ class MainWindow(get_main_window_base()):
                 self.target_format_var.get(),
             )
         except AppError as exc:
-            show_error("Conversion", str(exc))
-            self.status_var.set("La conversion fallo.")
+            show_error("Conversión", str(exc))
+            self.status_var.set("La conversión falló.")
             self.file_service.clear_prepared_conversion()
             self._set_save_enabled(False)
             self.ready_to_save_var.set(
-                "No se pudo preparar la conversion. Revisa el archivo y vuelve a intentar."
+                "No se pudo preparar la conversión. Revisa el archivo y vuelve a intentarlo."
             )
             return
 
         self._set_save_enabled(True)
         self.ready_to_save_var.set(
-            "Conversion preparada con exito. Ya puedes guardar el archivo convertido."
+            "Conversión preparada con éxito. Ya puedes guardar el archivo convertido."
         )
         self.status_var.set(
-            f"Conversion lista a {prepared_conversion.target_format.value.upper()}."
+            f"Conversión lista a {prepared_conversion.target_format.value.upper()}."
         )
         self._refresh_preview_after_conversion()
 
@@ -507,9 +507,9 @@ class MainWindow(get_main_window_base()):
         if not self.file_service.has_prepared_conversion():
             show_info(
                 "Guardar archivo",
-                "Primero usa el boton Convertir para preparar el archivo.",
+                "Primero usa el botón Convertir para preparar el archivo.",
             )
-            self.status_var.set("Aun no hay una conversion lista para guardar.")
+            self.status_var.set("Aún no hay una conversión lista para guardar.")
             return
         if not self._ensure_target_format_selected():
             return
@@ -531,9 +531,9 @@ class MainWindow(get_main_window_base()):
             return
 
         show_info(
-            "Conversion completada",
+            "Conversión completada",
             (
-                "La conversion se completo correctamente.\n\n"
+                "La conversión se completó correctamente.\n\n"
                 f"Archivo original: {Path(self.source_path_var.get()).name}\n"
                 f"Formato de salida: {self.target_format_var.get().upper()}\n"
                 f"Archivo guardado en:\n{result_path}"
@@ -549,7 +549,7 @@ class MainWindow(get_main_window_base()):
         AboutWindow(self)
 
     def open_help(self) -> None:
-        """Abre la ventana informativa 'Como usar'."""
+        """Abre la ventana informativa 'Cómo usar'."""
         HelpWindow(self)
 
     def _ensure_source_selected(self) -> bool:
@@ -558,11 +558,11 @@ class MainWindow(get_main_window_base()):
             return True
 
         self.preview_table.show_message(
-            "Todavia no hay un archivo cargado. Selecciona uno para continuar."
+            "Todavía no hay un archivo cargado. Selecciona uno para continuar."
         )
         show_warning(
             "Archivo requerido",
-            "Todavia no has cargado un archivo. Usa 'Seleccionar archivo' para continuar.",
+            "Todavía no has cargado un archivo. Usa 'Seleccionar archivo' para continuar.",
         )
         self.status_var.set("Esperando un archivo de entrada.")
         return False
@@ -574,9 +574,9 @@ class MainWindow(get_main_window_base()):
 
         show_warning(
             "Formato requerido",
-            "Todavia no has elegido un formato de salida. Selecciona uno para continuar.",
+            "Todavía no has elegido un formato de salida. Selecciona uno para continuar.",
         )
-        self.status_var.set("Esperando seleccion del formato de salida.")
+        self.status_var.set("Esperando selección del formato de salida.")
         return False
 
     def _refresh_preview_after_conversion(self) -> None:
@@ -605,14 +605,14 @@ class MainWindow(get_main_window_base()):
         """Reinicia el estado visual manteniendo preferencias de la sesion."""
 
         self.source_path_var.set("")
-        self.source_label_var.set("Ningun archivo cargado todavia.")
+        self.source_label_var.set("Ningún archivo cargado todavía.")
         self.file_info_var.set(
-            "Cuando cargues un archivo, aqui veras un resumen util para revisarlo rapidamente."
+            "Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
         )
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
-            "Todavia no hay una conversion lista para guardar."
+            "Todavía no hay una conversión lista para guardar."
         )
         self.preview_table.show_message(
             "Interfaz reiniciada. Selecciona o arrastra un archivo para comenzar."
@@ -631,8 +631,8 @@ class MainWindow(get_main_window_base()):
 
         details = [
             f"Nombre: {source_path.name}",
-            f"Extension: {source_path.suffix.lower() or 'sin extension'}",
-            f"Tamano aproximado: {self._format_file_size(source_path.stat().st_size)}",
+            f"Extensión: {source_path.suffix.lower() or 'sin extensión'}",
+            f"Tamaño aproximado: {self._format_file_size(source_path.stat().st_size)}",
         ]
 
         row_count = self._try_get_row_count(source_path)

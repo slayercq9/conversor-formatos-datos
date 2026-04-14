@@ -1,14 +1,14 @@
 # Conversor de Formatos Tabulares
 
-Aplicacion de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversion y guardar el archivo convertido.
+Aplicación de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversión y guardar el archivo convertido.
 
-Version actual: 2.0.0
+Versión actual: 2.0.0
 
-Autor: Fernando Corrales Quiros
+Autor: Fernando Corrales Quirós
 
 Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
 
-## Formatos Soportados
+## Formatos soportados
 
 Formatos de entrada:
 
@@ -29,9 +29,9 @@ Formatos de salida:
 - Python 3.11 o superior
 - Windows, macOS o Linux con soporte para Tkinter
 
-Tkinter normalmente viene incluido con Python. Si tu instalacion no lo incluye, instala el paquete correspondiente para tu sistema operativo.
+Tkinter normalmente viene incluido con Python. Si tu instalación no lo incluye, instala el paquete correspondiente para tu sistema operativo.
 
-## Instalacion
+## Instalación
 
 Crear y activar un entorno virtual:
 
@@ -46,29 +46,29 @@ Instalar dependencias:
 pip install -r requirements.txt
 ```
 
-## Ejecutar la App
+## Ejecutar la app
 
-Desde la raiz del proyecto:
+Desde la raíz del proyecto:
 
 ```powershell
 python app.py
 ```
 
-Para una guia paso a paso orientada a usuarios no tecnicos, consulta el manual de usuario en [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
+Para una guía paso a paso orientada a usuarios no técnicos, consulta el manual de usuario en [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
 
-## Como Convertir Archivos
+## Cómo convertir archivos
 
-1. Abrir la aplicacion con `python app.py`.
-2. Presionar el boton `Seleccionar archivo` o arrastrar y soltar un archivo compatible en la ventana principal.
-3. Revisar la informacion visible del archivo cargado: nombre, extension, tamano aproximado y filas cuando aplique.
+1. Abrir la aplicación con `python app.py`.
+2. Presionar el botón `Seleccionar archivo` o arrastrar y soltar un archivo compatible en la ventana principal.
+3. Revisar la información visible del archivo cargado: nombre, extensión, tamaño aproximado y filas cuando aplique.
 4. Elegir un archivo compatible: `.csv`, `.xlsx`, `.json` o `.txt`.
 5. Usar `Vista previa` para revisar los datos cargados.
 6. Seleccionar el formato de salida.
 7. Presionar `Convertir` para preparar el archivo.
-8. Presionar `Guardar convertido` para elegir la ubicacion final.
-9. Usar `Limpiar` si deseas reiniciar la interfaz sin cerrar la aplicacion.
+8. Presionar `Guardar convertido` para elegir la ubicación final.
+9. Usar `Limpiar` si deseas reiniciar la interfaz sin cerrar la aplicación.
 
-La app muestra mensajes claros si el archivo esta vacio, si el formato no es soportado o si ocurre un error de lectura o escritura.
+La app muestra mensajes claros si el archivo está vacío, si el formato no es compatible o si ocurre un error de lectura o escritura.
 
 ## Pruebas
 
@@ -78,7 +78,7 @@ Ejecutar la suite de pruebas:
 pytest
 ```
 
-Tambien puedes validar sintaxis rapidamente con:
+También puedes validar la sintaxis rápidamente con:
 
 ```powershell
 python -m compileall app.py src tests
@@ -88,7 +88,7 @@ python -m compileall app.py src tests
 
 Este proyecto incluye una base para generar un ejecutable con PyInstaller mediante el archivo `ConversorFormatos.spec`.
 
-Opcion directa:
+Opción directa:
 
 ```powershell
 pyinstaller ConversorFormatos.spec
@@ -100,9 +100,9 @@ O usando el script incluido:
 .\scripts\build.ps1
 ```
 
-El ejecutable quedara dentro de la carpeta `dist/`.
+El ejecutable quedará dentro de la carpeta `dist/`.
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```text
 .
@@ -145,18 +145,18 @@ El ejecutable quedara dentro de la carpeta `dist/`.
 
 ## Arquitectura
 
-- `src/gui`: ventanas, dialogos y componentes visuales de Tkinter.
-- `src/gui/drag_drop.py`: integracion real de arrastre y suelta con `tkinterdnd2`.
-- `src/core`: logica central de lectura, escritura, conversion, tipos de archivo y validaciones.
-- `src/services`: capa de coordinacion entre la interfaz y la logica de negocio.
+- `src/gui`: ventanas, diálogos y componentes visuales de Tkinter.
+- `src/gui/drag_drop.py`: integración real de arrastre y suelta con `tkinterdnd2`.
+- `src/core`: lógica central de lectura, escritura, conversión, tipos de archivo y validaciones.
+- `src/services`: capa de coordinación entre la interfaz y la lógica de negocio.
 - `src/utils`: constantes, helpers y excepciones personalizadas.
 - `tests`: pruebas unitarias de la base del proyecto.
 
-## Estado del Proyecto
+## Estado del proyecto
 
-Esta es una base lista para continuar desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, logica de conversion, validaciones, utilidades y pruebas, e incluye soporte para seleccion manual y drag and drop de archivos compatibles.
+Esta es una base lista para continuar el desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, lógica de conversión, validaciones, utilidades y pruebas, e incluye soporte para selección manual y drag and drop de archivos compatibles.
 
 Pendientes sugeridos:
 
-- Agregar mas pruebas de integracion con archivos reales de ejemplo.
-- Agregar pipeline de CI para ejecutar pruebas automaticamente.
+- Agregar más pruebas de integración con archivos reales de ejemplo.
+- Agregar un pipeline de CI para ejecutar pruebas automáticamente.

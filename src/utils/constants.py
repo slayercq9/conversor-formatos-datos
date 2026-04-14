@@ -7,7 +7,7 @@ textos visibles o configuraciones base desde un solo lugar.
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "2.0.0"
+APP_VERSION = "2.1.0"
 APP_LAST_UPDATED = "2026-04-13"
 APP_LAST_UPDATED_LABEL = "Lunes, 13 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quirós"

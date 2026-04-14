@@ -12,7 +12,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-2.0.0
+2.1.0
 
 ## Fecha de última actualización
 
@@ -138,6 +138,12 @@ No. La aplicación evita conversiones redundantes al mismo formato de origen.
 - Posible ampliación de formatos soportados en futuras versiones.
 
 ## Historial de versiones del manual
+
+### Versión 2.1.0
+
+- Se realiza un pulido visual menor para mejorar espaciados, alineación y consistencia de la interfaz.
+- Se ajustan ventanas informativas y vista previa para una presentación más uniforme.
+- Se actualizan la versión y la fecha visibles del proyecto.
 
 ### Versión 2.0.0
 

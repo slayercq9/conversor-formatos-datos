@@ -2,7 +2,7 @@
 
 Aplicación de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversión y guardar el archivo convertido.
 
-Versión actual: 2.0.0
+Versión actual: 2.1.0
 
 Autor: Fernando Corrales Quirós
 

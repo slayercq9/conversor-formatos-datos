@@ -1,7 +1,7 @@
 """Ventana principal de la interfaz de usuario.
 
-Este modulo compone los widgets principales y delega la logica real de
-conversion y vista previa a servicios especializados.
+Este módulo compone los widgets principales y delega la lógica real de
+conversión y vista previa a servicios especializados.
 """
 
 from __future__ import annotations
@@ -32,10 +32,10 @@ from src.utils.helpers import format_file_dialog_types
 
 
 class MainWindow(get_main_window_base()):
-    """Coordina el flujo principal de uso desde la interfaz grafica."""
+    """Coordina el flujo principal de uso desde la interfaz gráfica."""
 
     def __init__(self, icon_path: Path | None = None) -> None:
-        """Inicializa estado visual, servicios y puntos de extension futuros."""
+        """Inicializa estado visual, servicios y preferencias de la sesión."""
         super().__init__()
         self.title(APP_TITLE)
         self.minsize(*APP_MIN_SIZE)
@@ -90,24 +90,27 @@ class MainWindow(get_main_window_base()):
         style.configure(
             "Hero.TFrame",
             background=palette["surface"],
-            relief="raised",
+            relief="groove",
             borderwidth=1,
             lightcolor="#ffffff",
             darkcolor=palette["border"],
         )
         style.configure(
-            "Card.TLabelframe",
+            "Section.TLabelframe",
             background=palette["surface"],
-            bordercolor=palette["border"],
-            relief="raised",
+            bordercolor=palette["border_soft"],
+            relief="flat",
             borderwidth=1,
-            padding=14,
+            padding=12,
+            lightcolor="#ffffff",
+            darkcolor=palette["border_soft"],
         )
         style.configure(
-            "Card.TLabelframe.Label",
-            background=palette["surface"],
-            foreground=palette["text"],
+            "Section.TLabelframe.Label",
+            background=palette["bg"],
+            foreground=palette["accent"],
             font=("Segoe UI", 10, "bold"),
+            padding=(6, 0),
         )
         style.configure("TLabel", background=palette["bg"], foreground=palette["text"])
         style.configure(
@@ -138,8 +141,8 @@ class MainWindow(get_main_window_base()):
             background=palette["surface_alt"],
             foreground=palette["text"],
             font=("Segoe UI", 9),
-            padding=(10, 8),
-            relief="sunken",
+            padding=(11, 9),
+            relief="groove",
             borderwidth=1,
         )
         style.configure(
@@ -147,8 +150,8 @@ class MainWindow(get_main_window_base()):
             background=palette["surface_alt"],
             foreground=palette["muted"],
             font=("Segoe UI", 9),
-            padding=(12, 9),
-            relief="sunken",
+            padding=(11, 9),
+            relief="groove",
             borderwidth=1,
         )
         style.configure("Toolbar.TFrame", background=palette["surface"])
@@ -182,10 +185,7 @@ class MainWindow(get_main_window_base()):
             lightcolor="#ffffff",
             darkcolor=palette["border"],
         )
-        style.map(
-            "Secondary.TButton",
-            background=[("active", "#dce9f8")],
-        )
+        style.map("Secondary.TButton", background=[("active", "#dce9f8")])
         style.configure(
             "Preview.Treeview",
             background=palette["surface"],
@@ -200,20 +200,17 @@ class MainWindow(get_main_window_base()):
             foreground=palette["text"],
             font=("Segoe UI", 9, "bold"),
             relief="raised",
-            padding=(8, 6),
+            padding=(8, 7),
         )
-        style.map(
-            "Preview.Treeview.Heading",
-            background=[("active", "#e4ebf1")],
-        )
+        style.map("Preview.Treeview.Heading", background=[("active", "#e4ebf1")])
 
     def _configure_layout(self) -> None:
-        """Configura el contenedor raiz para permitir redimensionamiento."""
+        """Configura el contenedor raíz para permitir redimensionamiento."""
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
     def _apply_window_icon(self, icon_path: Path | None) -> None:
-        """Intenta aplicar un icono personalizado sin fallar si aun no existe."""
+        """Intenta aplicar un icono personalizado sin fallar si aún no existe."""
         if icon_path is None or not icon_path.exists():
             return
 
@@ -229,7 +226,7 @@ class MainWindow(get_main_window_base()):
         container.grid_columnconfigure(0, weight=1)
         container.grid_rowconfigure(2, weight=1)
 
-        header = ttk.Frame(container, style="Hero.TFrame", padding=18)
+        header = ttk.Frame(container, style="Hero.TFrame", padding=20)
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(0, weight=1)
 
@@ -242,21 +239,23 @@ class MainWindow(get_main_window_base()):
             title_block,
             text="Convierte archivos tabulares y revisa una vista previa antes de guardarlos.",
             style="HeroSubtitle.TLabel",
-        ).pack(anchor="w", pady=(4, 0))
+        ).pack(anchor="w", pady=(6, 0))
 
-        quick_access = ttk.Frame(header, style="Toolbar.TFrame", padding=(0, 2, 0, 2))
-        quick_access.grid(row=0, column=1, sticky="e")
+        quick_access = ttk.Frame(header, style="Toolbar.TFrame")
+        quick_access.grid(row=0, column=1, sticky="e", padx=(18, 0))
         ttk.Button(
             quick_access,
             text="Cómo usar",
             command=self.open_help,
             style="Secondary.TButton",
+            width=12,
         ).grid(row=0, column=0, padx=(0, 10))
         ttk.Button(
             quick_access,
             text="Acerca de",
             command=self.open_about,
             style="Secondary.TButton",
+            width=12,
         ).grid(row=0, column=1)
 
         top_sections = ttk.Frame(container)
@@ -267,11 +266,10 @@ class MainWindow(get_main_window_base()):
         self.drop_area = ttk.LabelFrame(
             top_sections,
             text="Carga de archivo",
-            style="Card.TLabelframe",
+            style="Section.TLabelframe",
         )
-        self.drop_area.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+        self.drop_area.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
         self.drop_area.grid_columnconfigure(0, weight=1)
-        self.drop_area.grid_columnconfigure(1, weight=0)
 
         ttk.Label(
             self.drop_area,
@@ -279,104 +277,113 @@ class MainWindow(get_main_window_base()):
                 "Selecciona un archivo desde el explorador o arrástralo a esta "
                 "sección para cargarlo automáticamente."
             ),
-            wraplength=760,
+            wraplength=700,
             justify="left",
             style="SectionHint.TLabel",
-        ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 14))
+        ).grid(row=0, column=0, sticky="w", pady=(0, 14))
 
         ttk.Button(
             self.drop_area,
             text="Seleccionar archivo",
             command=self.select_source_file,
             style="Accent.TButton",
+            width=18,
         ).grid(row=1, column=0, sticky="w")
 
         ttk.Label(
             self.drop_area,
             textvariable=self.source_label_var,
-            wraplength=760,
+            wraplength=700,
             justify="left",
             style="InfoValue.TLabel",
-        ).grid(row=2, column=0, columnspan=2, sticky="ew", pady=(14, 0))
+        ).grid(row=2, column=0, sticky="ew", pady=(14, 0))
+
         ttk.Label(
             self.drop_area,
             textvariable=self.file_info_var,
-            wraplength=760,
+            wraplength=700,
             justify="left",
             style="SectionHint.TLabel",
-        ).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        ).grid(row=3, column=0, sticky="ew", pady=(10, 0))
 
         config_frame = ttk.LabelFrame(
             top_sections,
             text="Configuración",
-            style="Card.TLabelframe",
+            style="Section.TLabelframe",
         )
         config_frame.grid(row=0, column=1, sticky="nsew")
-        config_frame.grid_columnconfigure(1, weight=1)
+        config_frame.grid_columnconfigure(0, weight=1)
 
-        ttk.Label(config_frame, text="Formato de salida", style="Surface.TLabel").grid(
-            row=0,
-            column=0,
-            sticky="w",
-        )
+        selector_row = ttk.Frame(config_frame, style="Surface.TFrame")
+        selector_row.grid(row=0, column=0, sticky="w")
+
+        ttk.Label(
+            selector_row,
+            text="Formato de salida",
+            style="Surface.TLabel",
+        ).grid(row=0, column=0, sticky="w")
         format_selector = ttk.Combobox(
-            config_frame,
+            selector_row,
             textvariable=self.target_format_var,
             values=TabularFileType.values(),
             state="readonly",
-            width=18,
+            width=10,
         )
-        format_selector.grid(row=0, column=1, sticky="w", padx=(8, 0))
+        format_selector.grid(row=0, column=1, sticky="w", padx=(10, 0))
         format_selector.bind("<<ComboboxSelected>>", self._on_target_format_changed)
 
         ttk.Label(
             config_frame,
             text="Selecciona un formato antes de convertir.",
             style="SectionHint.TLabel",
-        ).grid(row=0, column=2, sticky="w", padx=(12, 0))
+        ).grid(row=1, column=0, sticky="w", pady=(8, 0))
 
         actions = ttk.Frame(config_frame, style="Surface.TFrame")
-        actions.grid(row=1, column=0, columnspan=3, sticky="w", pady=(18, 0))
+        actions.grid(row=2, column=0, sticky="w", pady=(18, 0))
 
         ttk.Button(
             actions,
             text="Vista previa",
             command=self.preview_file,
             style="Secondary.TButton",
+            width=14,
         ).pack(side="left")
         ttk.Button(
             actions,
             text="Convertir",
             command=self.convert_file,
             style="Accent.TButton",
-        ).pack(side="left", padx=(8, 0))
+            width=15,
+        ).pack(side="left", padx=(10, 0))
         ttk.Button(
             actions,
             text="Limpiar",
             command=self.clear_interface,
             style="Secondary.TButton",
-        ).pack(side="left", padx=(8, 0))
+            width=12,
+        ).pack(side="left", padx=(10, 0))
         self.save_button = ttk.Button(
             actions,
             text="Guardar convertido",
             command=self.save_converted_file,
             state="disabled",
             style="Secondary.TButton",
+            width=18,
         )
-        self.save_button.pack(side="left", padx=(8, 0))
+        self.save_button.pack(side="left", padx=(10, 0))
 
         ttk.Label(
             config_frame,
             textvariable=self.ready_to_save_var,
-            wraplength=760,
+            wraplength=460,
             justify="left",
             style="InfoValue.TLabel",
-        ).grid(row=2, column=0, columnspan=3, sticky="ew", pady=(16, 0))
+        ).grid(row=3, column=0, sticky="ew", pady=(16, 0))
 
         preview_frame = ttk.LabelFrame(
             container,
             text="Vista previa",
-            style="Card.TLabelframe",
+            style="Section.TLabelframe",
         )
         preview_frame.grid(row=2, column=0, sticky="nsew")
         preview_frame.grid_rowconfigure(0, weight=1)
@@ -390,10 +397,8 @@ class MainWindow(get_main_window_base()):
             textvariable=self.status_var,
             anchor="w",
             style="Status.TLabel",
-        ).grid(row=3, column=0, sticky="ew", pady=(14, 0))
+        ).grid(row=3, column=0, sticky="ew", pady=(16, 0))
 
-        # Registramos drag and drop al final para incluir todos los widgets
-        # interactivos ya creados dentro del area visible de carga.
         self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
@@ -472,7 +477,7 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(f"Vista previa cargada con {len(rows)} filas.")
 
     def convert_file(self) -> None:
-        """Prepara la conversion en memoria sin escribir todavia a disco."""
+        """Prepara la conversión en memoria sin escribir todavía a disco."""
         if not self._ensure_source_selected():
             return
         if not self._ensure_target_format_selected():
@@ -580,7 +585,7 @@ class MainWindow(get_main_window_base()):
         return False
 
     def _refresh_preview_after_conversion(self) -> None:
-        """Refresca la vista previa luego de preparar la conversion."""
+        """Refresca la vista previa luego de preparar la conversión."""
         self._refresh_preview_from_source()
 
     def _refresh_preview_from_source(self) -> None:
@@ -596,14 +601,13 @@ class MainWindow(get_main_window_base()):
         self.preview_table.update_data(columns, rows)
 
     def _set_save_enabled(self, enabled: bool) -> None:
-        """Activa o desactiva el boton de guardado segun el estado actual."""
+        """Activa o desactiva el botón de guardado según el estado actual."""
         if self.save_button is None:
             return
         self.save_button.config(state="normal" if enabled else "disabled")
 
     def clear_interface(self) -> None:
-        """Reinicia el estado visual manteniendo preferencias de la sesion."""
-
+        """Reinicia el estado visual manteniendo preferencias de la sesión."""
         self.source_path_var.set("")
         self.source_label_var.set("Ningún archivo cargado todavía.")
         self.file_info_var.set(
@@ -628,7 +632,6 @@ class MainWindow(get_main_window_base()):
 
     def _build_file_summary(self, source_path: Path) -> str:
         """Construye un resumen legible del archivo actualmente cargado."""
-
         details = [
             f"Nombre: {source_path.name}",
             f"Extensión: {source_path.suffix.lower() or 'sin extensión'}",
@@ -643,7 +646,6 @@ class MainWindow(get_main_window_base()):
 
     def _try_get_row_count(self, source_path: Path) -> int | None:
         """Intenta obtener la cantidad de filas sin interrumpir la carga del archivo."""
-
         try:
             data_frame = self.reader.read(source_path)
         except AppError:
@@ -652,7 +654,6 @@ class MainWindow(get_main_window_base()):
 
     def _format_file_size(self, size_in_bytes: int) -> str:
         """Convierte bytes a un formato corto y amigable para la interfaz."""
-
         size = float(size_in_bytes)
         units = ("B", "KB", "MB", "GB")
         for unit in units:

@@ -16,7 +16,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Fecha de última actualización
 
-2026-04-13
+2026-04-14
 
 ## Requisitos de uso
 
@@ -64,6 +64,7 @@ Debes elegir un formato antes de convertir. Si no lo haces, la aplicación mostr
 4. Elige la carpeta de destino y el nombre del archivo.
 5. Confirma el guardado.
 6. Si deseas comenzar una nueva tarea sin cerrar la aplicación, usa el botón `Limpiar`.
+7. Al limpiar, la app reinicia el archivo cargado, la vista previa, la conversión preparada, los mensajes transitorios y la selección visible del formato de salida.
 
 Si ocurre un problema durante la lectura o escritura, la aplicación mostrará un diálogo explicando el motivo.
 
@@ -104,10 +105,10 @@ Suele significar que el archivo está dañado, en uso por otro programa o no tie
 Suele indicar problemas de permisos, rutas inválidas o que el archivo de destino está abierto en otro programa.
 
 `Interfaz reiniciada.`
-Indica que se limpió el estado visual de la app sin cerrar la ventana. El formato de salida puede mantenerse durante la sesión para agilizar nuevas conversiones.
+Indica que se limpió el estado visual de la app sin cerrar la ventana. También se reinicia la selección visible del formato de salida para comenzar una tarea nueva con claridad.
 
 `La aplicación recuerda preferencias de la sesión anterior.`
-Indica que el formato de salida y, cuando sea posible, la geometría de la ventana principal pueden restaurarse automáticamente al volver a abrir la app.
+Indica que el último formato elegido y, cuando sea posible, la geometría de la ventana principal pueden restaurarse automáticamente al volver a abrir la app, aunque durante la sesión actual uses `Limpiar`.
 
 ## Preguntas frecuentes
 

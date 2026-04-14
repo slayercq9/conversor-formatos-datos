@@ -35,6 +35,13 @@ from src.utils.preferences import AppPreferences, PreferencesManager
 class MainWindow(get_main_window_base()):
     """Coordina el flujo principal de uso desde la interfaz gráfica."""
 
+    DEFAULT_SOURCE_LABEL = "Ningún archivo cargado todavía."
+    DEFAULT_FILE_INFO = (
+        "Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
+    )
+    DEFAULT_STATUS = "Selecciona un archivo para comenzar."
+    DEFAULT_READY_TO_SAVE = "Todavía no hay una conversión lista para guardar."
+
     def __init__(self, icon_path: Path | None = None) -> None:
         """Inicializa estado visual, servicios y preferencias persistentes."""
         super().__init__()
@@ -49,17 +56,13 @@ class MainWindow(get_main_window_base()):
         self.preferences = self.preferences_manager.load()
 
         self.source_path_var = tk.StringVar()
-        self.source_label_var = tk.StringVar(value="Ningún archivo cargado todavía.")
-        self.file_info_var = tk.StringVar(
-            value="Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
-        )
+        self.source_label_var = tk.StringVar(value=self.DEFAULT_SOURCE_LABEL)
+        self.file_info_var = tk.StringVar(value=self.DEFAULT_FILE_INFO)
         self.target_format_var = tk.StringVar(
             value=self.preferences.last_target_format.strip()
         )
-        self.status_var = tk.StringVar(value="Selecciona un archivo para comenzar.")
-        self.ready_to_save_var = tk.StringVar(
-            value="Todavía no hay una conversión lista para guardar."
-        )
+        self.status_var = tk.StringVar(value=self.DEFAULT_STATUS)
+        self.ready_to_save_var = tk.StringVar(value=self.DEFAULT_READY_TO_SAVE)
         self.last_target_format = self.target_format_var.get().strip()
         self.save_button: ttk.Button | None = None
         self.drop_area: ttk.LabelFrame | None = None
@@ -432,7 +435,7 @@ class MainWindow(get_main_window_base()):
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
-            "Selecciona Convertir para preparar el archivo en el formato elegido."
+            "Formato actualizado. Usa Convertir para preparar un nuevo archivo en ese formato."
         )
         self.status_var.set("Formato de salida actualizado.")
 
@@ -446,7 +449,7 @@ class MainWindow(get_main_window_base()):
                 show_error("Archivo", str(exc))
                 self.status_var.set("No se pudo cargar el archivo seleccionado.")
         else:
-            self.status_var.set("No se seleccionó ningún archivo.")
+            self.status_var.set("Selección de archivo cancelada.")
 
     def load_dropped_file(self, source_path: Path) -> None:
         """Carga un archivo soltado en la interfaz y refresca la vista previa."""
@@ -456,7 +459,7 @@ class MainWindow(get_main_window_base()):
         except AppError as exc:
             show_error("Drag and drop", str(exc))
             self.preview_table.show_message(
-                "No se pudo cargar el archivo soltado. Intenta con otro archivo."
+                "No se pudo cargar el archivo soltado. Intenta con otro archivo compatible."
             )
             self.status_var.set("El archivo soltado no es válido.")
 
@@ -475,7 +478,7 @@ class MainWindow(get_main_window_base()):
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
         self.ready_to_save_var.set(
-            "Archivo cargado. Puedes revisar la vista previa o preparar la conversión."
+            "Archivo cargado correctamente. Revisa la vista previa o elige Convertir para preparar el resultado."
         )
         self.status_var.set(f"Archivo seleccionado: {validated_path.name}")
 
@@ -495,7 +498,7 @@ class MainWindow(get_main_window_base()):
             columns, rows = self.preview_service.load_preview(self.source_path_var.get())
         except AppError as exc:
             show_error("Vista previa", str(exc))
-            self.status_var.set("No se pudo generar la vista previa.")
+            self.status_var.set("No se pudo generar la vista previa del archivo actual.")
             return
 
         self.preview_table.update_data(columns, rows)
@@ -571,7 +574,7 @@ class MainWindow(get_main_window_base()):
         )
         self.status_var.set(f"Archivo guardado: {Path(result_path).name}")
         self.ready_to_save_var.set(
-            "Archivo guardado correctamente. Puedes convertir otro archivo o mantener este formato para la siguiente tarea."
+            "Conversión completada y guardada. Puedes cargar otro archivo cuando quieras."
         )
 
     def open_about(self) -> None:
@@ -621,6 +624,9 @@ class MainWindow(get_main_window_base()):
             self.preview_table.show_message(
                 "No se pudo actualizar la vista previa del archivo actual."
             )
+            self.status_var.set(
+                "La interfaz sigue disponible, pero no fue posible refrescar la vista previa."
+            )
             return
 
         self.preview_table.update_data(columns, rows)
@@ -634,26 +640,18 @@ class MainWindow(get_main_window_base()):
     def clear_interface(self) -> None:
         """Reinicia el estado visual manteniendo preferencias de la sesión."""
         self.source_path_var.set("")
-        self.source_label_var.set("Ningún archivo cargado todavía.")
-        self.file_info_var.set(
-            "Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
-        )
+        self.source_label_var.set(self.DEFAULT_SOURCE_LABEL)
+        self.file_info_var.set(self.DEFAULT_FILE_INFO)
+        self.target_format_var.set("")
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
-        self.ready_to_save_var.set(
-            "Todavía no hay una conversión lista para guardar."
-        )
+        self.ready_to_save_var.set(self.DEFAULT_READY_TO_SAVE)
         self.preview_table.show_message(
-            "Interfaz reiniciada. Selecciona o arrastra un archivo para comenzar."
+            "La interfaz se reinició. Selecciona o arrastra un archivo para comenzar de nuevo."
         )
-        if self.last_target_format:
-            self.target_format_var.set(self.last_target_format)
-            self.status_var.set(
-                f"Interfaz reiniciada. Se mantuvo el formato de salida {self.last_target_format.upper()}."
-            )
-        else:
-            self.target_format_var.set("")
-            self.status_var.set("Interfaz reiniciada. Selecciona un archivo para comenzar.")
+        self.status_var.set(
+            "Interfaz limpia: se quitaron el archivo, la vista previa, la conversión preparada y la selección visible del formato."
+        )
 
     def _build_file_summary(self, source_path: Path) -> str:
         """Construye un resumen legible del archivo actualmente cargado."""
@@ -694,7 +692,7 @@ class MainWindow(get_main_window_base()):
 
         self.update_idletasks()
         return AppPreferences(
-            last_target_format=self.target_format_var.get().strip(),
+            last_target_format=self.last_target_format,
             window_width=self.winfo_width(),
             window_height=self.winfo_height(),
             window_x=self.winfo_x(),

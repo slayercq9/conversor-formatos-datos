@@ -6,12 +6,50 @@ para widgets de tabla sin mezclar esa logica con la lectura de archivos.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from src.core.reader import TabularReader
 from src.core.validators import validate_source_path
 from src.utils.constants import PREVIEW_ROW_LIMIT
 from src.utils.errors import AppError, PreviewError
+
+
+@dataclass(slots=True)
+class PreviewData:
+    """Representa una vista previa ligera y lista para la interfaz."""
+
+    columns: list[str]
+    rows: list[tuple[str, ...]]
+    total_columns: int
+    previewed_rows: int
+    total_rows: int
+    is_partial: bool
+
+    @property
+    def summary_text(self) -> str:
+        """Resume la estructura detectada en una sola linea util."""
+        row_label = "fila" if self.previewed_rows == 1 else "filas"
+        column_label = "columna" if self.total_columns == 1 else "columnas"
+        summary = (
+            f"{self.total_columns} {column_label} detectadas | "
+            f"{self.previewed_rows} {row_label} en vista previa"
+        )
+        if self.is_partial:
+            summary += f" de {self.total_rows} en total"
+        return summary
+
+    @property
+    def note_text(self) -> str:
+        """Explica si la vista es completa o parcial."""
+        if self.is_partial:
+            return (
+                "La vista previa es parcial para mantener la aplicación ligera. "
+                "Solo se muestran las primeras filas del archivo."
+            )
+        if self.previewed_rows == 0:
+            return "Se detectaron columnas, pero no hay filas disponibles para mostrar."
+        return "Vista previa completa cargada para inspección rápida."
 
 
 class PreviewService:
@@ -25,21 +63,32 @@ class PreviewService:
         self,
         source_path: str | Path,
         max_rows: int = PREVIEW_ROW_LIMIT,
-    ) -> tuple[list[str], list[tuple[str, ...]]]:
-        """Devuelve columnas y filas serializadas para la tabla de preview."""
+    ) -> PreviewData:
+        """Devuelve una vista previa ligera con filas, columnas y resumen."""
         path = validate_source_path(source_path)
 
         try:
-            data_frame = self._reader.read(path).head(max_rows).fillna("")
+            data_frame = self._reader.read(path).fillna("")
         except AppError as exc:
             raise PreviewError(str(exc)) from exc
         except Exception as exc:
             raise PreviewError("No se pudo cargar la vista previa.") from exc
 
-        columns = [str(column) for column in data_frame.columns]
+        preview_frame = data_frame.head(max_rows)
+        columns = [str(column) for column in preview_frame.columns]
         # La GUI trabaja mejor con valores ya convertidos a texto simple.
         rows = [
             tuple(str(value) for value in record)
-            for record in data_frame.itertuples(index=False, name=None)
+            for record in preview_frame.itertuples(index=False, name=None)
         ]
-        return columns, rows
+        total_rows = len(data_frame.index)
+        previewed_rows = len(rows)
+
+        return PreviewData(
+            columns=columns,
+            rows=rows,
+            total_columns=len(columns),
+            previewed_rows=previewed_rows,
+            total_rows=total_rows,
+            is_partial=total_rows > previewed_rows,
+        )

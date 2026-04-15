@@ -7,7 +7,7 @@ textos visibles o configuraciones base desde un solo lugar.
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "4.0.0"
+APP_VERSION = "4.1.0"
 APP_LAST_UPDATED = "2026-04-14"
 APP_LAST_UPDATED_LABEL = "Martes, 14 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quirós"
@@ -26,8 +26,8 @@ HELP_TEXT = (
     "   También puedes arrastrar y soltar un archivo compatible en la ventana principal.\n"
     "2. La aplicación acepta archivos de entrada CSV, TSV, XLSX, ODS, JSON, XML y TXT.\n"
     "3. Revisa la información del archivo cargado para confirmar nombre, extensión y tamaño aproximado.\n"
-    "4. Elige el formato de salida en el selector correspondiente.\n"
-    "5. Usa 'Vista previa' para revisar los datos antes de convertir.\n"
+    "4. Usa la vista previa para inspeccionar columnas, filas visibles y si la muestra es parcial.\n"
+    "5. Elige el formato de salida en el selector correspondiente.\n"
     "6. Pulsa 'Convertir' para preparar el resultado.\n"
     "7. Pulsa 'Guardar convertido' para elegir la ubicación final y guardar.\n"
     "8. Si deseas comenzar otra tarea sin cerrar la app, usa el botón 'Limpiar'.\n\n"

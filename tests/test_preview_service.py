@@ -8,7 +8,11 @@ from src.utils.errors import PreviewError, ReadError
 
 
 class FakePreviewReader:
-    def __init__(self, data_frame: pd.DataFrame | None = None, error: Exception | None = None) -> None:
+    def __init__(
+        self,
+        data_frame: pd.DataFrame | None = None,
+        error: Exception | None = None,
+    ) -> None:
         self._data_frame = data_frame
         self._error = error
 
@@ -20,7 +24,7 @@ class FakePreviewReader:
         return self._data_frame
 
 
-def test_preview_service_limits_rows_and_serializes_values(tmp_path: Path) -> None:
+def test_preview_service_limits_rows_and_builds_summary(tmp_path: Path) -> None:
     source = tmp_path / "datos.csv"
     source.write_text("ok", encoding="utf-8")
     service = PreviewService(
@@ -29,10 +33,28 @@ def test_preview_service_limits_rows_and_serializes_values(tmp_path: Path) -> No
         )
     )
 
-    columns, rows = service.load_preview(source, max_rows=1)
+    preview = service.load_preview(source, max_rows=1)
 
-    assert columns == ["nombre", "edad"]
-    assert rows == [("Ana", "30")]
+    assert preview.columns == ["nombre", "edad"]
+    assert preview.rows == [("Ana", "30")]
+    assert preview.total_columns == 2
+    assert preview.previewed_rows == 1
+    assert preview.total_rows == 2
+    assert preview.is_partial is True
+    assert "2 columnas detectadas" in preview.summary_text
+
+
+def test_preview_service_marks_complete_preview_when_all_rows_fit(tmp_path: Path) -> None:
+    source = tmp_path / "datos.csv"
+    source.write_text("ok", encoding="utf-8")
+    service = PreviewService(
+        reader=FakePreviewReader(pd.DataFrame({"nombre": ["Ana"], "edad": [30]}))
+    )
+
+    preview = service.load_preview(source, max_rows=5)
+
+    assert preview.is_partial is False
+    assert preview.note_text == "Vista previa completa cargada para inspección rápida."
 
 
 def test_preview_service_preserves_clear_domain_message(tmp_path: Path) -> None:

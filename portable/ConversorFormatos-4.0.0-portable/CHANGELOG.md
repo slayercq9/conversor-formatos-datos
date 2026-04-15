@@ -4,6 +4,15 @@ Todos los cambios relevantes de este proyecto se documentarán en este archivo.
 
 El formato está inspirado en Keep a Changelog y usa versionado visible alineado con el proyecto.
 
+## [4.1.0] - 2026-04-14
+
+### Mejorado
+
+- La vista previa ahora muestra un resumen más claro de columnas detectadas y filas visibles.
+- Se agrega una nota visible cuando la vista previa es parcial.
+- Se mejora el uso del espacio y la presentación de encabezados en la tabla de inspección.
+- La interfaz conserva el enfoque de inspección rápida sin edición.
+
 ## [4.0.0] - 2026-04-14
 
 ### Añadido

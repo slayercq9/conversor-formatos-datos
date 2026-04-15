@@ -12,7 +12,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-4.0.0
+4.1.0
 
 ## Fecha de última actualización
 
@@ -47,6 +47,17 @@ Al iniciar, se abrirá la ventana principal de la aplicación.
 Si no seleccionas ningún archivo, la aplicación seguirá abierta y mostrará un mensaje de orientación.
 
 También puedes arrastrar y soltar un archivo compatible directamente sobre la zona de carga de la ventana principal. Si el archivo es válido, la aplicación lo cargará automáticamente y actualizará la vista previa.
+
+## Cómo usar la vista previa
+
+La vista previa está pensada para inspección rápida. Ahora muestra mejor la estructura tabular del archivo cargado:
+
+- columnas detectadas
+- cantidad de filas visibles en pantalla
+- aviso cuando la vista previa es parcial
+- mejor distribución de encabezados y espacio disponible
+
+La vista previa no es editable y no reemplaza el archivo original.
 
 ## Cómo elegir el formato de salida
 
@@ -90,16 +101,13 @@ Formatos de salida:
 - XML (`.xml`)
 - TXT (`.txt`)
 
-Notas importantes de compatibilidad:
-
-- XML se soporta cuando sus registros pueden representarse como tabla.
-- Si el archivo XML no tiene una estructura tabular compatible, la aplicación lo informará claramente.
-- JSON funciona mejor con listas de registros o estructuras tabulares compatibles.
-- ODS requiere la dependencia `odfpy`, incluida en `requirements.txt`.
-- Si falta una dependencia para XLSX u ODS, la aplicación mostrará un mensaje claro.
-- Parquet no forma parte de esta fase.
-
 ## Mensajes o errores comunes y su significado
+
+`No se pudo construir la vista previa.`
+Indica que el archivo no pudo representarse correctamente para inspección rápida, aunque la aplicación sigue disponible.
+
+`La vista previa es parcial.`
+Indica que solo se muestran las primeras filas para mantener la app ligera y rápida.
 
 `Todavía no has cargado un archivo.`
 Significa que debes seleccionar un archivo antes de usar la vista previa o iniciar la conversión.
@@ -110,75 +118,27 @@ Significa que la lista de formato de salida aún no tiene una opción elegida.
 `El archivo seleccionado está vacío.`
 Indica que el archivo no contiene datos útiles para procesar.
 
-`El formato del archivo cargado no es soportado.`
-Indica que la extensión del archivo no pertenece a los formatos actualmente compatibles.
-
-`No se pudo interpretar el archivo XML como una tabla.`
-Indica que el XML no tiene una estructura tabular compatible para esta versión de la app.
-
-`No se pudo interpretar el archivo JSON como una tabla.`
-Indica que el JSON no tiene una estructura tabular compatible para esta versión de la app.
-
-`No se pudo leer el archivo ODS porque falta la dependencia 'odfpy'.`
-Indica que la instalación actual no tiene la dependencia necesaria para abrir archivos ODS.
-
-`No se pudo guardar el archivo ODS porque falta la dependencia 'odfpy'.`
-Indica que la instalación actual no tiene la dependencia necesaria para exportar archivos ODS.
-
-`No se pudo leer el archivo ...`
-Suele significar que el archivo está dañado, en uso por otro programa o no tiene un contenido válido para su formato.
-
-`No se pudo guardar el archivo ...`
-Suele indicar problemas de permisos, rutas inválidas o que el archivo de destino está abierto en otro programa.
-
-`Interfaz reiniciada.`
-Indica que se limpió el estado visual de la app sin cerrar la ventana. También se reinicia la selección visible del formato de salida para comenzar una tarea nueva con claridad.
-
-`La aplicación recuerda preferencias de la sesión anterior.`
-Indica que el último formato elegido y, cuando sea posible, la geometría de la ventana principal pueden restaurarse automáticamente al volver a abrir la app, aunque durante la sesión actual uses `Limpiar`.
-
 ## Preguntas frecuentes
 
-### ¿La aplicación modifica mi archivo original?
+### ¿La vista previa modifica mis datos?
 
-No. La aplicación prepara un archivo nuevo y lo guarda en la ubicación que el usuario elige.
+No. La vista previa solo muestra una parte del contenido para revisión rápida.
 
-### ¿Puedo guardar con otro nombre?
+### ¿Por qué no siempre veo todas las filas?
 
-Sí. Al usar `Guardar convertido`, puedes cambiar el nombre y la carpeta de destino.
-
-### ¿Qué pasa si cierro la ventana antes de guardar?
-
-La conversión preparada en memoria se perderá y deberás repetir el proceso.
-
-### ¿Puedo convertir al mismo formato?
-
-No. La aplicación evita conversiones redundantes al mismo formato de origen.
+Porque la app limita la cantidad de filas mostradas para seguir siendo ligera y responder rápido.
 
 ### ¿Qué significa que la app sea portable?
 
 Significa que puede compartirse como una carpeta o un archivo ZIP listo para usar, sin instalador. El usuario solo necesita descomprimir el paquete y ejecutar el archivo principal de la aplicación.
 
-### ¿Qué necesito para usar archivos ODS?
-
-Solo necesitas tener instaladas las dependencias del proyecto. El soporte ODS usa `odfpy`, que ya está declarado en `requirements.txt`.
-
-## Recomendaciones de uso
-
-- Revisa la vista previa antes de guardar el archivo convertido.
-- Usa nombres de archivo claros para distinguir originales y convertidos.
-- Evita abrir el archivo de destino en otro programa mientras intentas guardarlo.
-- Si trabajas con archivos importantes, conserva una copia del original.
-- Si compartes la app con otros usuarios, incluye también el manual, la licencia y el changelog junto al ejecutable portable.
-
-## Mejoras futuras previstas
-
-- Más pruebas con archivos reales de ejemplo.
-- Publicación del paquete en GitHub Releases.
-- Evaluación de un posible canal de donaciones o apoyo al proyecto.
-- Posible ampliación de formatos soportados en futuras versiones.
-
 ## Historial de versiones del manual
+
+### Versión 4.1.0
+
+- Se mejora la vista previa con un resumen más útil de columnas y filas.
+- Se agrega aviso claro cuando la vista previa es parcial.
+- Se refuerza la inspección rápida sin convertir la tabla en editor.
 
 ### Versión 4.0.0
 
@@ -186,37 +146,3 @@ Solo necesitas tener instaladas las dependencias del proyecto. El soporte ODS us
 - Se documentan las limitaciones de XML y JSON cuando no pueden representarse como tabla.
 - Se documenta la dependencia `odfpy` para soporte ODS y sus mensajes de error esperables.
 - Se alinean la versión y la fecha visibles con la fase de robustez.
-
-### Versión 3.0.0
-
-- Se documenta la preparación del proyecto para distribución pública portable.
-- Se agrega una explicación breve sobre qué significa que la app sea portable.
-- Se alinean la versión y la fecha visibles con la documentación de distribución.
-- Se deja constancia de que GitHub Releases y donaciones quedan para fases futuras.
-
-### Versión 2.2.0
-
-- Se agrega persistencia simple de preferencias en un archivo JSON portable.
-- La aplicación recuerda el último formato de salida entre sesiones.
-- La aplicación puede restaurar el tamaño y la posición de la ventana principal cuando la información es válida.
-
-### Versión 2.1.0
-
-- Se realiza un pulido visual menor para mejorar espaciados, alineación y consistencia de la interfaz.
-- Se ajustan ventanas informativas y vista previa para una presentación más uniforme.
-- Se actualizan la versión y la fecha visibles del proyecto.
-
-### Versión 2.0.0
-
-- Se actualiza la experiencia de usuario con el botón `Limpiar`.
-- Se mantiene el último formato de salida durante la sesión actual.
-- Se agrega información resumida del archivo cargado en la interfaz.
-- Se actualizan la versión y la fecha visibles del proyecto.
-
-### Versión 1.2.0
-
-- Se crea el manual de usuario inicial.
-- Se documenta el flujo completo de uso de la aplicación.
-- Se alinean la versión y la fecha visibles con la documentación del proyecto.
-- Se confirma la integración del icono definitivo `assets/icon.ico`.
-- Se agrega soporte de drag and drop para cargar archivos compatibles.

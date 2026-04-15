@@ -2,7 +2,7 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes de manera simple, portable y fácil de compartir. La app permite cargar un archivo, revisar una vista previa, elegir un formato de salida, preparar la conversión y guardar el resultado como un archivo nuevo.
 
-Versión actual: 4.0.0
+Versión actual: 4.1.0
 
 Fecha de última actualización: 2026-04-14
 
@@ -13,7 +13,7 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 ## Qué hace la aplicación
 
 - Convierte archivos tabulares entre formatos comunes y extensibles.
-- Muestra una vista previa de los datos antes de guardar.
+- Muestra una vista previa más clara de los datos antes de guardar.
 - Permite cargar archivos tanto con selección manual como con drag and drop.
 - Mantiene una arquitectura modular, ligera y preparada para seguir creciendo.
 - Conserva preferencias simples entre sesiones sin dejar de ser portable.
@@ -48,6 +48,15 @@ Notas importantes de compatibilidad:
 - ODS usa la dependencia ligera `odfpy`, declarada en [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt).
 - Si falta una dependencia necesaria para XLSX u ODS, la app lo indicará con un mensaje claro.
 - Parquet no forma parte de esta fase y no está implementado en la app.
+
+## Vista previa avanzada ligera
+
+La versión 4.1.0 mejora la inspección rápida del archivo cargado sin convertir la vista previa en un editor:
+
+- muestra cuántas columnas fueron detectadas
+- indica cuántas filas se están previsualizando
+- avisa cuando la vista previa es parcial
+- presenta mejor los encabezados y aprovecha mejor el espacio disponible
 
 ## Requisitos
 
@@ -133,45 +142,6 @@ El proyecto incluye un script auxiliar para reunir el contenido de distribución
 .\scripts\package_portable.ps1
 ```
 
-Ese script:
-
-- verifica que exista la salida en `dist/ConversorFormatos/`
-- crea una carpeta de distribución en `portable/`
-- copia el ejecutable y los archivos de documentación esenciales
-- genera un ZIP listo para compartir
-
-La salida esperada queda en una estructura como esta:
-
-```text
-portable/
-|-- ConversorFormatos-4.0.0-portable/
-|   |-- ConversorFormatos.exe
-|   |-- LICENSE
-|   |-- README.md
-|   |-- MANUAL_USUARIO.md
-|   `-- CHANGELOG.md
-`-- ConversorFormatos-4.0.0-portable.zip
-```
-
-## Qué debe incluir un paquete portable
-
-Para compartir la aplicación con otros usuarios, el paquete portable debe incluir al menos:
-
-- el contenido generado por PyInstaller en `dist/ConversorFormatos/`
-- [README.md](/C:/Users/Fernando/Documents/Conversor_formatos/README.md)
-- [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
-- [LICENSE](/C:/Users/Fernando/Documents/Conversor_formatos/LICENSE)
-- [CHANGELOG.md](/C:/Users/Fernando/Documents/Conversor_formatos/CHANGELOG.md)
-
-## Cómo compartir la app con otros usuarios
-
-1. Genera el ejecutable con PyInstaller.
-2. Prepara el paquete portable con `.\scripts\package_portable.ps1 -Version 4.0.0`.
-3. Comparte la carpeta portable o el ZIP generado.
-4. Indica al usuario que solo necesita descomprimir el paquete y ejecutar `ConversorFormatos.exe`.
-
-No se crea instalador en esta fase porque la distribución sigue siendo completamente portable.
-
 ## Pruebas y validación
 
 Ejecutar la suite de pruebas:
@@ -186,73 +156,6 @@ Validar sintaxis rápidamente:
 python -m compileall app.py src tests
 ```
 
-## Estructura del proyecto
-
-```text
-.
-|-- app.py
-|-- CHANGELOG.md
-|-- ConversorFormatos.spec
-|-- LICENSE
-|-- MANUAL_USUARIO.md
-|-- README.md
-|-- hook-tkinterdnd2.py
-|-- requirements.txt
-|-- scripts/
-|   |-- build.ps1
-|   `-- package_portable.ps1
-|-- src/
-|   |-- core/
-|   |   |-- converter.py
-|   |   |-- file_types.py
-|   |   |-- reader.py
-|   |   |-- validators.py
-|   |   `-- writer.py
-|   |-- gui/
-|   |   |-- about_window.py
-|   |   |-- dialogs.py
-|   |   |-- drag_drop.py
-|   |   |-- help_window.py
-|   |   |-- main_window.py
-|   |   `-- preview_table.py
-|   |-- services/
-|   |   |-- file_service.py
-|   |   `-- preview_service.py
-|   `-- utils/
-|       |-- constants.py
-|       |-- errors.py
-|       |-- helpers.py
-|       `-- preferences.py
-|-- tests/
-|   |-- test_converter.py
-|   |-- test_drag_drop.py
-|   |-- test_file_service.py
-|   |-- test_file_types.py
-|   |-- test_preferences.py
-|   |-- test_preview_service.py
-|   |-- test_reader_writer.py
-|   `-- test_validators.py
-|-- dist/
-|   `-- ConversorFormatos/
-`-- portable/
-```
-
-Referencias importantes:
-
-- `dist/ConversorFormatos/`: salida generada por PyInstaller.
-- `portable/`: carpeta sugerida para armar paquetes listos para compartir.
-- `src/gui`: ventanas y componentes visuales.
-- `src/core`: lectura, escritura, conversión y validaciones.
-- `src/services`: coordinación entre interfaz y lógica.
-- `src/utils`: constantes, errores, preferencias y utilidades.
-
 ## Estado del proyecto
 
-La versión 4.0.0 consolida la compatibilidad práctica de TSV, XML y ODS, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
-
-Elementos reservados para versiones futuras:
-
-- publicación automatizada en GitHub Releases
-- canal de donaciones o apoyo al proyecto
-- mayor automatización del proceso de publicación
-- evaluación de formatos adicionales, excluyendo Parquet en esta fase
+La versión 4.1.0 mejora la experiencia de vista previa con una inspección más clara y útil, manteniendo la app ligera, portable y coherente con su enfoque de conversión rápida.

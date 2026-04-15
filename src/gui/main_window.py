@@ -213,6 +213,12 @@ class MainWindow(get_main_window_base()):
             padding=(8, 7),
         )
         style.map("Preview.Treeview.Heading", background=[("active", "#e4ebf1")])
+        style.configure(
+            "PreviewSummary.TLabel",
+            background=palette["surface"],
+            foreground=palette["text"],
+            font=("Segoe UI", 10, "bold"),
+        )
 
     def _configure_layout(self) -> None:
         """Configura el contenedor raíz para permitir redimensionamiento."""
@@ -486,7 +492,7 @@ class MainWindow(get_main_window_base()):
             self._refresh_preview_from_source()
         else:
             self.preview_table.show_message(
-                "Archivo cargado. Usa Vista previa para revisar los datos."
+                "Archivo cargado. Usa Vista previa para revisar su estructura y las primeras filas."
             )
 
     def preview_file(self) -> None:
@@ -495,14 +501,17 @@ class MainWindow(get_main_window_base()):
             return
 
         try:
-            columns, rows = self.preview_service.load_preview(self.source_path_var.get())
+            preview = self.preview_service.load_preview(self.source_path_var.get())
         except AppError as exc:
             show_error("Vista previa", str(exc))
+            self.preview_table.show_message(
+                "No se pudo construir la vista previa. Revisa si el archivo puede representarse como tabla."
+            )
             self.status_var.set("No se pudo generar la vista previa del archivo actual.")
             return
 
-        self.preview_table.update_data(columns, rows)
-        self.status_var.set(f"Vista previa cargada con {len(rows)} filas.")
+        self.preview_table.update_data(preview)
+        self.status_var.set(preview.summary_text)
 
     def convert_file(self) -> None:
         """Prepara la conversión en memoria sin escribir todavía a disco."""
@@ -619,7 +628,7 @@ class MainWindow(get_main_window_base()):
     def _refresh_preview_from_source(self) -> None:
         """Carga la vista previa desde el archivo actualmente seleccionado."""
         try:
-            columns, rows = self.preview_service.load_preview(self.source_path_var.get())
+            preview = self.preview_service.load_preview(self.source_path_var.get())
         except AppError:
             self.preview_table.show_message(
                 "No se pudo actualizar la vista previa del archivo actual."
@@ -629,7 +638,7 @@ class MainWindow(get_main_window_base()):
             )
             return
 
-        self.preview_table.update_data(columns, rows)
+        self.preview_table.update_data(preview)
 
     def _set_save_enabled(self, enabled: bool) -> None:
         """Activa o desactiva el botón de guardado según el estado actual."""

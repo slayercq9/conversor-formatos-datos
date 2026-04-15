@@ -1,12 +1,22 @@
 # Conversor de Formatos Tabulares
 
-Aplicación de escritorio creada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. La app permite cargar un archivo, revisar una vista previa de los datos, elegir un formato de salida, preparar la conversión y guardar el archivo convertido.
+Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes de manera simple, portable y fácil de compartir. La app permite cargar un archivo, revisar una vista previa, elegir un formato de salida, preparar la conversión y guardar el resultado como un archivo nuevo.
 
-Versión actual: 2.2.0
+Versión actual: 3.0.0
+
+Fecha de última actualización: 2026-04-14
 
 Autor: Fernando Corrales Quirós
 
 Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
+
+## Qué hace la aplicación
+
+- Convierte archivos tabulares entre formatos comunes.
+- Muestra una vista previa de los datos antes de guardar.
+- Permite cargar archivos tanto con selección manual como con drag and drop.
+- Mantiene una arquitectura modular, ligera y preparada para seguir creciendo.
+- Conserva preferencias simples entre sesiones sin dejar de ser portable.
 
 ## Formatos soportados
 
@@ -27,11 +37,12 @@ Formatos de salida:
 ## Requisitos
 
 - Python 3.11 o superior
-- Windows, macOS o Linux con soporte para Tkinter
+- Tkinter disponible en el sistema
+- Dependencias instaladas desde `requirements.txt`
 
 Tkinter normalmente viene incluido con Python. Si tu instalación no lo incluye, instala el paquete correspondiente para tu sistema operativo.
 
-## Instalación
+## Instalación de dependencias
 
 Crear y activar un entorno virtual:
 
@@ -46,7 +57,7 @@ Instalar dependencias:
 pip install -r requirements.txt
 ```
 
-## Ejecutar la app
+## Ejecutar la aplicación
 
 Desde la raíz del proyecto:
 
@@ -54,42 +65,34 @@ Desde la raíz del proyecto:
 python app.py
 ```
 
-Para una guía paso a paso orientada a usuarios no técnicos, consulta el manual de usuario en [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
+Para una guía orientada a usuarios no técnicos, consulta [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
 
-## Cómo convertir archivos
+## Uso básico
 
-1. Abrir la aplicación con `python app.py`.
-2. Presionar el botón `Seleccionar archivo` o arrastrar y soltar un archivo compatible en la ventana principal.
-3. Revisar la información visible del archivo cargado: nombre, extensión, tamaño aproximado y filas cuando aplique.
-4. Elegir un archivo compatible: `.csv`, `.xlsx`, `.json` o `.txt`.
-5. Usar `Vista previa` para revisar los datos cargados.
-6. Seleccionar el formato de salida.
-7. Presionar `Convertir` para preparar el archivo.
-8. Presionar `Guardar convertido` para elegir la ubicación final.
-9. Usar `Limpiar` si deseas reiniciar la interfaz sin cerrar la aplicación.
+1. Inicia la app con `python app.py`.
+2. Selecciona un archivo o arrástralo a la ventana principal.
+3. Revisa la información visible del archivo y su vista previa.
+4. Elige el formato de salida.
+5. Presiona `Convertir`.
+6. Presiona `Guardar convertido`.
+7. Usa `Limpiar` para reiniciar la interfaz sin cerrar la app.
 
-La app muestra mensajes claros si el archivo está vacío, si el formato no es compatible o si ocurre un error de lectura o escritura.
-Además, recuerda entre sesiones el último formato de salida seleccionado y puede restaurar el tamaño y la posición de la ventana principal.
+La aplicación muestra mensajes claros si el archivo está vacío, si el formato no es compatible o si ocurre un error de lectura o escritura.
 
-## Pruebas
+## Distribución portable
 
-Ejecutar la suite de pruebas:
+La aplicación está preparada para compartirse como un paquete portable. Esto significa que puede distribuirse como una carpeta o archivo ZIP con todo lo necesario para ejecutarse, sin instalador y sin modificar el sistema del usuario.
 
-```powershell
-pytest
-```
+Características del enfoque portable:
 
-También puedes validar la sintaxis rápidamente con:
+- No requiere instalador.
+- Puede ejecutarse desde una carpeta local, USB o unidad externa.
+- Mantiene su configuración simple en archivos livianos dentro del entorno de la app.
+- Facilita compartir una misma versión con otros usuarios de forma directa.
 
-```powershell
-python -m compileall app.py src tests
-```
+## Cómo generar el ejecutable
 
-## Empaquetado con PyInstaller
-
-Este proyecto incluye una base para generar un ejecutable con PyInstaller mediante el archivo `ConversorFormatos.spec`.
-
-Opción directa:
+Opción directa con PyInstaller:
 
 ```powershell
 pyinstaller ConversorFormatos.spec
@@ -101,20 +104,88 @@ O usando el script incluido:
 .\scripts\build.ps1
 ```
 
-El ejecutable quedará dentro de la carpeta `dist/`.
+La salida principal del ejecutable queda en:
+
+```text
+dist/ConversorFormatos/
+```
+
+## Cómo preparar un paquete portable
+
+El proyecto incluye un script auxiliar para reunir el contenido de distribución y generar un ZIP portable:
+
+```powershell
+.\scripts\package_portable.ps1
+```
+
+Ese script:
+
+- verifica que exista la salida en `dist/ConversorFormatos/`
+- crea una carpeta de distribución en `portable/`
+- copia el ejecutable y los archivos de documentación esenciales
+- genera un ZIP listo para compartir
+
+La salida esperada queda en una estructura como esta:
+
+```text
+portable/
+|-- ConversorFormatos-3.0.0-portable/
+|   |-- ConversorFormatos.exe
+|   |-- LICENSE
+|   |-- README.md
+|   |-- MANUAL_USUARIO.md
+|   `-- CHANGELOG.md
+`-- ConversorFormatos-3.0.0-portable.zip
+```
+
+## Qué debe incluir un paquete portable
+
+Para compartir la aplicación con otros usuarios, el paquete portable debe incluir al menos:
+
+- el contenido generado por PyInstaller en `dist/ConversorFormatos/`
+- [README.md](/C:/Users/Fernando/Documents/Conversor_formatos/README.md)
+- [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
+- [LICENSE](/C:/Users/Fernando/Documents/Conversor_formatos/LICENSE)
+- [CHANGELOG.md](/C:/Users/Fernando/Documents/Conversor_formatos/CHANGELOG.md)
+
+## Cómo compartir la app con otros usuarios
+
+1. Genera el ejecutable con PyInstaller.
+2. Prepara el paquete portable con `.\scripts\package_portable.ps1`.
+3. Comparte la carpeta portable o el ZIP generado.
+4. Indica al usuario que solo necesita descomprimir el paquete y ejecutar `ConversorFormatos.exe`.
+
+No se crea instalador en esta fase porque la distribución sigue siendo completamente portable.
+
+## Pruebas y validación
+
+Ejecutar la suite de pruebas:
+
+```powershell
+pytest
+```
+
+Validar sintaxis rápidamente:
+
+```powershell
+python -m compileall app.py src tests
+```
 
 ## Estructura del proyecto
 
 ```text
 .
 |-- app.py
+|-- CHANGELOG.md
 |-- ConversorFormatos.spec
+|-- LICENSE
 |-- MANUAL_USUARIO.md
 |-- README.md
 |-- hook-tkinterdnd2.py
 |-- requirements.txt
 |-- scripts/
-|   `-- build.ps1
+|   |-- build.ps1
+|   `-- package_portable.ps1
 |-- src/
 |   |-- core/
 |   |   |-- converter.py
@@ -135,29 +206,36 @@ El ejecutable quedará dentro de la carpeta `dist/`.
 |   `-- utils/
 |       |-- constants.py
 |       |-- errors.py
-|       `-- helpers.py
-`-- tests/
-    |-- test_converter.py
-    |-- test_drag_drop.py
-    |-- test_file_service.py
-    |-- test_file_types.py
-    `-- test_validators.py
+|       |-- helpers.py
+|       `-- preferences.py
+|-- tests/
+|   |-- test_converter.py
+|   |-- test_drag_drop.py
+|   |-- test_file_service.py
+|   |-- test_file_types.py
+|   |-- test_preferences.py
+|   `-- test_validators.py
+|-- dist/
+|   `-- ConversorFormatos/
+`-- portable/
 ```
 
-## Arquitectura
+Referencias importantes:
 
-- `src/gui`: ventanas, diálogos y componentes visuales de Tkinter.
-- `src/gui/drag_drop.py`: integración real de arrastre y suelta con `tkinterdnd2`.
-- `src/core`: lógica central de lectura, escritura, conversión, tipos de archivo y validaciones.
-- `src/services`: capa de coordinación entre la interfaz y la lógica de negocio.
-- `src/utils`: constantes, helpers y excepciones personalizadas.
-- `tests`: pruebas unitarias de la base del proyecto.
+- `dist/ConversorFormatos/`: salida generada por PyInstaller.
+- `portable/`: carpeta sugerida para armar paquetes listos para compartir.
+- `src/gui`: ventanas y componentes visuales.
+- `src/core`: lectura, escritura, conversión y validaciones.
+- `src/services`: coordinación entre interfaz y lógica.
+- `src/utils`: constantes, errores, preferencias y utilidades.
 
 ## Estado del proyecto
 
-Esta es una base lista para continuar el desarrollo y publicarse en GitHub. La arquitectura ya separa interfaz, servicios, lógica de conversión, validaciones, utilidades y pruebas, e incluye soporte para selección manual y drag and drop de archivos compatibles.
+La versión 3.0.0 deja la base lista para distribución pública portable, con documentación clara, licencia permisiva, registro de cambios y una rutina simple para preparar paquetes de entrega.
 
-Pendientes sugeridos:
+Elementos reservados para versiones futuras:
 
-- Agregar más pruebas de integración con archivos reales de ejemplo.
-- Agregar un pipeline de CI para ejecutar pruebas automáticamente.
+- publicación automatizada en GitHub Releases
+- canal de donaciones o apoyo al proyecto
+- mayor automatización del proceso de publicación
+

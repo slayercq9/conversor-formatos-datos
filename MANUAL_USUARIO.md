@@ -12,7 +12,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-2.2.0
+3.0.0
 
 ## Fecha de última actualización
 
@@ -128,20 +128,33 @@ La conversión preparada en memoria se perderá y deberás repetir el proceso.
 
 No. La aplicación evita conversiones redundantes al mismo formato de origen.
 
+### ¿Qué significa que la app sea portable?
+
+Significa que puede compartirse como una carpeta o un archivo ZIP listo para usar, sin instalador. El usuario solo necesita descomprimir el paquete y ejecutar el archivo principal de la aplicación.
+
 ## Recomendaciones de uso
 
 - Revisa la vista previa antes de guardar el archivo convertido.
 - Usa nombres de archivo claros para distinguir originales y convertidos.
 - Evita abrir el archivo de destino en otro programa mientras intentas guardarlo.
 - Si trabajas con archivos importantes, conserva una copia del original.
+- Si compartes la app con otros usuarios, incluye también el manual, la licencia y el changelog junto al ejecutable portable.
 
 ## Mejoras futuras previstas
 
 - Más pruebas con archivos reales de ejemplo.
-- Mejora visual del empaquetado y la distribución.
+- Publicación del paquete en GitHub Releases.
+- Evaluación de un posible canal de donaciones o apoyo al proyecto.
 - Posible ampliación de formatos soportados en futuras versiones.
 
 ## Historial de versiones del manual
+
+### Versión 3.0.0
+
+- Se documenta la preparación del proyecto para distribución pública portable.
+- Se agrega una explicación breve sobre qué significa que la app sea portable.
+- Se alinean la versión y la fecha visibles con la documentación de distribución.
+- Se deja constancia de que GitHub Releases y donaciones quedan para fases futuras.
 
 ### Versión 2.2.0
 
@@ -169,3 +182,4 @@ No. La aplicación evita conversiones redundantes al mismo formato de origen.
 - Se alinean la versión y la fecha visibles con la documentación del proyecto.
 - Se confirma la integración del icono definitivo `assets/icon.ico`.
 - Se agrega soporte de drag and drop para cargar archivos compatibles.
+

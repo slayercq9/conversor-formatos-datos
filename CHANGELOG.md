@@ -10,17 +10,20 @@ El formato está inspirado en Keep a Changelog y usa versionado visible alineado
 
 - Soporte de lectura y escritura para archivos TSV.
 - Soporte de lectura y escritura para archivos XML tabulares.
-- Pruebas automáticas para lectura de TSV, escritura y lectura de XML y errores claros en XML inválido.
+- Soporte de lectura y escritura para archivos ODS.
+- Pruebas automáticas actualizadas para TSV, XML y ODS.
 
 ### Mejorado
 
-- Registro central de formatos actualizado para exponer TSV y XML en filtros y opciones visibles.
+- Registro central de formatos actualizado para exponer TSV, ODS y XML en filtros y opciones visibles.
 - Ayuda y documentación alineadas con los nuevos formatos soportados.
+- Integración ODS resuelta con la dependencia ligera `odfpy`.
 
 ### Notas
 
 - XML se admite cuando su estructura puede representarse razonablemente como tabla.
 - Si el XML no es tabularizable, la app informa el problema sin cerrarse.
+- Parquet queda fuera de esta fase.
 
 ## [3.0.0] - 2026-04-14
 

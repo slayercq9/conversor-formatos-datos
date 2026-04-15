@@ -27,6 +27,7 @@ class TabularReader:
             TabularFileType.CSV: self._read_csv,
             TabularFileType.TSV: self._read_tsv,
             TabularFileType.XLSX: self._read_xlsx,
+            TabularFileType.ODS: self._read_ods,
             TabularFileType.JSON: self._read_json,
             TabularFileType.XML: self._read_xml,
             TabularFileType.TXT: self._read_txt,
@@ -74,6 +75,10 @@ class TabularReader:
     def _read_xlsx(self, source_path: Path) -> pd.DataFrame:
         """Lee la primera hoja de un archivo Excel soportado."""
         return pd.read_excel(source_path)
+
+    def _read_ods(self, source_path: Path) -> pd.DataFrame:
+        """Lee un archivo ODS usando el motor odf de pandas."""
+        return pd.read_excel(source_path, engine="odf")
 
     def _read_json(self, source_path: Path) -> pd.DataFrame:
         """Lee un archivo JSON tabularizable mediante pandas."""

@@ -30,6 +30,7 @@ class TabularWriter:
             TabularFileType.CSV: self._write_csv,
             TabularFileType.TSV: self._write_tsv,
             TabularFileType.XLSX: self._write_xlsx,
+            TabularFileType.ODS: self._write_ods,
             TabularFileType.JSON: self._write_json,
             TabularFileType.XML: self._write_xml,
             TabularFileType.TXT: self._write_txt,
@@ -87,6 +88,10 @@ class TabularWriter:
     def _write_xlsx(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a un archivo Excel simple."""
         data_frame.to_excel(target_path, index=False)
+
+    def _write_ods(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a ODS usando el motor odf de pandas."""
+        data_frame.to_excel(target_path, index=False, engine="odf")
 
     def _write_json(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a JSON orientado a registros."""

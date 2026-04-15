@@ -75,6 +75,7 @@ Formatos de entrada:
 - CSV (`.csv`)
 - TSV (`.tsv`)
 - XLSX (`.xlsx`)
+- ODS (`.ods`)
 - JSON (`.json`)
 - XML (`.xml`)
 - TXT (`.txt`)
@@ -84,14 +85,17 @@ Formatos de salida:
 - CSV (`.csv`)
 - TSV (`.tsv`)
 - XLSX (`.xlsx`)
+- ODS (`.ods`)
 - JSON (`.json`)
 - XML (`.xml`)
 - TXT (`.txt`)
 
-Nota sobre XML:
+Notas importantes:
 
 - XML se soporta cuando sus registros pueden representarse como tabla.
 - Si el archivo XML no tiene una estructura tabular compatible, la aplicación lo informará claramente.
+- ODS requiere la dependencia `odfpy`, incluida en `requirements.txt`.
+- Parquet no forma parte de esta fase.
 
 ## Mensajes o errores comunes y su significado
 
@@ -144,6 +148,10 @@ No. La aplicación evita conversiones redundantes al mismo formato de origen.
 
 Significa que puede compartirse como una carpeta o un archivo ZIP listo para usar, sin instalador. El usuario solo necesita descomprimir el paquete y ejecutar el archivo principal de la aplicación.
 
+### ¿Qué necesito para usar archivos ODS?
+
+Solo necesitas tener instaladas las dependencias del proyecto. El soporte ODS usa `odfpy`, que ya está declarado en `requirements.txt`.
+
 ## Recomendaciones de uso
 
 - Revisa la vista previa antes de guardar el archivo convertido.
@@ -163,8 +171,9 @@ Significa que puede compartirse como una carpeta o un archivo ZIP listo para usa
 
 ### Versión 4.0.0
 
-- Se agregan los formatos TSV y XML como opciones de lectura y escritura.
+- Se agregan los formatos TSV, XML y ODS como opciones de lectura y escritura.
 - Se documentan las limitaciones de XML cuando no puede representarse como tabla.
+- Se documenta la dependencia `odfpy` para soporte ODS.
 - Se alinean la versión y la fecha visibles con la nueva fase funcional.
 
 ### Versión 3.0.0

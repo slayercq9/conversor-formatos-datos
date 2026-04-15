@@ -10,11 +10,11 @@ def test_from_extension_accepts_dot_prefix() -> None:
 
 
 def test_values_returns_supported_extensions() -> None:
-    assert TabularFileType.values() == ["csv", "tsv", "xlsx", "json", "xml", "txt"]
+    assert TabularFileType.values() == ["csv", "tsv", "xlsx", "ods", "json", "xml", "txt"]
 
 
 def test_supported_extensions_are_centralized() -> None:
-    assert get_supported_extensions() == ["csv", "tsv", "xlsx", "json", "xml", "txt"]
+    assert get_supported_extensions() == ["csv", "tsv", "xlsx", "ods", "json", "xml", "txt"]
 
 
 def test_file_dialog_filters_include_all_formats() -> None:
@@ -22,4 +22,5 @@ def test_file_dialog_filters_include_all_formats() -> None:
     assert ("CSV", "*.csv") in filters
     assert ("TSV", "*.tsv") in filters
     assert ("Excel (.xlsx)", "*.xlsx") in filters
+    assert ("OpenDocument Spreadsheet (.ods)", "*.ods") in filters
     assert ("XML tabular (.xml)", "*.xml") in filters

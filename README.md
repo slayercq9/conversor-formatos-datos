@@ -25,6 +25,7 @@ Formatos de entrada:
 - CSV (`.csv`)
 - TSV (`.tsv`)
 - Excel (`.xlsx`)
+- OpenDocument Spreadsheet (`.ods`)
 - JSON (`.json`)
 - XML (`.xml`)
 - Texto delimitado (`.txt`)
@@ -34,14 +35,17 @@ Formatos de salida:
 - CSV (`.csv`)
 - TSV (`.tsv`)
 - Excel (`.xlsx`)
+- OpenDocument Spreadsheet (`.ods`)
 - JSON (`.json`)
 - XML (`.xml`)
 - Texto delimitado (`.txt`)
 
-Nota sobre XML:
+Notas importantes:
 
 - XML se soporta cuando puede representarse razonablemente como tabla.
 - Si el archivo XML no tiene una estructura tabular compatible, la app mostrará un mensaje claro sin cerrarse.
+- ODS usa la dependencia ligera `odfpy`, declarada en [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt).
+- Parquet no forma parte de esta fase y no está implementado en la app.
 
 ## Requisitos
 
@@ -241,10 +245,11 @@ Referencias importantes:
 
 ## Estado del proyecto
 
-La versión 4.0.0 amplía la base portable con soporte modular para TSV y XML, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
+La versión 4.0.0 amplía la base portable con soporte modular para TSV, XML y ODS, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
 
 Elementos reservados para versiones futuras:
 
 - publicación automatizada en GitHub Releases
 - canal de donaciones o apoyo al proyecto
 - mayor automatización del proceso de publicación
+- evaluación de formatos adicionales, excluyendo Parquet en esta fase

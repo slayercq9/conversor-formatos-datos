@@ -19,6 +19,7 @@ class TabularFileType(str, Enum):
     CSV = "csv"
     TSV = "tsv"
     XLSX = "xlsx"
+    ODS = "ods"
     JSON = "json"
     XML = "xml"
     TXT = "txt"
@@ -77,6 +78,11 @@ FORMAT_DEFINITIONS: dict[TabularFileType, TabularFormatDefinition] = {
         file_type=TabularFileType.XLSX,
         label="Excel (.xlsx)",
         file_pattern="*.xlsx",
+    ),
+    TabularFileType.ODS: TabularFormatDefinition(
+        file_type=TabularFileType.ODS,
+        label="OpenDocument Spreadsheet (.ods)",
+        file_pattern="*.ods",
     ),
     TabularFileType.JSON: TabularFormatDefinition(
         file_type=TabularFileType.JSON,

@@ -18,6 +18,42 @@ def test_reader_loads_tsv_as_dataframe(tmp_path: Path) -> None:
     assert data_frame.iloc[0]["nombre"] == "Ana"
 
 
+def test_reader_uses_odf_engine_for_ods(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_read_excel(path: Path, *args: object, **kwargs: object) -> pd.DataFrame:
+        captured["path"] = path
+        captured["kwargs"] = kwargs
+        return pd.DataFrame({"nombre": ["Ana"]})
+
+    monkeypatch.setattr(pd, "read_excel", fake_read_excel)
+
+    source = Path("archivo.ods")
+    data_frame = TabularReader()._read_ods(source)
+
+    assert list(data_frame.columns) == ["nombre"]
+    assert captured["path"] == source
+    assert captured["kwargs"] == {"engine": "odf"}
+
+
+def test_writer_uses_odf_engine_for_ods(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_to_excel(self: pd.DataFrame, path: Path, *args: object, **kwargs: object) -> None:
+        captured["path"] = path
+        captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(pd.DataFrame, "to_excel", fake_to_excel)
+
+    data_frame = pd.DataFrame({"nombre": ["Ana"]})
+    target = Path("salida.ods")
+
+    TabularWriter()._write_ods(data_frame, target)
+
+    assert captured["path"] == target
+    assert captured["kwargs"] == {"index": False, "engine": "odf"}
+
+
 def test_writer_exports_xml_and_reader_loads_it_back(tmp_path: Path) -> None:
     data_frame = pd.DataFrame(
         {

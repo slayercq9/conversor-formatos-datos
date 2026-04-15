@@ -40,6 +40,10 @@ def test_validate_target_format_requires_value() -> None:
         validate_target_format("")
 
 
+def test_validate_target_format_accepts_xml() -> None:
+    assert validate_target_format("xml") == TabularFileType.XML
+
+
 def test_validate_dataframe_not_empty_raises_for_empty_frame() -> None:
     with pytest.raises(EmptyFileError):
         validate_dataframe_not_empty(pd.DataFrame())

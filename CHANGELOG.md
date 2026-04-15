@@ -4,6 +4,24 @@ Todos los cambios relevantes de este proyecto se documentarán en este archivo.
 
 El formato está inspirado en Keep a Changelog y usa versionado visible alineado con el proyecto.
 
+## [4.0.0] - 2026-04-14
+
+### Añadido
+
+- Soporte de lectura y escritura para archivos TSV.
+- Soporte de lectura y escritura para archivos XML tabulares.
+- Pruebas automáticas para lectura de TSV, escritura y lectura de XML y errores claros en XML inválido.
+
+### Mejorado
+
+- Registro central de formatos actualizado para exponer TSV y XML en filtros y opciones visibles.
+- Ayuda y documentación alineadas con los nuevos formatos soportados.
+
+### Notas
+
+- XML se admite cuando su estructura puede representarse razonablemente como tabla.
+- Si el XML no es tabularizable, la app informa el problema sin cerrarse.
+
 ## [3.0.0] - 2026-04-14
 
 ### Añadido
@@ -68,4 +86,3 @@ El formato está inspirado en Keep a Changelog y usa versionado visible alineado
 ### Mejorado
 
 - Consistencia de versión y fecha en la documentación visible del proyecto.
-

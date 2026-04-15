@@ -28,8 +28,10 @@ class TabularWriter:
             Callable[[pd.DataFrame, Path], None],
         ] = {
             TabularFileType.CSV: self._write_csv,
+            TabularFileType.TSV: self._write_tsv,
             TabularFileType.XLSX: self._write_xlsx,
             TabularFileType.JSON: self._write_json,
+            TabularFileType.XML: self._write_xml,
             TabularFileType.TXT: self._write_txt,
         }
 
@@ -78,6 +80,10 @@ class TabularWriter:
         """Exporta el DataFrame a CSV sin incluir el indice."""
         data_frame.to_csv(target_path, index=False)
 
+    def _write_tsv(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a TSV usando tabulacion fija."""
+        data_frame.to_csv(target_path, sep="\t", index=False)
+
     def _write_xlsx(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a un archivo Excel simple."""
         data_frame.to_excel(target_path, index=False)
@@ -89,6 +95,16 @@ class TabularWriter:
             orient="records",
             indent=2,
             force_ascii=False,
+        )
+
+    def _write_xml(self, data_frame: pd.DataFrame, target_path: Path) -> None:
+        """Exporta el DataFrame a XML tabular con una estructura simple."""
+        data_frame.to_xml(
+            target_path,
+            index=False,
+            parser="etree",
+            root_name="rows",
+            row_name="row",
         )
 
     def _write_txt(self, data_frame: pd.DataFrame, target_path: Path) -> None:

@@ -17,8 +17,10 @@ class TabularFileType(str, Enum):
     """Enum con las extensiones tabulares soportadas por la aplicacion."""
 
     CSV = "csv"
+    TSV = "tsv"
     XLSX = "xlsx"
     JSON = "json"
+    XML = "xml"
     TXT = "txt"
 
     @classmethod
@@ -66,6 +68,11 @@ FORMAT_DEFINITIONS: dict[TabularFileType, TabularFormatDefinition] = {
         label="CSV",
         file_pattern="*.csv",
     ),
+    TabularFileType.TSV: TabularFormatDefinition(
+        file_type=TabularFileType.TSV,
+        label="TSV",
+        file_pattern="*.tsv",
+    ),
     TabularFileType.XLSX: TabularFormatDefinition(
         file_type=TabularFileType.XLSX,
         label="Excel (.xlsx)",
@@ -75,6 +82,11 @@ FORMAT_DEFINITIONS: dict[TabularFileType, TabularFormatDefinition] = {
         file_type=TabularFileType.JSON,
         label="JSON",
         file_pattern="*.json",
+    ),
+    TabularFileType.XML: TabularFormatDefinition(
+        file_type=TabularFileType.XML,
+        label="XML tabular (.xml)",
+        file_pattern="*.xml",
     ),
     TabularFileType.TXT: TabularFormatDefinition(
         file_type=TabularFileType.TXT,

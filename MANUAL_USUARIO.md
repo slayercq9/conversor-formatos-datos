@@ -12,7 +12,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-3.0.0
+4.0.0
 
 ## Fecha de última actualización
 
@@ -73,16 +73,25 @@ Si ocurre un problema durante la lectura o escritura, la aplicación mostrará u
 Formatos de entrada:
 
 - CSV (`.csv`)
+- TSV (`.tsv`)
 - XLSX (`.xlsx`)
 - JSON (`.json`)
+- XML (`.xml`)
 - TXT (`.txt`)
 
 Formatos de salida:
 
 - CSV (`.csv`)
+- TSV (`.tsv`)
 - XLSX (`.xlsx`)
 - JSON (`.json`)
+- XML (`.xml`)
 - TXT (`.txt`)
+
+Nota sobre XML:
+
+- XML se soporta cuando sus registros pueden representarse como tabla.
+- Si el archivo XML no tiene una estructura tabular compatible, la aplicación lo informará claramente.
 
 ## Mensajes o errores comunes y su significado
 
@@ -97,6 +106,9 @@ Indica que el archivo no contiene datos útiles para procesar.
 
 `El formato del archivo cargado no es soportado.`
 Indica que la extensión del archivo no pertenece a los formatos actualmente compatibles.
+
+`No se pudo interpretar el archivo XML como una tabla.`
+Indica que el XML no tiene una estructura tabular compatible para esta versión de la app.
 
 `No se pudo leer el archivo ...`
 Suele significar que el archivo está dañado, en uso por otro programa o no tiene un contenido válido para su formato.
@@ -149,6 +161,12 @@ Significa que puede compartirse como una carpeta o un archivo ZIP listo para usa
 
 ## Historial de versiones del manual
 
+### Versión 4.0.0
+
+- Se agregan los formatos TSV y XML como opciones de lectura y escritura.
+- Se documentan las limitaciones de XML cuando no puede representarse como tabla.
+- Se alinean la versión y la fecha visibles con la nueva fase funcional.
+
 ### Versión 3.0.0
 
 - Se documenta la preparación del proyecto para distribución pública portable.
@@ -182,4 +200,3 @@ Significa que puede compartirse como una carpeta o un archivo ZIP listo para usa
 - Se alinean la versión y la fecha visibles con la documentación del proyecto.
 - Se confirma la integración del icono definitivo `assets/icon.ico`.
 - Se agrega soporte de drag and drop para cargar archivos compatibles.
-

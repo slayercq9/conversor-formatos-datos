@@ -15,7 +15,7 @@ import pandas as pd
 from src.core.file_types import TabularFileType
 from src.core.validators import validate_dataframe_not_empty, validate_source_path
 from src.utils.constants import DEFAULT_TEXT_DELIMITER
-from src.utils.errors import ConversionError, ReadError
+from src.utils.errors import ReadError
 
 
 class TabularReader:
@@ -25,8 +25,10 @@ class TabularReader:
         """Registra los lectores por defecto disponibles en la aplicacion."""
         self._readers: dict[TabularFileType, Callable[[Path], pd.DataFrame]] = {
             TabularFileType.CSV: self._read_csv,
+            TabularFileType.TSV: self._read_tsv,
             TabularFileType.XLSX: self._read_xlsx,
             TabularFileType.JSON: self._read_json,
+            TabularFileType.XML: self._read_xml,
             TabularFileType.TXT: self._read_txt,
         }
 
@@ -52,9 +54,11 @@ class TabularReader:
 
         try:
             data_frame = reader(path)
+        except ReadError:
+            raise
         except Exception as exc:
             raise ReadError(
-                f"No se pudo leer el archivo '{path.name}'. Verifica que no este dañado o en uso."
+                f"No se pudo leer el archivo '{path.name}'. Verifica que no este danado o en uso."
             ) from exc
 
         return validate_dataframe_not_empty(data_frame)
@@ -63,6 +67,10 @@ class TabularReader:
         """Lee un archivo CSV usando la configuracion por defecto de pandas."""
         return pd.read_csv(source_path)
 
+    def _read_tsv(self, source_path: Path) -> pd.DataFrame:
+        """Lee un archivo TSV usando tabulacion como separador fijo."""
+        return pd.read_csv(source_path, sep="\t")
+
     def _read_xlsx(self, source_path: Path) -> pd.DataFrame:
         """Lee la primera hoja de un archivo Excel soportado."""
         return pd.read_excel(source_path)
@@ -70,6 +78,23 @@ class TabularReader:
     def _read_json(self, source_path: Path) -> pd.DataFrame:
         """Lee un archivo JSON tabularizable mediante pandas."""
         return pd.read_json(source_path)
+
+    def _read_xml(self, source_path: Path) -> pd.DataFrame:
+        """Lee XML cuando puede interpretarse como una tabla de registros."""
+        try:
+            data_frame = pd.read_xml(source_path, parser="etree")
+        except Exception as exc:
+            raise ReadError(
+                "No se pudo interpretar el archivo XML como una tabla. "
+                "Usa un XML con registros repetidos y campos consistentes."
+            ) from exc
+
+        if data_frame is None or (data_frame.empty and len(data_frame.columns) == 0):
+            raise ReadError(
+                "El archivo XML no contiene una estructura tabular compatible."
+            )
+
+        return data_frame
 
     def _read_txt(self, source_path: Path) -> pd.DataFrame:
         """Lee texto delimitado detectando el separador cuando es posible."""

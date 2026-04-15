@@ -2,7 +2,7 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes de manera simple, portable y fácil de compartir. La app permite cargar un archivo, revisar una vista previa, elegir un formato de salida, preparar la conversión y guardar el resultado como un archivo nuevo.
 
-Versión actual: 3.0.0
+Versión actual: 4.0.0
 
 Fecha de última actualización: 2026-04-14
 
@@ -12,7 +12,7 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 
 ## Qué hace la aplicación
 
-- Convierte archivos tabulares entre formatos comunes.
+- Convierte archivos tabulares entre formatos comunes y extensibles.
 - Muestra una vista previa de los datos antes de guardar.
 - Permite cargar archivos tanto con selección manual como con drag and drop.
 - Mantiene una arquitectura modular, ligera y preparada para seguir creciendo.
@@ -23,16 +23,25 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 Formatos de entrada:
 
 - CSV (`.csv`)
+- TSV (`.tsv`)
 - Excel (`.xlsx`)
 - JSON (`.json`)
+- XML (`.xml`)
 - Texto delimitado (`.txt`)
 
 Formatos de salida:
 
 - CSV (`.csv`)
+- TSV (`.tsv`)
 - Excel (`.xlsx`)
 - JSON (`.json`)
+- XML (`.xml`)
 - Texto delimitado (`.txt`)
+
+Nota sobre XML:
+
+- XML se soporta cuando puede representarse razonablemente como tabla.
+- Si el archivo XML no tiene una estructura tabular compatible, la app mostrará un mensaje claro sin cerrarse.
 
 ## Requisitos
 
@@ -129,13 +138,13 @@ La salida esperada queda en una estructura como esta:
 
 ```text
 portable/
-|-- ConversorFormatos-3.0.0-portable/
+|-- ConversorFormatos-4.0.0-portable/
 |   |-- ConversorFormatos.exe
 |   |-- LICENSE
 |   |-- README.md
 |   |-- MANUAL_USUARIO.md
 |   `-- CHANGELOG.md
-`-- ConversorFormatos-3.0.0-portable.zip
+`-- ConversorFormatos-4.0.0-portable.zip
 ```
 
 ## Qué debe incluir un paquete portable
@@ -151,7 +160,7 @@ Para compartir la aplicación con otros usuarios, el paquete portable debe inclu
 ## Cómo compartir la app con otros usuarios
 
 1. Genera el ejecutable con PyInstaller.
-2. Prepara el paquete portable con `.\scripts\package_portable.ps1`.
+2. Prepara el paquete portable con `.\scripts\package_portable.ps1 -Version 4.0.0`.
 3. Comparte la carpeta portable o el ZIP generado.
 4. Indica al usuario que solo necesita descomprimir el paquete y ejecutar `ConversorFormatos.exe`.
 
@@ -214,6 +223,7 @@ python -m compileall app.py src tests
 |   |-- test_file_service.py
 |   |-- test_file_types.py
 |   |-- test_preferences.py
+|   |-- test_reader_writer.py
 |   `-- test_validators.py
 |-- dist/
 |   `-- ConversorFormatos/
@@ -231,11 +241,10 @@ Referencias importantes:
 
 ## Estado del proyecto
 
-La versión 3.0.0 deja la base lista para distribución pública portable, con documentación clara, licencia permisiva, registro de cambios y una rutina simple para preparar paquetes de entrega.
+La versión 4.0.0 amplía la base portable con soporte modular para TSV y XML, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
 
 Elementos reservados para versiones futuras:
 
 - publicación automatizada en GitHub Releases
 - canal de donaciones o apoyo al proyecto
 - mayor automatización del proceso de publicación
-

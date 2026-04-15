@@ -40,11 +40,13 @@ Formatos de salida:
 - XML (`.xml`)
 - Texto delimitado (`.txt`)
 
-Notas importantes:
+Notas importantes de compatibilidad:
 
 - XML se soporta cuando puede representarse razonablemente como tabla.
 - Si el archivo XML no tiene una estructura tabular compatible, la app mostrará un mensaje claro sin cerrarse.
+- JSON funciona mejor con listas de registros o estructuras tabulares compatibles.
 - ODS usa la dependencia ligera `odfpy`, declarada en [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt).
+- Si falta una dependencia necesaria para XLSX u ODS, la app lo indicará con un mensaje claro.
 - Parquet no forma parte de esta fase y no está implementado en la app.
 
 ## Requisitos
@@ -227,6 +229,7 @@ python -m compileall app.py src tests
 |   |-- test_file_service.py
 |   |-- test_file_types.py
 |   |-- test_preferences.py
+|   |-- test_preview_service.py
 |   |-- test_reader_writer.py
 |   `-- test_validators.py
 |-- dist/
@@ -245,7 +248,7 @@ Referencias importantes:
 
 ## Estado del proyecto
 
-La versión 4.0.0 amplía la base portable con soporte modular para TSV, XML y ODS, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
+La versión 4.0.0 consolida la compatibilidad práctica de TSV, XML y ODS, manteniendo la documentación clara, la licencia permisiva, el registro de cambios y la rutina simple para preparar paquetes de entrega.
 
 Elementos reservados para versiones futuras:
 

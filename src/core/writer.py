@@ -70,6 +70,8 @@ class TabularWriter:
 
         try:
             writer(data_frame, path)
+        except WriteError:
+            raise
         except Exception as exc:
             raise WriteError(
                 f"No se pudo guardar el archivo '{path.name}'. Revisa permisos, ruta y si el archivo esta abierto."
@@ -87,11 +89,23 @@ class TabularWriter:
 
     def _write_xlsx(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a un archivo Excel simple."""
-        data_frame.to_excel(target_path, index=False)
+        try:
+            data_frame.to_excel(target_path, index=False)
+        except ImportError as exc:
+            raise WriteError(
+                "No se pudo guardar el archivo XLSX porque falta una dependencia de Excel. "
+                "Instala requirements.txt e intenta de nuevo."
+            ) from exc
 
     def _write_ods(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a ODS usando el motor odf de pandas."""
-        data_frame.to_excel(target_path, index=False, engine="odf")
+        try:
+            data_frame.to_excel(target_path, index=False, engine="odf")
+        except ImportError as exc:
+            raise WriteError(
+                "No se pudo guardar el archivo ODS porque falta la dependencia 'odfpy'. "
+                "Instala requirements.txt e intenta de nuevo."
+            ) from exc
 
     def _write_json(self, data_frame: pd.DataFrame, target_path: Path) -> None:
         """Exporta el DataFrame a JSON orientado a registros."""

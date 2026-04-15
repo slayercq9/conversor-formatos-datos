@@ -74,15 +74,33 @@ class TabularReader:
 
     def _read_xlsx(self, source_path: Path) -> pd.DataFrame:
         """Lee la primera hoja de un archivo Excel soportado."""
-        return pd.read_excel(source_path)
+        try:
+            return pd.read_excel(source_path)
+        except ImportError as exc:
+            raise ReadError(
+                "No se pudo leer el archivo XLSX porque falta una dependencia de Excel. "
+                "Instala requirements.txt e intenta de nuevo."
+            ) from exc
 
     def _read_ods(self, source_path: Path) -> pd.DataFrame:
         """Lee un archivo ODS usando el motor odf de pandas."""
-        return pd.read_excel(source_path, engine="odf")
+        try:
+            return pd.read_excel(source_path, engine="odf")
+        except ImportError as exc:
+            raise ReadError(
+                "No se pudo leer el archivo ODS porque falta la dependencia 'odfpy'. "
+                "Instala requirements.txt e intenta de nuevo."
+            ) from exc
 
     def _read_json(self, source_path: Path) -> pd.DataFrame:
         """Lee un archivo JSON tabularizable mediante pandas."""
-        return pd.read_json(source_path)
+        try:
+            return pd.read_json(source_path)
+        except ValueError as exc:
+            raise ReadError(
+                "No se pudo interpretar el archivo JSON como una tabla. "
+                "Usa una lista de registros o una estructura tabular compatible."
+            ) from exc
 
     def _read_xml(self, source_path: Path) -> pd.DataFrame:
         """Lee XML cuando puede interpretarse como una tabla de registros."""

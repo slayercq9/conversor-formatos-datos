@@ -90,11 +90,13 @@ Formatos de salida:
 - XML (`.xml`)
 - TXT (`.txt`)
 
-Notas importantes:
+Notas importantes de compatibilidad:
 
 - XML se soporta cuando sus registros pueden representarse como tabla.
 - Si el archivo XML no tiene una estructura tabular compatible, la aplicación lo informará claramente.
+- JSON funciona mejor con listas de registros o estructuras tabulares compatibles.
 - ODS requiere la dependencia `odfpy`, incluida en `requirements.txt`.
+- Si falta una dependencia para XLSX u ODS, la aplicación mostrará un mensaje claro.
 - Parquet no forma parte de esta fase.
 
 ## Mensajes o errores comunes y su significado
@@ -113,6 +115,15 @@ Indica que la extensión del archivo no pertenece a los formatos actualmente com
 
 `No se pudo interpretar el archivo XML como una tabla.`
 Indica que el XML no tiene una estructura tabular compatible para esta versión de la app.
+
+`No se pudo interpretar el archivo JSON como una tabla.`
+Indica que el JSON no tiene una estructura tabular compatible para esta versión de la app.
+
+`No se pudo leer el archivo ODS porque falta la dependencia 'odfpy'.`
+Indica que la instalación actual no tiene la dependencia necesaria para abrir archivos ODS.
+
+`No se pudo guardar el archivo ODS porque falta la dependencia 'odfpy'.`
+Indica que la instalación actual no tiene la dependencia necesaria para exportar archivos ODS.
 
 `No se pudo leer el archivo ...`
 Suele significar que el archivo está dañado, en uso por otro programa o no tiene un contenido válido para su formato.
@@ -171,10 +182,10 @@ Solo necesitas tener instaladas las dependencias del proyecto. El soporte ODS us
 
 ### Versión 4.0.0
 
-- Se agregan los formatos TSV, XML y ODS como opciones de lectura y escritura.
-- Se documentan las limitaciones de XML cuando no puede representarse como tabla.
-- Se documenta la dependencia `odfpy` para soporte ODS.
-- Se alinean la versión y la fecha visibles con la nueva fase funcional.
+- Se consolida la compatibilidad práctica de TSV, XML y ODS.
+- Se documentan las limitaciones de XML y JSON cuando no pueden representarse como tabla.
+- Se documenta la dependencia `odfpy` para soporte ODS y sus mensajes de error esperables.
+- Se alinean la versión y la fecha visibles con la fase de robustez.
 
 ### Versión 3.0.0
 

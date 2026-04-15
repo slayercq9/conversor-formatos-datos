@@ -4,6 +4,24 @@ Todos los cambios relevantes de este proyecto se documentarán en este archivo.
 
 El formato está inspirado en Keep a Changelog y usa versionado visible alineado con el proyecto.
 
+## [4.2.0] - 2026-04-14
+
+### Añadido
+
+- Preparación formal para generar un instalador de Windows con Inno Setup 6.
+- Script [scripts/build_installer.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build_installer.ps1) para compilar el instalador de forma repetible.
+- Base de configuración del instalador en [installer/ConversorFormatos.iss](/C:/Users/Fernando/Documents/Conversor_formatos/installer/ConversorFormatos.iss).
+
+### Mejorado
+
+- Documentación actualizada para distinguir claramente entre versión portable e instalable.
+- Flujo de build principal actualizado para mencionar ambas salidas oficiales.
+
+### Notas
+
+- La distribución portable se mantiene como vía oficial.
+- GitHub Releases y donaciones siguen fuera de esta fase.
+
 ## [4.1.0] - 2026-04-14
 
 ### Mejorado
@@ -12,25 +30,3 @@ El formato está inspirado en Keep a Changelog y usa versionado visible alineado
 - Se agrega una nota visible cuando la vista previa es parcial.
 - Se mejora el uso del espacio y la presentación de encabezados en la tabla de inspección.
 - La interfaz conserva el enfoque de inspección rápida sin edición.
-
-## [4.0.0] - 2026-04-14
-
-### Añadido
-
-- Soporte de lectura y escritura para archivos TSV.
-- Soporte de lectura y escritura para archivos XML tabulares.
-- Soporte de lectura y escritura para archivos ODS.
-- Pruebas automáticas adicionales para compatibilidad práctica, vista previa y errores esperables en XML, JSON y ODS.
-
-### Mejorado
-
-- Registro central de formatos actualizado para exponer TSV, ODS y XML en filtros y opciones visibles.
-- Manejo de errores más claro para JSON no tabular, XML no tabular y dependencias faltantes de XLSX u ODS.
-- Ayuda y documentación alineadas con las limitaciones de compatibilidad más importantes.
-
-### Notas
-
-- XML se admite cuando su estructura puede representarse razonablemente como tabla.
-- JSON funciona mejor con listas de registros o estructuras tabulares compatibles.
-- Si el XML o el JSON no son tabularizables, la app informa el problema sin cerrarse.
-- Parquet queda fuera de esta fase.

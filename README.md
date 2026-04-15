@@ -2,7 +2,7 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes de manera simple, portable y fácil de compartir. La app permite cargar un archivo, revisar una vista previa, elegir un formato de salida, preparar la conversión y guardar el resultado como un archivo nuevo.
 
-Versión actual: 4.1.0
+Versión actual: 4.2.0
 
 Fecha de última actualización: 2026-04-14
 
@@ -13,10 +13,10 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 ## Qué hace la aplicación
 
 - Convierte archivos tabulares entre formatos comunes y extensibles.
-- Muestra una vista previa más clara de los datos antes de guardar.
+- Muestra una vista previa clara de los datos antes de guardar.
 - Permite cargar archivos tanto con selección manual como con drag and drop.
 - Mantiene una arquitectura modular, ligera y preparada para seguir creciendo.
-- Conserva preferencias simples entre sesiones sin dejar de ser portable.
+- Puede distribuirse como versión portable o como versión instalable para Windows.
 
 ## Formatos soportados
 
@@ -40,23 +40,31 @@ Formatos de salida:
 - XML (`.xml`)
 - Texto delimitado (`.txt`)
 
-Notas importantes de compatibilidad:
+## Modalidades de distribución
 
-- XML se soporta cuando puede representarse razonablemente como tabla.
-- Si el archivo XML no tiene una estructura tabular compatible, la app mostrará un mensaje claro sin cerrarse.
-- JSON funciona mejor con listas de registros o estructuras tabulares compatibles.
-- ODS usa la dependencia ligera `odfpy`, declarada en [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt).
-- Si falta una dependencia necesaria para XLSX u ODS, la app lo indicará con un mensaje claro.
-- Parquet no forma parte de esta fase y no está implementado en la app.
+### Versión portable
 
-## Vista previa avanzada ligera
+- Se entrega como carpeta o ZIP listo para usar.
+- No requiere instalación.
+- Puede ejecutarse desde una carpeta local, USB o unidad externa.
+- Es ideal para pruebas, uso personal portátil o distribución directa.
 
-La versión 4.1.0 mejora la inspección rápida del archivo cargado sin convertir la vista previa en un editor:
+### Versión instalable
 
-- muestra cuántas columnas fueron detectadas
-- indica cuántas filas se están previsualizando
-- avisa cuando la vista previa es parcial
-- presenta mejor los encabezados y aprovecha mejor el espacio disponible
+- Se entrega como instalador tradicional para Windows.
+- Copia la aplicación a `Archivos de programa`, crea accesos directos y permite desinstalación estándar.
+- Es recomendable para usuarios que prefieren una experiencia más convencional de instalación.
+
+Ambas opciones seguirán siendo oficiales. La vía portable no se elimina ni se reemplaza.
+
+## Herramientas de empaquetado
+
+El proyecto usa dos herramientas comunes y mantenibles:
+
+- `PyInstaller` para generar la aplicación empaquetada en `dist/ConversorFormatos/`.
+- `Inno Setup 6` para generar un instalador de Windows a partir de esa salida.
+
+La base del instalador está en [installer/ConversorFormatos.iss](/C:/Users/Fernando/Documents/Conversor_formatos/installer/ConversorFormatos.iss).
 
 ## Requisitos
 
@@ -64,98 +72,105 @@ La versión 4.1.0 mejora la inspección rápida del archivo cargado sin converti
 - Tkinter disponible en el sistema
 - Dependencias instaladas desde `requirements.txt`
 
-Tkinter normalmente viene incluido con Python. Si tu instalación no lo incluye, instala el paquete correspondiente para tu sistema operativo.
-
 ## Instalación de dependencias
-
-Crear y activar un entorno virtual:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-
-Instalar dependencias:
-
-```powershell
 pip install -r requirements.txt
 ```
 
 ## Ejecutar la aplicación
 
-Desde la raíz del proyecto:
-
 ```powershell
 python app.py
 ```
 
-Para una guía orientada a usuarios no técnicos, consulta [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md).
-
-## Uso básico
-
-1. Inicia la app con `python app.py`.
-2. Selecciona un archivo o arrástralo a la ventana principal.
-3. Revisa la información visible del archivo y su vista previa.
-4. Elige el formato de salida.
-5. Presiona `Convertir`.
-6. Presiona `Guardar convertido`.
-7. Usa `Limpiar` para reiniciar la interfaz sin cerrar la app.
-
-La aplicación muestra mensajes claros si el archivo está vacío, si el formato no es compatible o si ocurre un error de lectura o escritura.
-
-## Distribución portable
-
-La aplicación está preparada para compartirse como un paquete portable. Esto significa que puede distribuirse como una carpeta o archivo ZIP con todo lo necesario para ejecutarse, sin instalador y sin modificar el sistema del usuario.
-
-Características del enfoque portable:
-
-- No requiere instalador.
-- Puede ejecutarse desde una carpeta local, USB o unidad externa.
-- Mantiene su configuración simple en archivos livianos dentro del entorno de la app.
-- Facilita compartir una misma versión con otros usuarios de forma directa.
-
-## Cómo generar el ejecutable
-
-Opción directa con PyInstaller:
-
-```powershell
-pyinstaller ConversorFormatos.spec
-```
-
-O usando el script incluido:
+## Cómo generar la aplicación empaquetada
 
 ```powershell
 .\scripts\build.ps1
 ```
 
-La salida principal del ejecutable queda en:
+La salida base queda en:
 
 ```text
 dist/ConversorFormatos/
 ```
 
-## Cómo preparar un paquete portable
-
-El proyecto incluye un script auxiliar para reunir el contenido de distribución y generar un ZIP portable:
+## Cómo generar el paquete portable
 
 ```powershell
-.\scripts\package_portable.ps1
+.\scripts\package_portable.ps1 -Version 4.2.0
 ```
 
-## Pruebas y validación
+Salida esperada:
 
-Ejecutar la suite de pruebas:
-
-```powershell
-pytest
+```text
+portable/
+|-- ConversorFormatos-4.2.0-portable/
+`-- ConversorFormatos-4.2.0-portable.zip
 ```
 
-Validar sintaxis rápidamente:
+## Cómo generar el instalador de Windows
+
+Primero construye la aplicación con PyInstaller:
 
 ```powershell
-python -m compileall app.py src tests
+.\scripts\build.ps1
+```
+
+Después compila el instalador:
+
+```powershell
+.\scripts\build_installer.ps1 -Version 4.2.0
+```
+
+Requisito adicional para el instalador:
+
+- Tener `Inno Setup 6` instalado en Windows.
+
+Salida esperada:
+
+```text
+installer-output/
+`-- ConversorFormatos-4.2.0-setup.exe
+```
+
+## Qué incluye cada distribución
+
+### Portable
+
+- Aplicación empaquetada por PyInstaller
+- `README.md`
+- `MANUAL_USUARIO.md`
+- `LICENSE`
+- `CHANGELOG.md`
+
+### Instalable
+
+- Aplicación empaquetada por PyInstaller
+- Accesos directos de Windows
+- Registro de desinstalación
+- Documentación básica copiada junto a la app instalada
+
+## Estructura relevante del proyecto
+
+```text
+.
+|-- ConversorFormatos.spec
+|-- installer/
+|   `-- ConversorFormatos.iss
+|-- installer-output/
+|-- portable/
+|-- scripts/
+|   |-- build.ps1
+|   |-- build_installer.ps1
+|   `-- package_portable.ps1
+`-- dist/
+    `-- ConversorFormatos/
 ```
 
 ## Estado del proyecto
 
-La versión 4.1.0 mejora la experiencia de vista previa con una inspección más clara y útil, manteniendo la app ligera, portable y coherente con su enfoque de conversión rápida.
+La versión 4.2.0 deja preparada una vía instalable seria para Windows sin perder la distribución portable ya existente. GitHub Releases y donaciones quedan fuera de esta fase.

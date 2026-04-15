@@ -12,77 +12,60 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Versión actual
 
-4.1.0
+4.2.0
 
 ## Fecha de última actualización
 
 2026-04-14
 
-## Requisitos de uso
+## Versiones disponibles
 
-- Tener Python 3.11 o superior instalado.
-- Tener las dependencias del proyecto instaladas desde `requirements.txt`.
-- Contar con un archivo de entrada en uno de los formatos soportados.
+### Versión portable
+
+- No requiere instalación.
+- Puede ejecutarse desde una carpeta o memoria USB.
+- Es práctica para llevarla contigo o compartirla directamente.
+
+### Versión instalable
+
+- Requiere ejecutar un instalador en Windows.
+- Crea accesos directos y una desinstalación más tradicional.
+- Es útil para usuarios que prefieren una experiencia estándar de instalación.
+
+Ambas opciones comparten la misma funcionalidad de la aplicación.
 
 ## Cómo iniciar la aplicación
 
-1. Abrir una terminal en la carpeta raíz del proyecto.
-2. Activar el entorno virtual si el proyecto utiliza uno.
-3. Ejecutar el siguiente comando:
+### Si usas la versión portable
 
-```powershell
-python app.py
-```
+1. Descomprime el paquete si viene en ZIP.
+2. Abre la carpeta de la aplicación.
+3. Ejecuta `ConversorFormatos.exe`.
 
-Al iniciar, se abrirá la ventana principal de la aplicación.
+### Si usas la versión instalable
 
-## Cómo seleccionar un archivo
+1. Ejecuta el instalador de Windows.
+2. Sigue los pasos del asistente.
+3. Abre la app desde el acceso directo creado en el menú Inicio o el escritorio.
 
-1. Presiona el botón `Seleccionar archivo`.
-2. Busca el archivo que deseas convertir.
-3. Selecciónalo y confirma la apertura.
-4. La aplicación mostrará la ruta o el nombre del archivo cargado.
-5. Cuando sea posible, también mostrará información útil como extensión, tamaño aproximado y cantidad de filas.
+## Cómo usar la aplicación
 
-Si no seleccionas ningún archivo, la aplicación seguirá abierta y mostrará un mensaje de orientación.
+1. Presiona `Seleccionar archivo` o arrastra un archivo compatible.
+2. Revisa la información del archivo y la vista previa.
+3. Elige el `Formato de salida`.
+4. Presiona `Convertir`.
+5. Presiona `Guardar convertido`.
 
-También puedes arrastrar y soltar un archivo compatible directamente sobre la zona de carga de la ventana principal. Si el archivo es válido, la aplicación lo cargará automáticamente y actualizará la vista previa.
+## Diferencia entre portable e instalable
 
-## Cómo usar la vista previa
+La diferencia está en la forma de distribución, no en la lógica de conversión:
 
-La vista previa está pensada para inspección rápida. Ahora muestra mejor la estructura tabular del archivo cargado:
-
-- columnas detectadas
-- cantidad de filas visibles en pantalla
-- aviso cuando la vista previa es parcial
-- mejor distribución de encabezados y espacio disponible
-
-La vista previa no es editable y no reemplaza el archivo original.
-
-## Cómo elegir el formato de salida
-
-1. Ubica el campo `Formato de salida`.
-2. Haz clic en la lista desplegable.
-3. Selecciona el formato al que deseas convertir el archivo.
-
-Debes elegir un formato antes de convertir. Si no lo haces, la aplicación mostrará un mensaje informativo.
-
-## Cómo convertir y guardar
-
-1. Una vez cargado el archivo y elegido el formato de salida, presiona `Convertir`.
-2. La aplicación preparará la conversión internamente.
-3. Cuando la conversión esté lista, presiona `Guardar convertido`.
-4. Elige la carpeta de destino y el nombre del archivo.
-5. Confirma el guardado.
-6. Si deseas comenzar una nueva tarea sin cerrar la aplicación, usa el botón `Limpiar`.
-7. Al limpiar, la app reinicia el archivo cargado, la vista previa, la conversión preparada, los mensajes transitorios y la selección visible del formato de salida.
-
-Si ocurre un problema durante la lectura o escritura, la aplicación mostrará un diálogo explicando el motivo.
+- La versión portable se ejecuta desde su propia carpeta.
+- La versión instalable copia la app al sistema y crea accesos directos.
+- Ambas permiten convertir los mismos formatos y conservar la misma experiencia principal.
 
 ## Formatos soportados actualmente
 
-Formatos de entrada:
-
 - CSV (`.csv`)
 - TSV (`.tsv`)
 - XLSX (`.xlsx`)
@@ -91,58 +74,22 @@ Formatos de entrada:
 - XML (`.xml`)
 - TXT (`.txt`)
 
-Formatos de salida:
+## Notas importantes
 
-- CSV (`.csv`)
-- TSV (`.tsv`)
-- XLSX (`.xlsx`)
-- ODS (`.ods`)
-- JSON (`.json`)
-- XML (`.xml`)
-- TXT (`.txt`)
-
-## Mensajes o errores comunes y su significado
-
-`No se pudo construir la vista previa.`
-Indica que el archivo no pudo representarse correctamente para inspección rápida, aunque la aplicación sigue disponible.
-
-`La vista previa es parcial.`
-Indica que solo se muestran las primeras filas para mantener la app ligera y rápida.
-
-`Todavía no has cargado un archivo.`
-Significa que debes seleccionar un archivo antes de usar la vista previa o iniciar la conversión.
-
-`Debes elegir un formato de salida antes de convertir.`
-Significa que la lista de formato de salida aún no tiene una opción elegida.
-
-`El archivo seleccionado está vacío.`
-Indica que el archivo no contiene datos útiles para procesar.
-
-## Preguntas frecuentes
-
-### ¿La vista previa modifica mis datos?
-
-No. La vista previa solo muestra una parte del contenido para revisión rápida.
-
-### ¿Por qué no siempre veo todas las filas?
-
-Porque la app limita la cantidad de filas mostradas para seguir siendo ligera y responder rápido.
-
-### ¿Qué significa que la app sea portable?
-
-Significa que puede compartirse como una carpeta o un archivo ZIP listo para usar, sin instalador. El usuario solo necesita descomprimir el paquete y ejecutar el archivo principal de la aplicación.
+- La vista previa sigue siendo solo de inspección rápida.
+- La versión portable seguirá disponible junto con la instalable.
+- GitHub Releases y donaciones no forman parte de esta fase.
 
 ## Historial de versiones del manual
+
+### Versión 4.2.0
+
+- Se documenta la nueva vía instalable para Windows.
+- Se mantiene y aclara la coexistencia con la versión portable.
+- Se explican las diferencias prácticas entre ambas modalidades.
 
 ### Versión 4.1.0
 
 - Se mejora la vista previa con un resumen más útil de columnas y filas.
 - Se agrega aviso claro cuando la vista previa es parcial.
 - Se refuerza la inspección rápida sin convertir la tabla en editor.
-
-### Versión 4.0.0
-
-- Se consolida la compatibilidad práctica de TSV, XML y ODS.
-- Se documentan las limitaciones de XML y JSON cuando no pueden representarse como tabla.
-- Se documenta la dependencia `odfpy` para soporte ODS y sus mensajes de error esperables.
-- Se alinean la versión y la fecha visibles con la fase de robustez.

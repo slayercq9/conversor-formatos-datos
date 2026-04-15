@@ -7,7 +7,7 @@ textos visibles o configuraciones base desde un solo lugar.
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "4.1.0"
+APP_VERSION = "4.2.0"
 APP_LAST_UPDATED = "2026-04-14"
 APP_LAST_UPDATED_LABEL = "Martes, 14 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quirós"
@@ -37,5 +37,5 @@ HELP_TEXT = (
     "- Algunos XML no pueden convertirse a tabla; en ese caso la app mostrará un mensaje claro.\n"
     "- El soporte ODS usa la dependencia ligera 'odfpy', incluida en requirements.txt.\n"
     "- La app no se cierra por errores comunes; solo informa el problema.\n\n"
-    "Nota: la aplicación recuerda el último formato de salida y puede restaurar el tamaño y la posición de la ventana."
+    "Nota: la aplicación puede distribuirse como versión portable o como instalador para Windows."
 )

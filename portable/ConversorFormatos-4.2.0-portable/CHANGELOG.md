@@ -4,7 +4,7 @@ Todos los cambios relevantes de este proyecto se documentarán en este archivo.
 
 El formato está inspirado en Keep a Changelog y usa versionado visible alineado con el proyecto.
 
-## [4.2.0] - 2026-04-14
+## [4.2.0] - 2026-04-15
 
 ### Añadido
 

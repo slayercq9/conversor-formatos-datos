@@ -16,7 +16,7 @@ El objetivo principal de la aplicación es facilitar la conversión de archivos 
 
 ## Fecha de última actualización
 
-2026-04-14
+2026-04-15
 
 ## Versiones disponibles
 

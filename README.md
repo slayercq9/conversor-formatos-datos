@@ -4,7 +4,7 @@ Aplicación de escritorio desarrollada con Python y Tkinter para convertir archi
 
 Versión actual: 4.2.0
 
-Fecha de última actualización: 2026-04-14
+Fecha de última actualización: 2026-04-15
 
 Autor: Fernando Corrales Quirós
 

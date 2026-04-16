@@ -26,31 +26,6 @@ class PreviewData:
     total_rows: int
     is_partial: bool
 
-    @property
-    def summary_text(self) -> str:
-        """Resume la estructura detectada en una sola linea util."""
-        row_label = "fila" if self.previewed_rows == 1 else "filas"
-        column_label = "columna" if self.total_columns == 1 else "columnas"
-        summary = (
-            f"{self.total_columns} {column_label} detectadas | "
-            f"{self.previewed_rows} {row_label} en vista previa"
-        )
-        if self.is_partial:
-            summary += f" de {self.total_rows} en total"
-        return summary
-
-    @property
-    def note_text(self) -> str:
-        """Explica si la vista es completa o parcial."""
-        if self.is_partial:
-            return (
-                "La vista previa es parcial para mantener la aplicación ligera. "
-                "Solo se muestran las primeras filas del archivo."
-            )
-        if self.previewed_rows == 0:
-            return "Se detectaron columnas, pero no hay filas disponibles para mostrar."
-        return "Vista previa completa cargada para inspección rápida."
-
 
 class PreviewService:
     """Adapta datos tabulares a una forma facil de pintar en la interfaz."""
@@ -76,19 +51,17 @@ class PreviewService:
 
         preview_frame = data_frame.head(max_rows)
         columns = [str(column) for column in preview_frame.columns]
-        # La GUI trabaja mejor con valores ya convertidos a texto simple.
         rows = [
             tuple(str(value) for value in record)
             for record in preview_frame.itertuples(index=False, name=None)
         ]
         total_rows = len(data_frame.index)
-        previewed_rows = len(rows)
 
         return PreviewData(
             columns=columns,
             rows=rows,
             total_columns=len(columns),
-            previewed_rows=previewed_rows,
+            previewed_rows=len(rows),
             total_rows=total_rows,
-            is_partial=total_rows > previewed_rows,
+            is_partial=total_rows > len(rows),
         )

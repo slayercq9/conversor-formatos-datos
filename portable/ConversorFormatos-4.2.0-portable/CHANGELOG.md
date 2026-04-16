@@ -2,7 +2,19 @@
 
 Todos los cambios relevantes de este proyecto se documentarán en este archivo.
 
-El formato está inspirado en Keep a Changelog y usa versionado visible alineado con el proyecto.
+## [5.0.0] - 2026-04-15
+
+### Añadido
+
+- Soporte multidioma ligero para español e inglés en la interfaz.
+- Selector visible de idioma en la ventana principal.
+- Persistencia de la preferencia de idioma entre sesiones.
+- Capa centralizada de textos para facilitar mantenimiento futuro.
+
+### Mejorado
+
+- Ventana principal, ayuda, acerca de, botones, etiquetas y mensajes visibles ahora pueden mostrarse en ambos idiomas.
+- La vista previa y los mensajes del dominio se traducen en la capa de interfaz sin tocar la lógica central.
 
 ## [4.2.0] - 2026-04-15
 
@@ -16,17 +28,3 @@ El formato está inspirado en Keep a Changelog y usa versionado visible alineado
 
 - Documentación actualizada para distinguir claramente entre versión portable e instalable.
 - Flujo de build principal actualizado para mencionar ambas salidas oficiales.
-
-### Notas
-
-- La distribución portable se mantiene como vía oficial.
-- GitHub Releases y donaciones siguen fuera de esta fase.
-
-## [4.1.0] - 2026-04-14
-
-### Mejorado
-
-- La vista previa ahora muestra un resumen más claro de columnas detectadas y filas visibles.
-- Se agrega una nota visible cuando la vista previa es parcial.
-- Se mejora el uso del espacio y la presentación de encabezados en la tabla de inspección.
-- La interfaz conserva el enfoque de inspección rápida sin edición.

@@ -36,6 +36,7 @@ def test_save_and_load_roundtrip_preferences(tmp_path: Path) -> None:
     manager = PreferencesManager(file_path)
     expected = AppPreferences(
         last_target_format="json",
+        language_code="en",
         window_width=1200,
         window_height=800,
         window_x=25,

@@ -1,31 +1,21 @@
-"""Ventana auxiliar con información general de la aplicación.
-
-Su responsabilidad es mostrar datos estáticos como nombre, versión,
-fecha de actualización, descripción y autoría sin depender de la lógica
-de conversión.
-"""
+"""Ventana auxiliar con información general de la aplicación."""
 
 from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk
 
-from src.utils.constants import (
-    APP_AUTHOR,
-    APP_DESCRIPTION,
-    APP_LAST_UPDATED_LABEL,
-    APP_TITLE,
-    APP_VERSION,
-)
+from src.i18n.translations import Translator
+from src.utils.constants import APP_AUTHOR, APP_LAST_UPDATED_LABEL, APP_VERSION
 
 
 class AboutWindow(tk.Toplevel):
     """Muestra información resumida del proyecto en una ventana modal."""
 
-    def __init__(self, master: tk.Misc) -> None:
-        """Construye una ventana ligera enfocada en información fija."""
+    def __init__(self, master: tk.Misc, translator: Translator) -> None:
         super().__init__(master)
-        self.title("Acerca de")
+        self.translator = translator
+        self.title(self.translator.t("titles.about"))
         self.resizable(False, False)
         self.transient(master)
         self.grab_set()
@@ -36,41 +26,48 @@ class AboutWindow(tk.Toplevel):
         header = ttk.Frame(frame)
         header.pack(fill="x")
 
-        ttk.Label(header, text=APP_TITLE, font=("Segoe UI", 16, "bold")).pack(
-            anchor="w"
-        )
         ttk.Label(
             header,
-            text=f"Versión actual: {APP_VERSION}",
+            text=self.translator.t("app.title"),
+            font=("Segoe UI", 16, "bold"),
+        ).pack(anchor="w")
+        ttk.Label(
+            header,
+            text=self.translator.t("app.version_label", version=APP_VERSION),
             foreground="#555555",
         ).pack(anchor="w", pady=(6, 2))
         ttk.Label(
             header,
-            text=f"Última actualización: {APP_LAST_UPDATED_LABEL}",
+            text=self.translator.t("app.updated_label", date=APP_LAST_UPDATED_LABEL),
             foreground="#555555",
         ).pack(anchor="w")
 
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=14)
 
-        ttk.Label(frame, text=APP_DESCRIPTION, justify="left", wraplength=440).pack(
-            anchor="w"
-        )
         ttk.Label(
             frame,
-            text=f"Creado por {APP_AUTHOR}",
+            text=self.translator.t("app.description"),
+            justify="left",
+            wraplength=440,
+        ).pack(anchor="w")
+        ttk.Label(
+            frame,
+            text=self.translator.t("app.author_prefix", author=APP_AUTHOR),
             justify="left",
         ).pack(anchor="w", pady=(14, 0))
 
         footer = ttk.Frame(frame)
         footer.pack(fill="x", pady=(18, 0))
-        ttk.Button(footer, text="Cerrar", command=self.destroy, width=14).pack(
-            anchor="e"
-        )
+        ttk.Button(
+            footer,
+            text=self.translator.t("buttons.close"),
+            command=self.destroy,
+            width=14,
+        ).pack(anchor="e")
 
         self._center_on_parent(master)
 
     def _center_on_parent(self, master: tk.Misc) -> None:
-        """Centra la ventana respecto a la principal para una apertura más natural."""
         self.update_idletasks()
         parent_x = master.winfo_rootx()
         parent_y = master.winfo_rooty()

@@ -13,30 +13,28 @@ class PreviewTable(ttk.Frame):
 
     def __init__(self, master: tk.Misc) -> None:
         super().__init__(master, padding=4)
-        self.empty_message_var = tk.StringVar(
-            value="La vista previa de los datos aparecerá aquí."
-        )
-        self.summary_var = tk.StringVar(value="Sin vista previa cargada.")
-        self.note_var = tk.StringVar(
-            value="Cuando cargues un archivo, aquí verás una inspección rápida de su estructura."
-        )
+        self.empty_message_var = tk.StringVar()
+        self.summary_var = tk.StringVar()
+        self.note_var = tk.StringVar()
 
         header = ttk.Frame(self, style="Surface.TFrame", padding=(6, 2, 6, 10))
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(0, weight=1)
 
-        ttk.Label(
+        self.summary_label = ttk.Label(
             header,
             textvariable=self.summary_var,
             style="PreviewSummary.TLabel",
-        ).grid(row=0, column=0, sticky="w")
-        ttk.Label(
+        )
+        self.summary_label.grid(row=0, column=0, sticky="w")
+        self.note_label = ttk.Label(
             header,
             textvariable=self.note_var,
             style="SectionHint.TLabel",
             wraplength=760,
             justify="left",
-        ).grid(row=1, column=0, sticky="w", pady=(4, 0))
+        )
+        self.note_label.grid(row=1, column=0, sticky="w", pady=(4, 0))
 
         table_area = ttk.Frame(self, style="Surface.TFrame", padding=4)
         table_area.grid(row=1, column=0, sticky="nsew")
@@ -66,16 +64,22 @@ class PreviewTable(ttk.Frame):
 
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.show_message("La vista previa de los datos aparecerá aquí.")
 
-    def update_data(self, preview: PreviewData) -> None:
+    def update_data(
+        self,
+        preview: PreviewData,
+        *,
+        summary_text: str,
+        note_text: str,
+        empty_message: str,
+    ) -> None:
         """Pinta una nueva grilla con resumen, columnas y filas serializadas."""
         self.clear()
-        self.summary_var.set(preview.summary_text)
-        self.note_var.set(preview.note_text)
+        self.summary_var.set(summary_text)
+        self.note_var.set(note_text)
 
         if not preview.columns:
-            self.show_message("No se encontraron columnas para mostrar.")
+            self.show_message(empty_message, note_text=note_text)
             return
 
         self.tree["columns"] = preview.columns
@@ -91,7 +95,7 @@ class PreviewTable(ttk.Frame):
             self.tree.insert("", "end", values=row)
 
         if not preview.rows:
-            self.show_message("Se detectaron columnas, pero no hay filas para previsualizar.")
+            self.show_message(empty_message, note_text=note_text)
 
     def clear(self) -> None:
         """Limpia filas y columnas previas antes de mostrar nuevos datos."""
@@ -99,12 +103,10 @@ class PreviewTable(ttk.Frame):
             self.tree.delete(item)
         self.tree["columns"] = ()
 
-    def show_message(self, message: str) -> None:
+    def show_message(self, message: str, *, note_text: str) -> None:
         """Oculta la tabla y muestra un mensaje centrado en su lugar."""
         self.empty_message_var.set(message)
-        self.summary_var.set("Sin vista previa cargada.")
-        self.note_var.set(
-            "La vista previa está pensada para inspección rápida y no permite editar datos."
-        )
+        self.summary_var.set("")
+        self.note_var.set(note_text)
         self.tree.grid_remove()
         self.empty_label.grid()

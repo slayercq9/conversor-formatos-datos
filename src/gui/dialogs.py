@@ -4,17 +4,18 @@ from pathlib import Path
 from tkinter import filedialog, messagebox
 
 
-def ask_open_path(file_types: list[tuple[str, str]]) -> str:
-    return filedialog.askopenfilename(title="Selecciona un archivo", filetypes=file_types)
+def ask_open_path(file_types: list[tuple[str, str]], title: str) -> str:
+    return filedialog.askopenfilename(title=title, filetypes=file_types)
 
 
 def ask_save_path(
     default_path: str | Path,
     file_types: list[tuple[str, str]],
+    title: str,
 ) -> str:
     path = Path(default_path)
     return filedialog.asksaveasfilename(
-        title="Guardar archivo convertido",
+        title=title,
         initialfile=path.name,
         initialdir=str(path.parent),
         defaultextension=path.suffix,

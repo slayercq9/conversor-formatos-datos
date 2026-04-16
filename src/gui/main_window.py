@@ -1,8 +1,4 @@
-"""Ventana principal de la interfaz de usuario.
-
-Este módulo compone los widgets principales y delega la lógica real de
-conversión y vista previa a servicios especializados.
-"""
+"""Ventana principal de la interfaz de usuario."""
 
 from __future__ import annotations
 
@@ -24,9 +20,10 @@ from src.gui.dialogs import (
 )
 from src.gui.help_window import HelpWindow
 from src.gui.preview_table import PreviewTable
+from src.i18n.translations import SUPPORTED_LANGUAGES, Translator, build_translator
 from src.services.file_service import FileService
-from src.services.preview_service import PreviewService
-from src.utils.constants import APP_MIN_SIZE, APP_TITLE
+from src.services.preview_service import PreviewData, PreviewService
+from src.utils.constants import APP_AUTHOR, APP_LAST_UPDATED_LABEL, APP_MIN_SIZE, APP_VERSION
 from src.utils.errors import AppError
 from src.utils.helpers import format_file_dialog_types
 from src.utils.preferences import AppPreferences, PreferencesManager
@@ -35,17 +32,8 @@ from src.utils.preferences import AppPreferences, PreferencesManager
 class MainWindow(get_main_window_base()):
     """Coordina el flujo principal de uso desde la interfaz gráfica."""
 
-    DEFAULT_SOURCE_LABEL = "Ningún archivo cargado todavía."
-    DEFAULT_FILE_INFO = (
-        "Cuando cargues un archivo, aquí verás un resumen útil para revisarlo rápidamente."
-    )
-    DEFAULT_STATUS = "Selecciona un archivo para comenzar."
-    DEFAULT_READY_TO_SAVE = "Todavía no hay una conversión lista para guardar."
-
     def __init__(self, icon_path: Path | None = None) -> None:
-        """Inicializa estado visual, servicios y preferencias persistentes."""
         super().__init__()
-        self.title(APP_TITLE)
         self.minsize(*APP_MIN_SIZE)
 
         self.file_service = FileService()
@@ -54,28 +42,48 @@ class MainWindow(get_main_window_base()):
         self.drag_drop_manager = create_drag_drop_manager()
         self.preferences_manager = PreferencesManager()
         self.preferences = self.preferences_manager.load()
+        self.translator = build_translator(self.preferences.language_code)
 
         self.source_path_var = tk.StringVar()
-        self.source_label_var = tk.StringVar(value=self.DEFAULT_SOURCE_LABEL)
-        self.file_info_var = tk.StringVar(value=self.DEFAULT_FILE_INFO)
+        self.source_label_var = tk.StringVar()
+        self.file_info_var = tk.StringVar()
         self.target_format_var = tk.StringVar(
             value=self.preferences.last_target_format.strip()
         )
-        self.status_var = tk.StringVar(value=self.DEFAULT_STATUS)
-        self.ready_to_save_var = tk.StringVar(value=self.DEFAULT_READY_TO_SAVE)
+        self.status_var = tk.StringVar()
+        self.ready_to_save_var = tk.StringVar()
+        self.language_var = tk.StringVar(
+            value=self.translator.language_display_name(self.translator.language_code)
+        )
+
         self.last_target_format = self.target_format_var.get().strip()
         self.save_button: ttk.Button | None = None
         self.drop_area: ttk.LabelFrame | None = None
+        self.config_frame: ttk.LabelFrame | None = None
+        self.preview_frame: ttk.LabelFrame | None = None
+        self.help_button: ttk.Button | None = None
+        self.about_button: ttk.Button | None = None
+        self.select_button: ttk.Button | None = None
+        self.preview_button: ttk.Button | None = None
+        self.convert_button: ttk.Button | None = None
+        self.clear_button: ttk.Button | None = None
+        self.output_format_label: ttk.Label | None = None
+        self.load_hint_label: ttk.Label | None = None
+        self.config_hint_label: ttk.Label | None = None
+        self.hero_title_label: ttk.Label | None = None
+        self.hero_subtitle_label: ttk.Label | None = None
+        self.language_label: ttk.Label | None = None
+        self.language_selector: ttk.Combobox | None = None
 
         self._configure_styles()
         self._configure_layout()
         self._build_content()
+        self._apply_translations()
         self._apply_window_icon(icon_path)
         self._restore_window_preferences()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _configure_styles(self) -> None:
-        """Define una paleta visual sobria y estilos reutilizables."""
         palette = {
             "bg": "#dfe8f6",
             "surface": "#f8fbff",
@@ -123,11 +131,7 @@ class MainWindow(get_main_window_base()):
             padding=(6, 0),
         )
         style.configure("TLabel", background=palette["bg"], foreground=palette["text"])
-        style.configure(
-            "Surface.TLabel",
-            background=palette["surface"],
-            foreground=palette["text"],
-        )
+        style.configure("Surface.TLabel", background=palette["surface"], foreground=palette["text"])
         style.configure(
             "HeroTitle.TLabel",
             background=palette["surface"],
@@ -212,7 +216,6 @@ class MainWindow(get_main_window_base()):
             relief="raised",
             padding=(8, 7),
         )
-        style.map("Preview.Treeview.Heading", background=[("active", "#e4ebf1")])
         style.configure(
             "PreviewSummary.TLabel",
             background=palette["surface"],
@@ -221,22 +224,10 @@ class MainWindow(get_main_window_base()):
         )
 
     def _configure_layout(self) -> None:
-        """Configura el contenedor raíz para permitir redimensionamiento."""
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-    def _apply_window_icon(self, icon_path: Path | None) -> None:
-        """Intenta aplicar un icono personalizado sin fallar si aún no existe."""
-        if icon_path is None or not icon_path.exists():
-            return
-
-        try:
-            self.iconbitmap(default=str(icon_path))
-        except tk.TclError:
-            pass
-
     def _build_content(self) -> None:
-        """Construye los bloques visuales principales de la ventana."""
         container = ttk.Frame(self, padding=22)
         container.grid(row=0, column=0, sticky="nsew")
         container.grid_columnconfigure(0, weight=1)
@@ -248,63 +239,53 @@ class MainWindow(get_main_window_base()):
 
         title_block = ttk.Frame(header, style="Hero.TFrame")
         title_block.grid(row=0, column=0, sticky="w")
-        ttk.Label(title_block, text=APP_TITLE, style="HeroTitle.TLabel").pack(
-            anchor="w"
-        )
-        ttk.Label(
-            title_block,
-            text="Convierte archivos tabulares y revisa una vista previa antes de guardarlos.",
-            style="HeroSubtitle.TLabel",
-        ).pack(anchor="w", pady=(6, 0))
+        self.hero_title_label = ttk.Label(title_block, style="HeroTitle.TLabel")
+        self.hero_title_label.pack(anchor="w")
+        self.hero_subtitle_label = ttk.Label(title_block, style="HeroSubtitle.TLabel")
+        self.hero_subtitle_label.pack(anchor="w", pady=(6, 0))
 
         quick_access = ttk.Frame(header, style="Toolbar.TFrame")
         quick_access.grid(row=0, column=1, sticky="e", padx=(18, 0))
-        ttk.Button(
+        self.language_label = ttk.Label(quick_access, style="Surface.TLabel")
+        self.language_label.grid(row=0, column=0, padx=(0, 8))
+        self.language_selector = ttk.Combobox(
             quick_access,
-            text="Cómo usar",
-            command=self.open_help,
-            style="Secondary.TButton",
-            width=12,
-        ).grid(row=0, column=0, padx=(0, 10))
-        ttk.Button(
-            quick_access,
-            text="Acerca de",
-            command=self.open_about,
-            style="Secondary.TButton",
-            width=12,
-        ).grid(row=0, column=1)
+            textvariable=self.language_var,
+            values=list(SUPPORTED_LANGUAGES.values()),
+            state="readonly",
+            width=10,
+        )
+        self.language_selector.grid(row=0, column=1, padx=(0, 12))
+        self.language_selector.bind("<<ComboboxSelected>>", self._on_language_changed)
+        self.help_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_help)
+        self.help_button.grid(row=0, column=2, padx=(0, 10))
+        self.about_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_about)
+        self.about_button.grid(row=0, column=3)
 
         top_sections = ttk.Frame(container)
         top_sections.grid(row=1, column=0, sticky="ew", pady=(18, 14))
         top_sections.grid_columnconfigure(0, weight=3)
         top_sections.grid_columnconfigure(1, weight=2)
 
-        self.drop_area = ttk.LabelFrame(
-            top_sections,
-            text="Carga de archivo",
-            style="Section.TLabelframe",
-        )
+        self.drop_area = ttk.LabelFrame(top_sections, style="Section.TLabelframe")
         self.drop_area.grid(row=0, column=0, sticky="nsew", padx=(0, 12))
         self.drop_area.grid_columnconfigure(0, weight=1)
 
-        ttk.Label(
+        self.load_hint_label = ttk.Label(
             self.drop_area,
-            text=(
-                "Selecciona un archivo desde el explorador o arrástralo a esta "
-                "sección para cargarlo automáticamente."
-            ),
             wraplength=700,
             justify="left",
             style="SectionHint.TLabel",
-        ).grid(row=0, column=0, sticky="w", pady=(0, 14))
+        )
+        self.load_hint_label.grid(row=0, column=0, sticky="w", pady=(0, 14))
 
-        ttk.Button(
+        self.select_button = ttk.Button(
             self.drop_area,
-            text="Seleccionar archivo",
             command=self.select_source_file,
             style="Accent.TButton",
             width=18,
-        ).grid(row=1, column=0, sticky="w")
+        )
+        self.select_button.grid(row=1, column=0, sticky="w")
 
         ttk.Label(
             self.drop_area,
@@ -322,22 +303,15 @@ class MainWindow(get_main_window_base()):
             style="SectionHint.TLabel",
         ).grid(row=3, column=0, sticky="ew", pady=(10, 0))
 
-        config_frame = ttk.LabelFrame(
-            top_sections,
-            text="Configuración",
-            style="Section.TLabelframe",
-        )
-        config_frame.grid(row=0, column=1, sticky="nsew")
-        config_frame.grid_columnconfigure(0, weight=1)
+        self.config_frame = ttk.LabelFrame(top_sections, style="Section.TLabelframe")
+        self.config_frame.grid(row=0, column=1, sticky="nsew")
+        self.config_frame.grid_columnconfigure(0, weight=1)
 
-        selector_row = ttk.Frame(config_frame, style="Surface.TFrame")
+        selector_row = ttk.Frame(self.config_frame, style="Surface.TFrame")
         selector_row.grid(row=0, column=0, sticky="w")
 
-        ttk.Label(
-            selector_row,
-            text="Formato de salida",
-            style="Surface.TLabel",
-        ).grid(row=0, column=0, sticky="w")
+        self.output_format_label = ttk.Label(selector_row, style="Surface.TLabel")
+        self.output_format_label.grid(row=0, column=0, sticky="w")
         format_selector = ttk.Combobox(
             selector_row,
             textvariable=self.target_format_var,
@@ -348,64 +322,38 @@ class MainWindow(get_main_window_base()):
         format_selector.grid(row=0, column=1, sticky="w", padx=(10, 0))
         format_selector.bind("<<ComboboxSelected>>", self._on_target_format_changed)
 
-        ttk.Label(
-            config_frame,
-            text="Selecciona un formato antes de convertir.",
+        self.config_hint_label = ttk.Label(
+            self.config_frame,
             style="SectionHint.TLabel",
-        ).grid(row=1, column=0, sticky="w", pady=(8, 0))
+        )
+        self.config_hint_label.grid(row=1, column=0, sticky="w", pady=(8, 0))
 
-        actions = ttk.Frame(config_frame, style="Surface.TFrame")
+        actions = ttk.Frame(self.config_frame, style="Surface.TFrame")
         actions.grid(row=2, column=0, sticky="w", pady=(18, 0))
 
-        ttk.Button(
-            actions,
-            text="Vista previa",
-            command=self.preview_file,
-            style="Secondary.TButton",
-            width=14,
-        ).pack(side="left")
-        ttk.Button(
-            actions,
-            text="Convertir",
-            command=self.convert_file,
-            style="Accent.TButton",
-            width=15,
-        ).pack(side="left", padx=(10, 0))
-        ttk.Button(
-            actions,
-            text="Limpiar",
-            command=self.clear_interface,
-            style="Secondary.TButton",
-            width=12,
-        ).pack(side="left", padx=(10, 0))
-        self.save_button = ttk.Button(
-            actions,
-            text="Guardar convertido",
-            command=self.save_converted_file,
-            state="disabled",
-            style="Secondary.TButton",
-            width=18,
-        )
+        self.preview_button = ttk.Button(actions, style="Secondary.TButton", width=14, command=self.preview_file)
+        self.preview_button.pack(side="left")
+        self.convert_button = ttk.Button(actions, style="Accent.TButton", width=15, command=self.convert_file)
+        self.convert_button.pack(side="left", padx=(10, 0))
+        self.clear_button = ttk.Button(actions, style="Secondary.TButton", width=12, command=self.clear_interface)
+        self.clear_button.pack(side="left", padx=(10, 0))
+        self.save_button = ttk.Button(actions, state="disabled", style="Secondary.TButton", width=18, command=self.save_converted_file)
         self.save_button.pack(side="left", padx=(10, 0))
 
         ttk.Label(
-            config_frame,
+            self.config_frame,
             textvariable=self.ready_to_save_var,
             wraplength=460,
             justify="left",
             style="InfoValue.TLabel",
         ).grid(row=3, column=0, sticky="ew", pady=(16, 0))
 
-        preview_frame = ttk.LabelFrame(
-            container,
-            text="Vista previa",
-            style="Section.TLabelframe",
-        )
-        preview_frame.grid(row=2, column=0, sticky="nsew")
-        preview_frame.grid_rowconfigure(0, weight=1)
-        preview_frame.grid_columnconfigure(0, weight=1)
+        self.preview_frame = ttk.LabelFrame(container, style="Section.TLabelframe")
+        self.preview_frame.grid(row=2, column=0, sticky="nsew")
+        self.preview_frame.grid_rowconfigure(0, weight=1)
+        self.preview_frame.grid_columnconfigure(0, weight=1)
 
-        self.preview_table = PreviewTable(preview_frame)
+        self.preview_table = PreviewTable(self.preview_frame)
         self.preview_table.grid(row=0, column=0, sticky="nsew")
 
         ttk.Label(
@@ -417,13 +365,70 @@ class MainWindow(get_main_window_base()):
 
         self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
+    def _apply_window_icon(self, icon_path: Path | None) -> None:
+        if icon_path is None or not icon_path.exists():
+            return
+        try:
+            self.iconbitmap(default=str(icon_path))
+        except tk.TclError:
+            pass
+
+    def _apply_translations(self) -> None:
+        self.title(self.translator.t("app.title"))
+        assert self.hero_title_label and self.hero_subtitle_label
+        assert self.drop_area and self.config_frame and self.preview_frame
+        assert self.help_button and self.about_button and self.select_button
+        assert self.preview_button and self.convert_button and self.clear_button and self.save_button
+        assert self.output_format_label and self.load_hint_label and self.config_hint_label
+        assert self.language_label
+
+        self.hero_title_label.config(text=self.translator.t("app.title"))
+        self.hero_subtitle_label.config(text=self.translator.t("app.subtitle"))
+        self.language_label.config(text=self.translator.t("app.language_label"))
+        self.help_button.config(text=self.translator.t("buttons.help"))
+        self.about_button.config(text=self.translator.t("buttons.about"))
+        self.drop_area.configure(text=self.translator.t("sections.load"))
+        self.config_frame.configure(text=self.translator.t("sections.config"))
+        self.preview_frame.configure(text=self.translator.t("sections.preview"))
+        self.load_hint_label.config(text=self.translator.t("messages.load_hint"))
+        self.select_button.config(text=self.translator.t("buttons.select_file"))
+        self.output_format_label.config(text=self.translator.t("labels.output_format"))
+        self.config_hint_label.config(text=self.translator.t("messages.config_hint"))
+        self.preview_button.config(text=self.translator.t("buttons.preview"))
+        self.convert_button.config(text=self.translator.t("buttons.convert"))
+        self.clear_button.config(text=self.translator.t("buttons.clear"))
+        self.save_button.config(text=self.translator.t("buttons.save"))
+
+        if not self.source_path_var.get().strip():
+            self.source_label_var.set(self.translator.t("messages.default_source_label"))
+            self.file_info_var.set(self.translator.t("messages.default_file_info"))
+            self.ready_to_save_var.set(self.translator.t("messages.default_ready"))
+            self.status_var.set(self.translator.t("messages.default_status"))
+            self.preview_table.show_message(
+                self.translator.t("messages.preview_empty"),
+                note_text=self.translator.t("messages.preview_idle_note"),
+            )
+        else:
+            self.file_info_var.set(self._build_file_summary(Path(self.source_path_var.get())))
+            if self.file_service.has_prepared_conversion():
+                self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_ok"))
+                self.status_var.set(
+                    self.translator.t(
+                        "messages.status_converted_ready",
+                        format=self.target_format_var.get().upper(),
+                    )
+                )
+            else:
+                self.ready_to_save_var.set(self.translator.t("messages.file_loaded"))
+                self.status_var.set(
+                    self.translator.t(
+                        "messages.status_file_selected",
+                        name=Path(self.source_path_var.get()).name,
+                    )
+                )
+        self.language_var.set(self.translator.language_display_name(self.translator.language_code))
+
     def _restore_window_preferences(self) -> None:
-        """Restaura geometría guardada si existe y parece válida.
-
-        La persistencia se aplica después de construir la interfaz para que Tk
-        ya conozca el tamaño mínimo y pueda respetar mejor la geometría final.
-        """
-
         width = self.preferences.window_width
         height = self.preferences.window_height
         pos_x = self.preferences.window_x
@@ -435,46 +440,49 @@ class MainWindow(get_main_window_base()):
                 geometry += f"+{pos_x}+{pos_y}"
             self.geometry(geometry)
 
+    def _on_language_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        language_code = self.translator.resolve_language_code(self.language_var.get())
+        self.translator = build_translator(language_code)
+        self._apply_translations()
+        if self.source_path_var.get().strip():
+            self._refresh_preview_from_source()
+
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
-        """Limpia el estado pendiente al cambiar el formato de salida."""
         self.last_target_format = self.target_format_var.get().strip()
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
-        self.ready_to_save_var.set(
-            "Formato actualizado. Usa Convertir para preparar un nuevo archivo en ese formato."
-        )
-        self.status_var.set("Formato de salida actualizado.")
+        self.ready_to_save_var.set(self.translator.t("messages.ready_format_updated"))
+        self.status_var.set(self.translator.t("messages.status_format_updated"))
 
     def select_source_file(self) -> None:
-        """Abre el selector de archivos y actualiza el estado visual."""
-        path = ask_open_path(format_file_dialog_types())
+        path = ask_open_path(
+            format_file_dialog_types(),
+            title=self.translator.t("titles.open_file"),
+        )
         if path:
             try:
                 self._load_source_file(path, refresh_preview=False)
             except AppError as exc:
-                show_error("Archivo", str(exc))
-                self.status_var.set("No se pudo cargar el archivo seleccionado.")
+                show_error(self.translator.t("titles.file"), self._localize_error(exc))
+                self.status_var.set(self.translator.t("messages.status_preview_failed"))
         else:
-            self.status_var.set("Selección de archivo cancelada.")
+            self.status_var.set(self.translator.t("messages.status_selection_canceled"))
 
     def load_dropped_file(self, source_path: Path) -> None:
-        """Carga un archivo soltado en la interfaz y refresca la vista previa."""
         try:
             self._load_source_file(source_path, refresh_preview=True)
-            self.status_var.set(f"Archivo cargado mediante arrastre: {source_path.name}")
-        except AppError as exc:
-            show_error("Drag and drop", str(exc))
-            self.preview_table.show_message(
-                "No se pudo cargar el archivo soltado. Intenta con otro archivo compatible."
+            self.status_var.set(
+                self.translator.t("messages.status_file_dropped", name=source_path.name)
             )
-            self.status_var.set("El archivo soltado no es válido.")
+        except AppError as exc:
+            show_error(self.translator.t("titles.drag_drop"), self._localize_error(exc))
+            self.preview_table.show_message(
+                self.translator.t("messages.drop_error_preview"),
+                note_text=self.translator.t("messages.preview_idle_note"),
+            )
+            self.status_var.set(self.translator.t("messages.status_drop_invalid"))
 
-    def _load_source_file(
-        self,
-        source_path: str | Path,
-        refresh_preview: bool,
-    ) -> None:
-        """Centraliza la carga visual de un archivo desde cualquier origen."""
+    def _load_source_file(self, source_path: str | Path, refresh_preview: bool) -> None:
         validated_path = validate_source_path(source_path)
         path_text = str(validated_path)
 
@@ -483,38 +491,38 @@ class MainWindow(get_main_window_base()):
         self.file_info_var.set(self._build_file_summary(validated_path))
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
-        self.ready_to_save_var.set(
-            "Archivo cargado correctamente. Revisa la vista previa o elige Convertir para preparar el resultado."
+        self.ready_to_save_var.set(self.translator.t("messages.file_loaded"))
+        self.status_var.set(
+            self.translator.t("messages.status_file_selected", name=validated_path.name)
         )
-        self.status_var.set(f"Archivo seleccionado: {validated_path.name}")
 
         if refresh_preview:
             self._refresh_preview_from_source()
         else:
             self.preview_table.show_message(
-                "Archivo cargado. Usa Vista previa para revisar su estructura y las primeras filas."
+                self.translator.t("messages.file_loaded_preview_hint"),
+                note_text=self.translator.t("messages.preview_idle_note"),
             )
 
     def preview_file(self) -> None:
-        """Carga una vista previa de las primeras filas del archivo."""
         if not self._ensure_source_selected():
             return
 
         try:
             preview = self.preview_service.load_preview(self.source_path_var.get())
         except AppError as exc:
-            show_error("Vista previa", str(exc))
+            show_error(self.translator.t("titles.preview"), self._localize_error(exc))
             self.preview_table.show_message(
-                "No se pudo construir la vista previa. Revisa si el archivo puede representarse como tabla."
+                self.translator.t("messages.preview_build_failed"),
+                note_text=self.translator.t("messages.preview_idle_note"),
             )
-            self.status_var.set("No se pudo generar la vista previa del archivo actual.")
+            self.status_var.set(self.translator.t("messages.status_preview_failed"))
             return
 
-        self.preview_table.update_data(preview)
-        self.status_var.set(preview.summary_text)
+        self._render_preview(preview)
+        self.status_var.set(self._build_preview_summary(preview))
 
     def convert_file(self) -> None:
-        """Prepara la conversión en memoria sin escribir todavía a disco."""
         if not self._ensure_source_selected():
             return
         if not self._ensure_target_format_selected():
@@ -526,32 +534,30 @@ class MainWindow(get_main_window_base()):
                 self.target_format_var.get(),
             )
         except AppError as exc:
-            show_error("Conversión", str(exc))
-            self.status_var.set("La conversión falló.")
+            show_error(self.translator.t("titles.conversion"), self._localize_error(exc))
+            self.status_var.set(self.translator.t("messages.status_conversion_failed"))
             self.file_service.clear_prepared_conversion()
             self._set_save_enabled(False)
-            self.ready_to_save_var.set(
-                "No se pudo preparar la conversión. Revisa el archivo y vuelve a intentarlo."
-            )
+            self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_failed"))
             return
 
         self._set_save_enabled(True)
-        self.ready_to_save_var.set(
-            "Conversión preparada con éxito. Ya puedes guardar el archivo convertido."
-        )
+        self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_ok"))
         self.status_var.set(
-            f"Conversión lista a {prepared_conversion.target_format.value.upper()}."
+            self.translator.t(
+                "messages.status_converted_ready",
+                format=prepared_conversion.target_format.value.upper(),
+            )
         )
         self._refresh_preview_after_conversion()
 
     def save_converted_file(self) -> None:
-        """Solicita una ruta y guarda el archivo convertido preparado."""
         if not self.file_service.has_prepared_conversion():
             show_info(
-                "Guardar archivo",
-                "Primero usa el botón Convertir para preparar el archivo.",
+                self.translator.t("titles.save"),
+                self.translator.t("messages.dialog_save_prepare_first"),
             )
-            self.status_var.set("Aún no hay una conversión lista para guardar.")
+            self.status_var.set(self.translator.translate_runtime_message("Primero convierte el archivo antes de intentar guardarlo."))
             return
         if not self._ensure_target_format_selected():
             return
@@ -560,124 +566,168 @@ class MainWindow(get_main_window_base()):
             self.source_path_var.get(),
             self.target_format_var.get(),
         )
-        target_path = ask_save_path(default_path, format_file_dialog_types())
+        target_path = ask_save_path(
+            default_path,
+            format_file_dialog_types(),
+            title=self.translator.t("titles.save_file"),
+        )
         if not target_path:
-            self.status_var.set("Guardado cancelado por el usuario.")
+            self.status_var.set(self.translator.t("messages.status_save_canceled"))
             return
 
         try:
             result_path = self.file_service.save_prepared_conversion(target_path)
         except AppError as exc:
-            show_error("Guardar archivo", str(exc))
-            self.status_var.set("No se pudo guardar el archivo convertido.")
+            show_error(self.translator.t("titles.save"), self._localize_error(exc))
+            self.status_var.set(self.translator.t("messages.status_save_failed"))
             return
 
         show_info(
-            "Conversión completada",
-            (
-                "La conversión se completó correctamente.\n\n"
-                f"Archivo original: {Path(self.source_path_var.get()).name}\n"
-                f"Formato de salida: {self.target_format_var.get().upper()}\n"
-                f"Archivo guardado en:\n{result_path}"
+            self.translator.t("titles.save_completed"),
+            self.translator.t(
+                "messages.save_completed_dialog",
+                source_name=Path(self.source_path_var.get()).name,
+                target_format=self.target_format_var.get().upper(),
+                result_path=result_path,
             ),
         )
-        self.status_var.set(f"Archivo guardado: {Path(result_path).name}")
-        self.ready_to_save_var.set(
-            "Conversión completada y guardada. Puedes cargar otro archivo cuando quieras."
+        self.status_var.set(
+            self.translator.t("messages.status_saved", name=Path(result_path).name)
         )
+        self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_saved"))
 
     def open_about(self) -> None:
-        """Abre la ventana informativa 'Acerca de'."""
-        AboutWindow(self)
+        AboutWindow(self, self.translator)
 
     def open_help(self) -> None:
-        """Abre la ventana informativa 'Cómo usar'."""
-        HelpWindow(self)
+        HelpWindow(self, self.translator)
 
     def _ensure_source_selected(self) -> bool:
-        """Valida desde la GUI que exista un archivo elegido por el usuario."""
         if self.source_path_var.get().strip():
             return True
 
         self.preview_table.show_message(
-            "Todavía no hay un archivo cargado. Selecciona uno para continuar."
+            self.translator.t("messages.dialog_file_required"),
+            note_text=self.translator.t("messages.preview_idle_note"),
         )
         show_warning(
-            "Archivo requerido",
-            "Todavía no has cargado un archivo. Usa 'Seleccionar archivo' para continuar.",
+            self.translator.t("titles.file_required"),
+            self.translator.t("messages.dialog_file_required"),
         )
-        self.status_var.set("Esperando un archivo de entrada.")
+        self.status_var.set(self.translator.t("messages.status_waiting_file"))
         return False
 
     def _ensure_target_format_selected(self) -> bool:
-        """Valida desde la GUI que haya un formato de salida seleccionado."""
         if self.target_format_var.get().strip():
             return True
 
         show_warning(
-            "Formato requerido",
-            "Todavía no has elegido un formato de salida. Selecciona uno para continuar.",
+            self.translator.t("titles.format_required"),
+            self.translator.t("messages.dialog_format_required"),
         )
-        self.status_var.set("Esperando selección del formato de salida.")
+        self.status_var.set(self.translator.t("messages.status_waiting_format"))
         return False
 
     def _refresh_preview_after_conversion(self) -> None:
-        """Refresca la vista previa luego de preparar la conversión."""
         self._refresh_preview_from_source()
 
     def _refresh_preview_from_source(self) -> None:
-        """Carga la vista previa desde el archivo actualmente seleccionado."""
         try:
             preview = self.preview_service.load_preview(self.source_path_var.get())
         except AppError:
             self.preview_table.show_message(
-                "No se pudo actualizar la vista previa del archivo actual."
+                self.translator.t("messages.preview_refresh_failed"),
+                note_text=self.translator.t("messages.preview_idle_note"),
             )
-            self.status_var.set(
-                "La interfaz sigue disponible, pero no fue posible refrescar la vista previa."
-            )
+            self.status_var.set(self.translator.t("messages.status_preview_refresh_failed"))
             return
 
-        self.preview_table.update_data(preview)
+        self._render_preview(preview)
+
+    def _render_preview(self, preview: PreviewData) -> None:
+        self.preview_table.update_data(
+            preview,
+            summary_text=self._build_preview_summary(preview),
+            note_text=self._build_preview_note(preview),
+            empty_message=self.translator.t("messages.preview_no_rows")
+            if preview.columns
+            else self.translator.t("messages.preview_no_columns"),
+        )
+
+    def _build_preview_summary(self, preview: PreviewData) -> str:
+        column_label = self._pluralize(
+            preview.total_columns,
+            "meta.column_label_singular",
+            "meta.column_label_plural",
+        )
+        row_label = self._pluralize(
+            preview.previewed_rows,
+            "meta.row_label_singular",
+            "meta.row_label_plural",
+        )
+        summary = self.translator.t(
+            "messages.preview_summary",
+            columns=preview.total_columns,
+            column_label=column_label,
+            rows=preview.previewed_rows,
+            row_label=row_label,
+        )
+        if preview.is_partial:
+            return self.translator.t(
+                "messages.preview_summary_partial",
+                summary=summary,
+                total=preview.total_rows,
+            )
+        return summary
+
+    def _build_preview_note(self, preview: PreviewData) -> str:
+        if preview.is_partial:
+            return self.translator.t("messages.preview_note_partial")
+        return self.translator.t("messages.preview_note_complete")
+
+    def _pluralize(self, value: int, singular_key: str, plural_key: str) -> str:
+        if value == 1:
+            return self.translator.t(singular_key)
+        return self.translator.t(plural_key)
+
+    def _localize_error(self, error: AppError) -> str:
+        return self.translator.translate_runtime_message(str(error))
 
     def _set_save_enabled(self, enabled: bool) -> None:
-        """Activa o desactiva el botón de guardado según el estado actual."""
         if self.save_button is None:
             return
         self.save_button.config(state="normal" if enabled else "disabled")
 
     def clear_interface(self) -> None:
-        """Reinicia el estado visual manteniendo preferencias de la sesión."""
         self.source_path_var.set("")
-        self.source_label_var.set(self.DEFAULT_SOURCE_LABEL)
-        self.file_info_var.set(self.DEFAULT_FILE_INFO)
+        self.source_label_var.set(self.translator.t("messages.default_source_label"))
+        self.file_info_var.set(self.translator.t("messages.default_file_info"))
         self.target_format_var.set("")
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
-        self.ready_to_save_var.set(self.DEFAULT_READY_TO_SAVE)
+        self.ready_to_save_var.set(self.translator.t("messages.default_ready"))
         self.preview_table.show_message(
-            "La interfaz se reinició. Selecciona o arrastra un archivo para comenzar de nuevo."
+            self.translator.t("messages.clear_preview_message"),
+            note_text=self.translator.t("messages.preview_idle_note"),
         )
-        self.status_var.set(
-            "Interfaz limpia: se quitaron el archivo, la vista previa, la conversión preparada y la selección visible del formato."
-        )
+        self.status_var.set(self.translator.t("messages.status_clean"))
 
     def _build_file_summary(self, source_path: Path) -> str:
-        """Construye un resumen legible del archivo actualmente cargado."""
+        name_label = "Name" if self.translator.language_code == "en" else "Nombre"
+        ext_label = "Extension" if self.translator.language_code == "en" else "Extensión"
+        size_label = "Approx. size" if self.translator.language_code == "en" else "Tamaño aproximado"
+        rows_label = "Rows" if self.translator.language_code == "en" else "Registros o filas"
         details = [
-            f"Nombre: {source_path.name}",
-            f"Extensión: {source_path.suffix.lower() or 'sin extensión'}",
-            f"Tamaño aproximado: {self._format_file_size(source_path.stat().st_size)}",
+            f"{name_label}: {source_path.name}",
+            f"{ext_label}: {source_path.suffix.lower() or 'sin extensión'}",
+            f"{size_label}: {self._format_file_size(source_path.stat().st_size)}",
         ]
-
         row_count = self._try_get_row_count(source_path)
         if row_count is not None:
-            details.append(f"Registros o filas: {row_count}")
-
+            details.append(f"{rows_label}: {row_count}")
         return " | ".join(details)
 
     def _try_get_row_count(self, source_path: Path) -> int | None:
-        """Intenta obtener la cantidad de filas sin interrumpir la carga del archivo."""
         try:
             data_frame = self.reader.read(source_path)
         except AppError:
@@ -685,7 +735,6 @@ class MainWindow(get_main_window_base()):
         return len(data_frame.index)
 
     def _format_file_size(self, size_in_bytes: int) -> str:
-        """Convierte bytes a un formato corto y amigable para la interfaz."""
         size = float(size_in_bytes)
         units = ("B", "KB", "MB", "GB")
         for unit in units:
@@ -697,11 +746,10 @@ class MainWindow(get_main_window_base()):
         return f"{size_in_bytes} B"
 
     def _capture_preferences(self) -> AppPreferences:
-        """Construye el snapshot de preferencias actual para guardar al salir."""
-
         self.update_idletasks()
         return AppPreferences(
             last_target_format=self.last_target_format,
+            language_code=self.translator.language_code,
             window_width=self.winfo_width(),
             window_height=self.winfo_height(),
             window_x=self.winfo_x(),
@@ -709,7 +757,5 @@ class MainWindow(get_main_window_base()):
         )
 
     def _on_close(self) -> None:
-        """Guarda preferencias livianas antes de cerrar la ventana principal."""
-
         self.preferences_manager.save(self._capture_preferences())
         self.destroy()

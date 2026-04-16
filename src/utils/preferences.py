@@ -19,6 +19,7 @@ class AppPreferences:
     """Representa las preferencias livianas que la GUI puede recordar."""
 
     last_target_format: str = ""
+    language_code: str = "es"
     window_width: int | None = None
     window_height: int | None = None
     window_x: int | None = None
@@ -53,6 +54,7 @@ class PreferencesManager:
 
         return AppPreferences(
             last_target_format=self._coerce_str(payload.get("last_target_format")),
+            language_code=self._coerce_language(payload.get("language_code")),
             window_width=self._coerce_int(payload.get("window_width")),
             window_height=self._coerce_int(payload.get("window_height")),
             window_x=self._coerce_int(payload.get("window_x")),
@@ -84,6 +86,13 @@ class PreferencesManager:
         """Normaliza cadenas opcionales provenientes del JSON."""
 
         return value if isinstance(value, str) else ""
+
+    def _coerce_language(self, value: Any) -> str:
+        """Normaliza el idioma guardado y cae a español por defecto."""
+
+        if isinstance(value, str) and value in {"es", "en"}:
+            return value
+        return "es"
 
     def _coerce_int(self, value: Any) -> int | None:
         """Normaliza enteros opcionales provenientes del JSON."""

@@ -1,24 +1,20 @@
-"""Ventana auxiliar con instrucciones de uso para el usuario final.
-
-Este módulo encapsula la ayuda visual para que la ventana principal
-solo tenga que abrirla cuando sea necesario.
-"""
+"""Ventana auxiliar con instrucciones de uso para el usuario final."""
 
 from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk
 
-from src.utils.constants import HELP_TEXT
+from src.i18n.translations import Translator
 
 
 class HelpWindow(tk.Toplevel):
     """Muestra instrucciones de uso en una ventana separada y legible."""
 
-    def __init__(self, master: tk.Misc) -> None:
-        """Construye una ventana modal con recomendaciones de uso."""
+    def __init__(self, master: tk.Misc, translator: Translator) -> None:
         super().__init__(master)
-        self.title("Cómo usar")
+        self.translator = translator
+        self.title(self.translator.t("titles.help"))
         self.geometry("620x430")
         self.minsize(560, 390)
         self.transient(master)
@@ -29,11 +25,11 @@ class HelpWindow(tk.Toplevel):
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
 
-        ttk.Label(frame, text="Cómo usar", font=("Segoe UI", 16, "bold")).grid(
-            row=0,
-            column=0,
-            sticky="w",
-        )
+        ttk.Label(
+            frame,
+            text=self.translator.t("titles.help"),
+            font=("Segoe UI", 16, "bold"),
+        ).grid(row=0, column=0, sticky="w")
 
         content = ttk.Frame(frame, padding=0)
         content.grid(row=1, column=0, sticky="nsew", pady=(14, 0))
@@ -47,7 +43,7 @@ class HelpWindow(tk.Toplevel):
         )
         ttk.Label(
             content,
-            text=HELP_TEXT,
+            text=self.translator.t("help.body"),
             justify="left",
             anchor="nw",
             wraplength=540,
@@ -56,14 +52,16 @@ class HelpWindow(tk.Toplevel):
 
         footer = ttk.Frame(frame)
         footer.grid(row=2, column=0, sticky="ew", pady=(18, 0))
-        ttk.Button(footer, text="Cerrar", command=self.destroy, width=14).pack(
-            anchor="e"
-        )
+        ttk.Button(
+            footer,
+            text=self.translator.t("buttons.close"),
+            command=self.destroy,
+            width=14,
+        ).pack(anchor="e")
 
         self._center_on_parent(master)
 
     def _center_on_parent(self, master: tk.Misc) -> None:
-        """Centra la ventana respecto a la principal para evitar aperturas bruscas."""
         self.update_idletasks()
         parent_x = master.winfo_rootx()
         parent_y = master.winfo_rooty()

@@ -80,15 +80,15 @@ Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Convers
 2. Prepara el paquete portable:
 
 ```powershell
-.\scripts\package_portable.ps1 -Version 5.1.0
+.\scripts\package_portable.ps1 -Version 5.1.1
 ```
 
 Salida esperada:
 
 ```text
 portable/
-|-- ConversorFormatos-5.1.0-portable/
-`-- ConversorFormatos-5.1.0-portable.zip
+|-- ConversorFormatos-5.1.1-portable/
+`-- ConversorFormatos-5.1.1-portable.zip
 ```
 
 Un paquete portable debe incluir al menos:
@@ -113,14 +113,14 @@ Pasos:
 
 ```powershell
 .\scripts\build.ps1
-.\scripts\build_installer.ps1 -Version 5.1.0
+.\scripts\build_installer.ps1 -Version 5.1.1
 ```
 
 Salida esperada:
 
 ```text
 installer-output/
-`-- ConversorFormatos-5.1.0-setup.exe
+`-- ConversorFormatos-5.1.1-setup.exe
 ```
 
 ## Cómo compartir la aplicación

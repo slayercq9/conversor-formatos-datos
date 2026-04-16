@@ -30,6 +30,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "version_label": "Versión actual: {version}",
             "updated_label": "Última actualización: {date}",
             "language_label": "Idioma",
+            "theme_label": "Tema",
         },
         "sections": {
             "load": "Carga de archivo",
@@ -52,6 +53,10 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "file_extension": "Extensión",
             "file_size": "Tamaño aproximado",
             "file_rows": "Registros o filas",
+        },
+        "themes": {
+            "light": "Claro",
+            "dark": "Oscuro",
         },
         "messages": {
             "default_source_label": "Ningún archivo cargado todavía.",
@@ -163,6 +168,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "version_label": "Current version: {version}",
             "updated_label": "Last updated: {date}",
             "language_label": "Language",
+            "theme_label": "Theme",
         },
         "sections": {
             "load": "Load File",
@@ -185,6 +191,10 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "file_extension": "Extension",
             "file_size": "Approx. size",
             "file_rows": "Rows",
+        },
+        "themes": {
+            "light": "Light",
+            "dark": "Dark",
         },
         "messages": {
             "default_source_label": "No file loaded yet.",

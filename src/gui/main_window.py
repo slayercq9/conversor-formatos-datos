@@ -20,6 +20,7 @@ from src.gui.dialogs import (
 )
 from src.gui.help_window import HelpWindow
 from src.gui.preview_table import PreviewTable
+from src.gui.theme import DEFAULT_THEME, SUPPORTED_THEMES, apply_theme, apply_toplevel_theme
 from src.i18n.translations import SUPPORTED_LANGUAGES, Translator, build_translator
 from src.services.file_service import FileService
 from src.services.preview_service import PreviewData, PreviewService
@@ -43,6 +44,7 @@ class MainWindow(get_main_window_base()):
         self.preferences_manager = PreferencesManager()
         self.preferences = self.preferences_manager.load()
         self.translator = build_translator(self.preferences.language_code)
+        self.theme_code = DEFAULT_THEME
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar()
@@ -55,6 +57,7 @@ class MainWindow(get_main_window_base()):
         self.language_var = tk.StringVar(
             value=self.translator.language_display_name(self.translator.language_code)
         )
+        self.theme_var = tk.StringVar()
 
         self.last_target_format = self.target_format_var.get().strip()
         self.save_button: ttk.Button | None = None
@@ -74,6 +77,9 @@ class MainWindow(get_main_window_base()):
         self.hero_subtitle_label: ttk.Label | None = None
         self.language_label: ttk.Label | None = None
         self.language_selector: ttk.Combobox | None = None
+        self.theme_label: ttk.Label | None = None
+        self.theme_selector: ttk.Combobox | None = None
+        self.output_format_selector: ttk.Combobox | None = None
 
         self._configure_styles()
         self._configure_layout()
@@ -84,144 +90,7 @@ class MainWindow(get_main_window_base()):
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _configure_styles(self) -> None:
-        palette = {
-            "bg": "#dfe8f6",
-            "surface": "#f8fbff",
-            "surface_alt": "#edf3fb",
-            "border": "#93a7c0",
-            "border_soft": "#c0cede",
-            "text": "#1f2d3d",
-            "muted": "#5e6d7d",
-            "accent": "#3f78b5",
-            "accent_hover": "#2f6297",
-            "accent_light": "#eaf2fc",
-        }
-        self._palette = palette
-
-        self.configure(background=palette["bg"])
-        style = ttk.Style(self)
-        if "clam" in style.theme_names():
-            style.theme_use("clam")
-
-        style.configure("TFrame", background=palette["bg"])
-        style.configure("Surface.TFrame", background=palette["surface"])
-        style.configure(
-            "Hero.TFrame",
-            background=palette["surface"],
-            relief="groove",
-            borderwidth=1,
-            lightcolor="#ffffff",
-            darkcolor=palette["border"],
-        )
-        style.configure(
-            "Section.TLabelframe",
-            background=palette["surface"],
-            bordercolor=palette["border_soft"],
-            relief="flat",
-            borderwidth=1,
-            padding=12,
-            lightcolor="#ffffff",
-            darkcolor=palette["border_soft"],
-        )
-        style.configure(
-            "Section.TLabelframe.Label",
-            background=palette["bg"],
-            foreground=palette["accent"],
-            font=("Segoe UI", 10, "bold"),
-            padding=(6, 0),
-        )
-        style.configure("TLabel", background=palette["bg"], foreground=palette["text"])
-        style.configure("Surface.TLabel", background=palette["surface"], foreground=palette["text"])
-        style.configure(
-            "HeroTitle.TLabel",
-            background=palette["surface"],
-            foreground=palette["text"],
-            font=("Segoe UI", 18, "bold"),
-        )
-        style.configure(
-            "HeroSubtitle.TLabel",
-            background=palette["surface"],
-            foreground=palette["muted"],
-            font=("Segoe UI", 10),
-        )
-        style.configure(
-            "SectionHint.TLabel",
-            background=palette["surface"],
-            foreground=palette["muted"],
-            font=("Segoe UI", 9),
-        )
-        style.configure(
-            "InfoValue.TLabel",
-            background=palette["surface_alt"],
-            foreground=palette["text"],
-            font=("Segoe UI", 9),
-            padding=(11, 9),
-            relief="groove",
-            borderwidth=1,
-        )
-        style.configure(
-            "Status.TLabel",
-            background=palette["surface_alt"],
-            foreground=palette["muted"],
-            font=("Segoe UI", 9),
-            padding=(11, 9),
-            relief="groove",
-            borderwidth=1,
-        )
-        style.configure("Toolbar.TFrame", background=palette["surface"])
-        style.configure(
-            "TButton",
-            padding=(12, 7),
-            font=("Segoe UI", 9),
-            relief="raised",
-            borderwidth=1,
-            focusthickness=1,
-            focuscolor=palette["border_soft"],
-        )
-        style.configure(
-            "Accent.TButton",
-            background=palette["accent"],
-            foreground="#ffffff",
-            borderwidth=1,
-            lightcolor="#7ea7d5",
-            darkcolor="#2a5077",
-        )
-        style.map(
-            "Accent.TButton",
-            background=[("active", palette["accent_hover"]), ("disabled", "#9fb3c1")],
-            foreground=[("disabled", "#f4f7fa")],
-        )
-        style.configure(
-            "Secondary.TButton",
-            background=palette["accent_light"],
-            foreground=palette["text"],
-            bordercolor=palette["border"],
-            lightcolor="#ffffff",
-            darkcolor=palette["border"],
-        )
-        style.map("Secondary.TButton", background=[("active", "#dce9f8")])
-        style.configure(
-            "Preview.Treeview",
-            background=palette["surface"],
-            fieldbackground=palette["surface"],
-            foreground=palette["text"],
-            bordercolor=palette["border"],
-            rowheight=28,
-        )
-        style.configure(
-            "Preview.Treeview.Heading",
-            background=palette["surface_alt"],
-            foreground=palette["text"],
-            font=("Segoe UI", 9, "bold"),
-            relief="raised",
-            padding=(8, 7),
-        )
-        style.configure(
-            "PreviewSummary.TLabel",
-            background=palette["surface"],
-            foreground=palette["text"],
-            font=("Segoe UI", 10, "bold"),
-        )
+        self._palette = apply_theme(self, self.theme_code)
 
     def _configure_layout(self) -> None:
         self.grid_columnconfigure(0, weight=1)
@@ -257,10 +126,20 @@ class MainWindow(get_main_window_base()):
         )
         self.language_selector.grid(row=0, column=1, padx=(0, 12))
         self.language_selector.bind("<<ComboboxSelected>>", self._on_language_changed)
+        self.theme_label = ttk.Label(quick_access, style="Surface.TLabel")
+        self.theme_label.grid(row=0, column=2, padx=(0, 8))
+        self.theme_selector = ttk.Combobox(
+            quick_access,
+            textvariable=self.theme_var,
+            state="readonly",
+            width=10,
+        )
+        self.theme_selector.grid(row=0, column=3, padx=(0, 12))
+        self.theme_selector.bind("<<ComboboxSelected>>", self._on_theme_changed)
         self.help_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_help)
-        self.help_button.grid(row=0, column=2, padx=(0, 10))
+        self.help_button.grid(row=0, column=4, padx=(0, 10))
         self.about_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_about)
-        self.about_button.grid(row=0, column=3)
+        self.about_button.grid(row=0, column=5)
 
         top_sections = ttk.Frame(container)
         top_sections.grid(row=1, column=0, sticky="ew", pady=(18, 14))
@@ -312,15 +191,15 @@ class MainWindow(get_main_window_base()):
 
         self.output_format_label = ttk.Label(selector_row, style="Surface.TLabel")
         self.output_format_label.grid(row=0, column=0, sticky="w")
-        format_selector = ttk.Combobox(
+        self.output_format_selector = ttk.Combobox(
             selector_row,
             textvariable=self.target_format_var,
             values=TabularFileType.values(),
             state="readonly",
             width=10,
         )
-        format_selector.grid(row=0, column=1, sticky="w", padx=(10, 0))
-        format_selector.bind("<<ComboboxSelected>>", self._on_target_format_changed)
+        self.output_format_selector.grid(row=0, column=1, sticky="w", padx=(10, 0))
+        self.output_format_selector.bind("<<ComboboxSelected>>", self._on_target_format_changed)
 
         self.config_hint_label = ttk.Label(
             self.config_frame,
@@ -380,13 +259,16 @@ class MainWindow(get_main_window_base()):
         assert self.help_button and self.about_button and self.select_button
         assert self.preview_button and self.convert_button and self.clear_button and self.save_button
         assert self.output_format_label and self.load_hint_label and self.config_hint_label
-        assert self.language_label
+        assert self.language_label and self.theme_label and self.theme_selector
 
         self.hero_title_label.config(text=self.translator.t("app.title"))
         self.hero_subtitle_label.config(text=self.translator.t("app.subtitle"))
         self.language_label.config(text=self.translator.t("app.language_label"))
+        self.theme_label.config(text=self.translator.t("app.theme_label"))
         self.help_button.config(text=self.translator.t("buttons.help"))
         self.about_button.config(text=self.translator.t("buttons.about"))
+        self.theme_selector.config(values=self._theme_display_values())
+        self.theme_var.set(self._theme_display_name())
         self.drop_area.configure(text=self.translator.t("sections.load"))
         self.config_frame.configure(text=self.translator.t("sections.config"))
         self.preview_frame.configure(text=self.translator.t("sections.preview"))
@@ -421,6 +303,14 @@ class MainWindow(get_main_window_base()):
                 )
         self.language_var.set(self.translator.language_display_name(self.translator.language_code))
 
+    def _theme_display_values(self) -> list[str]:
+        """Devuelve las etiquetas visibles de temas en el idioma actual."""
+        return [self.translator.t("themes.light"), self.translator.t("themes.dark")]
+
+    def _theme_display_name(self) -> str:
+        """Devuelve la etiqueta visible del tema actualmente activo."""
+        return self.translator.t(f"themes.{self.theme_code}")
+
     def _apply_empty_state_texts(self) -> None:
         """Restablece textos visibles cuando no hay archivo cargado."""
         self.source_label_var.set(self.translator.t("messages.default_source_label"))
@@ -454,6 +344,30 @@ class MainWindow(get_main_window_base()):
         self._apply_translations()
         if self.source_path_var.get().strip():
             self._refresh_preview_from_source()
+
+    def _on_theme_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        selected_theme = self._resolve_theme_code(self.theme_var.get())
+        self._apply_selected_theme(selected_theme)
+
+    def _resolve_theme_code(self, display_name: str) -> str:
+        """Resuelve el codigo interno del tema a partir de su etiqueta visible."""
+        for theme_code in SUPPORTED_THEMES:
+            if self.translator.t(f"themes.{theme_code}") == display_name:
+                return theme_code
+        return DEFAULT_THEME
+
+    def _apply_selected_theme(self, theme_code: str) -> None:
+        """Actualiza la paleta activa sin alterar la logica funcional."""
+        self.theme_code = theme_code if theme_code in SUPPORTED_THEMES else DEFAULT_THEME
+        self._palette = apply_theme(self, self.theme_code)
+        self.theme_var.set(self._theme_display_name())
+        self._apply_theme_to_open_windows()
+
+    def _apply_theme_to_open_windows(self) -> None:
+        """Propaga el color base a ventanas secundarias ya abiertas."""
+        for child in self.winfo_children():
+            if isinstance(child, tk.Toplevel):
+                apply_toplevel_theme(child, self.theme_code)
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
         self.last_target_format = self.target_format_var.get().strip()
@@ -605,10 +519,10 @@ class MainWindow(get_main_window_base()):
         self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_saved"))
 
     def open_about(self) -> None:
-        AboutWindow(self, self.translator)
+        AboutWindow(self, self.translator, self.theme_code)
 
     def open_help(self) -> None:
-        HelpWindow(self, self.translator)
+        HelpWindow(self, self.translator, self.theme_code)
 
     def _ensure_source_selected(self) -> bool:
         if self.source_path_var.get().strip():

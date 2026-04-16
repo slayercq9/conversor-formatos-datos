@@ -5,13 +5,14 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
+from src.gui.theme import apply_toplevel_theme
 from src.i18n.translations import Translator
 
 
 class HelpWindow(tk.Toplevel):
     """Muestra instrucciones de uso en una ventana separada y legible."""
 
-    def __init__(self, master: tk.Misc, translator: Translator) -> None:
+    def __init__(self, master: tk.Misc, translator: Translator, theme_code: str) -> None:
         super().__init__(master)
         self.translator = translator
         self.title(self.translator.t("titles.help"))
@@ -19,8 +20,9 @@ class HelpWindow(tk.Toplevel):
         self.minsize(560, 390)
         self.transient(master)
         self.grab_set()
+        apply_toplevel_theme(self, theme_code)
 
-        frame = ttk.Frame(self, padding=20)
+        frame = ttk.Frame(self, padding=20, style="Modal.TFrame")
         frame.pack(fill="both", expand=True)
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
@@ -28,10 +30,10 @@ class HelpWindow(tk.Toplevel):
         ttk.Label(
             frame,
             text=self.translator.t("titles.help"),
-            font=("Segoe UI", 16, "bold"),
+            style="ModalTitle.TLabel",
         ).grid(row=0, column=0, sticky="w")
 
-        content = ttk.Frame(frame, padding=0)
+        content = ttk.Frame(frame, padding=0, style="Modal.TFrame")
         content.grid(row=1, column=0, sticky="nsew", pady=(14, 0))
         content.columnconfigure(0, weight=1)
 
@@ -48,9 +50,10 @@ class HelpWindow(tk.Toplevel):
             anchor="nw",
             wraplength=540,
             padding=(6, 4),
+            style="ModalBody.TLabel",
         ).grid(row=1, column=0, sticky="nsew")
 
-        footer = ttk.Frame(frame)
+        footer = ttk.Frame(frame, style="Modal.TFrame")
         footer.grid(row=2, column=0, sticky="ew", pady=(18, 0))
         ttk.Button(
             footer,

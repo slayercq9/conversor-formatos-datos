@@ -2,7 +2,7 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto prioriza una experiencia ligera, portable y mantenible, con vista previa rápida, soporte multidioma básico y dos vías de distribución para Windows.
 
-Versión actual: `5.1.0`
+Versión actual: `5.1.1`
 
 Fecha de última actualización: `2026-04-15`
 
@@ -17,6 +17,7 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 - Convierte entre formatos tabulares soportados.
 - Guarda el resultado como un archivo nuevo.
 - Permite cambiar el idioma visible entre español e inglés.
+- Permite alternar entre tema claro y tema oscuro.
 - Conserva preferencias simples entre sesiones.
 - Puede distribuirse como versión portable o como instalador de Windows.
 
@@ -161,7 +162,7 @@ installer-output/
 
 ## Estado técnico actual
 
-La versión `5.1.0` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, vista previa ligera y preparación seria para distribución en Windows.
+La versión `5.1.1` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, vista previa ligera y preparación seria para distribución en Windows.
 
 Recomendaciones técnicas futuras no implementadas en esta fase:
 

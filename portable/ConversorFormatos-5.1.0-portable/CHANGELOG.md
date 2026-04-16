@@ -2,6 +2,18 @@
 
 Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
+## [5.1.1] - 2026-04-15
+
+### Añadido
+
+- Soporte visual para tema claro y tema oscuro.
+- Selector de tema en la ventana principal.
+
+### Mejorado
+
+- Estilos centralizados para facilitar el mantenimiento visual futuro.
+- Ventanas `Acerca de`, `Cómo usar` y sección de vista previa alineadas con ambos temas.
+
 ## [5.1.0] - 2026-04-15
 
 ### Mejorado

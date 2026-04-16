@@ -12,7 +12,7 @@ Permitir que una persona cargue un archivo tabular, revise una vista previa ráp
 
 ## Versión actual
 
-`5.1.0`
+`5.1.1`
 
 ## Fecha de última actualización
 
@@ -63,6 +63,15 @@ Cuando el archivo se carga, la interfaz muestra:
 3. Elige el formato al que deseas convertir el archivo.
 
 La aplicación recuerda el último formato usado entre sesiones, pero el botón `Limpiar` reinicia la selección visible dentro de la sesión actual.
+
+## Tema visual
+
+La interfaz ofrece dos temas:
+
+- claro
+- oscuro
+
+Puedes cambiar el tema desde la ventana principal. En esta fase, el tema activo no se guarda entre sesiones.
 
 ## Cómo convertir y guardar
 
@@ -137,6 +146,10 @@ Significa que puede ejecutarse sin proceso de instalación formal, siempre que e
 
 Sí. La interfaz permite cambiar entre ambos idiomas desde la ventana principal.
 
+### ¿También puedo cambiar el tema visual?
+
+Sí. La ventana principal permite alternar entre tema claro y tema oscuro.
+
 ## Recomendaciones de uso
 
 - Revisa la vista previa antes de convertir archivos grandes o de estructura poco clara.
@@ -151,6 +164,11 @@ Sí. La interfaz permite cambiar entre ambos idiomas desde la ventana principal.
 - mejorar reutilización de utilidades compartidas en la interfaz
 
 ## Historial de versiones del manual
+
+### Versión 5.1.1
+
+- Se agrega soporte para tema claro y tema oscuro.
+- Se incorpora un selector de tema en la ventana principal.
 
 ### Versión 5.1.0
 

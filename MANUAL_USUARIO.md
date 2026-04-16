@@ -12,11 +12,11 @@ Permitir que una persona cargue un archivo tabular, revise una vista previa ráp
 
 ## Versión actual
 
-`5.1.2`
+`5.2.0`
 
 ## Fecha de última actualización
 
-`2026-04-15`
+`2026-04-16`
 
 ## Requisitos de uso
 
@@ -165,6 +165,11 @@ Sí. La ventana principal permite alternar entre tema claro y tema oscuro.
 - mejorar reutilización de utilidades compartidas en la interfaz
 
 ## Historial de versiones del manual
+
+### Versión 5.2.0
+
+- Se revisa y alinea la documentación final del proyecto antes de una futura publicación.
+- Se deja consistente la información sobre scripts, tema persistente y modalidades de distribución.
 
 ### Versión 5.1.2
 

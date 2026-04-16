@@ -2,6 +2,15 @@
 
 Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
+## [5.2.0] - 2026-04-16
+
+### Mejorado
+
+- Revisión integral final del proyecto orientada a publicación futura.
+- Comentarios y docstrings ajustados para reflejar mejor el estado actual de la aplicación.
+- Scripts de empaquetado portable e instalador alineados con la versión visible vigente.
+- Documentación actualizada para reflejar con precisión multidioma, tema oscuro, persistencia del tema y cadena de distribución.
+
 ## [5.1.2] - 2026-04-15
 
 ### Añadido

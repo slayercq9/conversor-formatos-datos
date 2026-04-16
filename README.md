@@ -2,9 +2,9 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto prioriza una experiencia ligera, portable y mantenible, con vista previa rápida, soporte multidioma básico y dos vías de distribución para Windows.
 
-Versión actual: `5.1.2`
+Versión actual: `5.2.0`
 
-Fecha de última actualización: `2026-04-15`
+Fecha de última actualización: `2026-04-16`
 
 Autor: `Fernando Corrales Quirós`
 
@@ -80,15 +80,15 @@ Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Convers
 2. Prepara el paquete portable:
 
 ```powershell
-.\scripts\package_portable.ps1 -Version 5.1.2
+.\scripts\package_portable.ps1 -Version 5.2.0
 ```
 
 Salida esperada:
 
 ```text
 portable/
-|-- ConversorFormatos-5.1.2-portable/
-`-- ConversorFormatos-5.1.2-portable.zip
+|-- ConversorFormatos-5.2.0-portable/
+`-- ConversorFormatos-5.2.0-portable.zip
 ```
 
 Un paquete portable debe incluir al menos:
@@ -113,14 +113,14 @@ Pasos:
 
 ```powershell
 .\scripts\build.ps1
-.\scripts\build_installer.ps1 -Version 5.1.2
+.\scripts\build_installer.ps1 -Version 5.2.0
 ```
 
 Salida esperada:
 
 ```text
 installer-output/
-`-- ConversorFormatos-5.1.2-setup.exe
+`-- ConversorFormatos-5.2.0-setup.exe
 ```
 
 ## Cómo compartir la aplicación
@@ -162,10 +162,11 @@ installer-output/
 
 ## Estado técnico actual
 
-La versión `5.1.2` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, persistencia ligera de preferencias, vista previa ligera y preparación seria para distribución en Windows.
+La versión `5.2.0` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, persistencia ligera de preferencias, vista previa ligera y preparación seria para distribución en Windows.
 
 Recomendaciones técnicas futuras no implementadas en esta fase:
 
 - centralizar aún más los mensajes del dominio para reducir texto literal repetido
 - introducir una pequeña capa de utilidades compartidas para ventanas secundarias
 - ampliar la cobertura automatizada de GUI sin comprometer ligereza ni portabilidad
+- excluir de control de versiones las salidas generadas de `portable/` e `installer-output/` para mantener el repositorio más limpio antes de publicar

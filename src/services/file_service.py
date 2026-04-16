@@ -1,7 +1,8 @@
-"""Servicios de archivo para la capa de interfaz.
+"""Servicios de archivo orientados a la interfaz.
 
-Este modulo ofrece una API mas cercana a la GUI para preparar, guardar
-y reutilizar conversiones sin exponer detalles de la capa core.
+Este módulo expone operaciones simples para la GUI: preparar una
+conversión, construir una ruta sugerida y guardar un resultado ya
+preparado, sin filtrar detalles internos de la capa core.
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 """Definiciones centralizadas de formatos tabulares soportados.
 
-Este modulo funciona como fuente unica de verdad para extensiones,
-etiquetas legibles y filtros de dialogo asociados a cada formato.
+Este módulo funciona como fuente única de verdad para extensiones,
+etiquetas visibles y filtros de diálogo asociados a cada formato.
 """
 
 from __future__ import annotations

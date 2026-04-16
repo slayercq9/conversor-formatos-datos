@@ -1,4 +1,8 @@
-"""Ventana principal de la interfaz de usuario."""
+"""Ventana principal de la aplicación.
+
+Este módulo concentra la composición visual y coordina eventos de la GUI
+sin mover lógica de conversión al nivel de interfaz.
+"""
 
 from __future__ import annotations
 
@@ -79,11 +83,9 @@ class MainWindow(get_main_window_base()):
         self.config_hint_label: ttk.Label | None = None
         self.hero_title_label: ttk.Label | None = None
         self.hero_subtitle_label: ttk.Label | None = None
-        self.language_label: ttk.Label | None = None
         self.language_pill_frame: ttk.Frame | None = None
         self.language_es_button: ttk.Radiobutton | None = None
         self.language_en_button: ttk.Radiobutton | None = None
-        self.theme_label: ttk.Label | None = None
         self.theme_pill_frame: ttk.Frame | None = None
         self.theme_light_button: ttk.Radiobutton | None = None
         self.theme_dark_button: ttk.Radiobutton | None = None
@@ -98,13 +100,16 @@ class MainWindow(get_main_window_base()):
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _configure_styles(self) -> None:
+        """Aplica el tema visual activo a la ventana principal."""
         self._palette = apply_theme(self, self.theme_code)
 
     def _configure_layout(self) -> None:
+        """Define la rejilla base para que la ventana sea redimensionable."""
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
     def _build_content(self) -> None:
+        """Construye la estructura visual principal y sus secciones."""
         container = ttk.Frame(self, padding=22)
         container.grid(row=0, column=0, sticky="nsew")
         container.grid_columnconfigure(0, weight=1)
@@ -274,6 +279,7 @@ class MainWindow(get_main_window_base()):
         self.drag_drop_manager.attach(self, self.drop_area, self.load_dropped_file)
 
     def _apply_window_icon(self, icon_path: Path | None) -> None:
+        """Intenta aplicar el icono sin fallar en entornos no compatibles."""
         if icon_path is None or not icon_path.exists():
             return
         try:
@@ -282,6 +288,7 @@ class MainWindow(get_main_window_base()):
             pass
 
     def _apply_translations(self) -> None:
+        """Actualiza los textos visibles de la interfaz en el idioma activo."""
         self.title(self.translator.t("app.title"))
         assert self.hero_title_label and self.hero_subtitle_label
         assert self.drop_area and self.config_frame and self.preview_frame
@@ -333,6 +340,7 @@ class MainWindow(get_main_window_base()):
                         name=Path(self.source_path_var.get()).name,
                     )
                 )
+
     def _language_button_label(self, language_code: str) -> str:
         """Devuelve una etiqueta compacta para el selector segmentado de idioma."""
         return "ES" if language_code == "es" else "EN"
@@ -353,6 +361,7 @@ class MainWindow(get_main_window_base()):
         self.file_info_var.set(self._build_file_summary(Path(self.source_path_var.get())))
 
     def _restore_window_preferences(self) -> None:
+        """Restaura tamaño y posición de la ventana si son válidos."""
         width = self.preferences.window_width
         height = self.preferences.window_height
         pos_x = self.preferences.window_x
@@ -365,6 +374,7 @@ class MainWindow(get_main_window_base()):
             self.geometry(geometry)
 
     def _on_language_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        """Cambia el idioma visible sin alterar el resto del estado."""
         language_code = self.language_var.get().strip()
         if language_code not in SUPPORTED_LANGUAGES:
             language_code = "es"
@@ -374,6 +384,7 @@ class MainWindow(get_main_window_base()):
             self._refresh_preview_from_source()
 
     def _on_theme_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        """Aplica el tema seleccionado desde el control segmentado."""
         selected_theme = self.theme_var.get().strip()
         self._apply_selected_theme(selected_theme)
 
@@ -656,6 +667,7 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(self.translator.t("messages.status_clean"))
 
     def _build_file_summary(self, source_path: Path) -> str:
+        """Construye un resumen compacto del archivo cargado para la GUI."""
         extension = source_path.suffix.lower() or self.translator.t("meta.without_extension")
         details = [
             f"{self.translator.t('labels.file_name')}: {source_path.name}",

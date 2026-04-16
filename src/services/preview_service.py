@@ -1,7 +1,8 @@
-"""Servicios para construir vistas previas de datos en la GUI.
+"""Servicios para construir vistas previas ligeras para la GUI.
 
-La idea es transformar un DataFrame en una estructura ligera y amigable
-para widgets de tabla sin mezclar esa logica con la lectura de archivos.
+La idea es transformar un `DataFrame` en una estructura serializable y
+directa de pintar en Tkinter, manteniendo separadas la lectura de
+archivos y la presentación visual.
 """
 
 from __future__ import annotations

@@ -19,3 +19,7 @@ def test_dark_theme_palette_exposes_required_colors() -> None:
         "selection",
     ):
         assert key in palette
+
+
+def test_unknown_theme_uses_safe_default_palette() -> None:
+    assert get_palette("unknown") == get_palette(DEFAULT_THEME)

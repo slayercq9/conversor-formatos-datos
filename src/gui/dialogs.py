@@ -1,3 +1,9 @@
+"""Envolturas mínimas sobre `filedialog` y `messagebox`.
+
+Estas funciones aíslan detalles de Tkinter para que la ventana
+principal se mantenga más declarativa y fácil de leer.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path

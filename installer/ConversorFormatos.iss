@@ -2,7 +2,7 @@
 #define MyAppExeName "ConversorFormatos.exe"
 #define MyAppPublisher "Fernando Corrales Quirós"
 #ifndef MyAppVersion
-  #define MyAppVersion "5.1.0"
+  #define MyAppVersion "5.2.0"
 #endif
 #define MyAppURL "https://github.com/"
 #define MySourceDir "..\\dist\\ConversorFormatos"

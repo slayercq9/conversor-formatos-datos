@@ -1,8 +1,8 @@
-"""Configuracion visual centralizada para los temas de la interfaz.
+"""Configuración visual centralizada para la interfaz.
 
-Este modulo mantiene una capa ligera de temas para evitar repetir
-paletas y estilos en cada ventana. El objetivo es conservar una base
-portable y facil de mantener usando solo Tkinter/ttk.
+Este módulo mantiene una capa ligera de temas y estilos para evitar
+repeticiones entre ventanas, preservar consistencia visual y facilitar
+el mantenimiento del modo claro/oscuro con Tkinter y ttk.
 """
 
 from __future__ import annotations
@@ -130,12 +130,6 @@ def apply_theme(root: tk.Misc, theme_code: str) -> dict[str, str]:
         background=palette["surface"],
         foreground=palette["text"],
         font=("Segoe UI", 9),
-    )
-    style.configure(
-        "PillTitle.TLabel",
-        background=palette["surface"],
-        foreground=palette["muted"],
-        font=("Segoe UI", 8, "bold"),
     )
     style.configure(
         "SectionHint.TLabel",

@@ -23,6 +23,6 @@ def build_output_path(source_path: Path, target_format: TabularFileType) -> Path
     return source_path.with_suffix(f".{target_format.value}")
 
 
-def format_file_dialog_types() -> list[tuple[str, str]]:
-    """Devuelve filtros compatibles con filedialog."""
-    return get_file_dialog_filters()
+def format_file_dialog_types(language_code: str = "es") -> list[tuple[str, str]]:
+    """Devuelve filtros compatibles con filedialog segun el idioma visible."""
+    return get_file_dialog_filters(language_code)

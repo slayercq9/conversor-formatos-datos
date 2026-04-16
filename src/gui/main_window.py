@@ -23,7 +23,7 @@ from src.gui.preview_table import PreviewTable
 from src.i18n.translations import SUPPORTED_LANGUAGES, Translator, build_translator
 from src.services.file_service import FileService
 from src.services.preview_service import PreviewData, PreviewService
-from src.utils.constants import APP_AUTHOR, APP_LAST_UPDATED_LABEL, APP_MIN_SIZE, APP_VERSION
+from src.utils.constants import APP_MIN_SIZE
 from src.utils.errors import AppError
 from src.utils.helpers import format_file_dialog_types
 from src.utils.preferences import AppPreferences, PreferencesManager
@@ -400,16 +400,9 @@ class MainWindow(get_main_window_base()):
         self.save_button.config(text=self.translator.t("buttons.save"))
 
         if not self.source_path_var.get().strip():
-            self.source_label_var.set(self.translator.t("messages.default_source_label"))
-            self.file_info_var.set(self.translator.t("messages.default_file_info"))
-            self.ready_to_save_var.set(self.translator.t("messages.default_ready"))
-            self.status_var.set(self.translator.t("messages.default_status"))
-            self.preview_table.show_message(
-                self.translator.t("messages.preview_empty"),
-                note_text=self.translator.t("messages.preview_idle_note"),
-            )
+            self._apply_empty_state_texts()
         else:
-            self.file_info_var.set(self._build_file_summary(Path(self.source_path_var.get())))
+            self._refresh_loaded_file_texts()
             if self.file_service.has_prepared_conversion():
                 self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_ok"))
                 self.status_var.set(
@@ -427,6 +420,21 @@ class MainWindow(get_main_window_base()):
                     )
                 )
         self.language_var.set(self.translator.language_display_name(self.translator.language_code))
+
+    def _apply_empty_state_texts(self) -> None:
+        """Restablece textos visibles cuando no hay archivo cargado."""
+        self.source_label_var.set(self.translator.t("messages.default_source_label"))
+        self.file_info_var.set(self.translator.t("messages.default_file_info"))
+        self.ready_to_save_var.set(self.translator.t("messages.default_ready"))
+        self.status_var.set(self.translator.t("messages.default_status"))
+        self.preview_table.show_message(
+            self.translator.t("messages.preview_empty"),
+            note_text=self.translator.t("messages.preview_idle_note"),
+        )
+
+    def _refresh_loaded_file_texts(self) -> None:
+        """Actualiza el resumen visible del archivo cargado en el idioma actual."""
+        self.file_info_var.set(self._build_file_summary(Path(self.source_path_var.get())))
 
     def _restore_window_preferences(self) -> None:
         width = self.preferences.window_width
@@ -456,7 +464,7 @@ class MainWindow(get_main_window_base()):
 
     def select_source_file(self) -> None:
         path = ask_open_path(
-            format_file_dialog_types(),
+            format_file_dialog_types(self.translator.language_code),
             title=self.translator.t("titles.open_file"),
         )
         if path:
@@ -557,7 +565,7 @@ class MainWindow(get_main_window_base()):
                 self.translator.t("titles.save"),
                 self.translator.t("messages.dialog_save_prepare_first"),
             )
-            self.status_var.set(self.translator.translate_runtime_message("Primero convierte el archivo antes de intentar guardarlo."))
+            self.status_var.set(self.translator.t("messages.status_save_prepare_first"))
             return
         if not self._ensure_target_format_selected():
             return
@@ -568,7 +576,7 @@ class MainWindow(get_main_window_base()):
         )
         target_path = ask_save_path(
             default_path,
-            format_file_dialog_types(),
+            format_file_dialog_types(self.translator.language_code),
             title=self.translator.t("titles.save_file"),
         )
         if not target_path:
@@ -700,11 +708,11 @@ class MainWindow(get_main_window_base()):
 
     def clear_interface(self) -> None:
         self.source_path_var.set("")
-        self.source_label_var.set(self.translator.t("messages.default_source_label"))
-        self.file_info_var.set(self.translator.t("messages.default_file_info"))
         self.target_format_var.set("")
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
+        self.source_label_var.set(self.translator.t("messages.default_source_label"))
+        self.file_info_var.set(self.translator.t("messages.default_file_info"))
         self.ready_to_save_var.set(self.translator.t("messages.default_ready"))
         self.preview_table.show_message(
             self.translator.t("messages.clear_preview_message"),
@@ -713,18 +721,15 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(self.translator.t("messages.status_clean"))
 
     def _build_file_summary(self, source_path: Path) -> str:
-        name_label = "Name" if self.translator.language_code == "en" else "Nombre"
-        ext_label = "Extension" if self.translator.language_code == "en" else "Extensión"
-        size_label = "Approx. size" if self.translator.language_code == "en" else "Tamaño aproximado"
-        rows_label = "Rows" if self.translator.language_code == "en" else "Registros o filas"
+        extension = source_path.suffix.lower() or self.translator.t("meta.without_extension")
         details = [
-            f"{name_label}: {source_path.name}",
-            f"{ext_label}: {source_path.suffix.lower() or 'sin extensión'}",
-            f"{size_label}: {self._format_file_size(source_path.stat().st_size)}",
+            f"{self.translator.t('labels.file_name')}: {source_path.name}",
+            f"{self.translator.t('labels.file_extension')}: {extension}",
+            f"{self.translator.t('labels.file_size')}: {self._format_file_size(source_path.stat().st_size)}",
         ]
         row_count = self._try_get_row_count(source_path)
         if row_count is not None:
-            details.append(f"{rows_label}: {row_count}")
+            details.append(f"{self.translator.t('labels.file_rows')}: {row_count}")
         return " | ".join(details)
 
     def _try_get_row_count(self, source_path: Path) -> int | None:

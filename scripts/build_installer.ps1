@@ -1,5 +1,5 @@
 param(
-    [string]$Version = "4.2.0"
+    [string]$Version = "5.1.0"
 )
 
 $ErrorActionPreference = "Stop"
@@ -39,4 +39,3 @@ Write-Host "Compilando instalador con Inno Setup..."
 & $iscc "/DMyAppVersion=$Version" $issPath
 
 Write-Host "Instalador listo. Revisa la carpeta installer-output."
-

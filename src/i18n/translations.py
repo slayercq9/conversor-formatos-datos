@@ -48,6 +48,10 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
         },
         "labels": {
             "output_format": "Formato de salida",
+            "file_name": "Nombre",
+            "file_extension": "Extensión",
+            "file_size": "Tamaño aproximado",
+            "file_rows": "Registros o filas",
         },
         "messages": {
             "default_source_label": "Ningún archivo cargado todavía.",
@@ -74,6 +78,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "status_preview_refresh_failed": "La interfaz sigue disponible, pero no fue posible refrescar la vista previa.",
             "status_format_updated": "Formato de salida actualizado.",
             "status_saved": "Archivo guardado: {name}",
+            "status_save_prepare_first": "Primero convierte el archivo antes de intentar guardarlo.",
             "status_clean": "Interfaz limpia: se quitaron el archivo, la vista previa, la conversión preparada y la selección visible del formato.",
             "status_converted_ready": "Conversión lista a {format}.",
             "ready_format_updated": "Formato actualizado. Usa Convertir para preparar un nuevo archivo en ese formato.",
@@ -142,6 +147,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "column_label_plural": "columnas",
             "row_label_singular": "fila",
             "row_label_plural": "filas",
+            "without_extension": "sin extensión",
         },
     },
     "en": {
@@ -175,6 +181,10 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
         },
         "labels": {
             "output_format": "Output format",
+            "file_name": "Name",
+            "file_extension": "Extension",
+            "file_size": "Approx. size",
+            "file_rows": "Rows",
         },
         "messages": {
             "default_source_label": "No file loaded yet.",
@@ -201,6 +211,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "status_preview_refresh_failed": "The interface is still available, but the preview could not be refreshed.",
             "status_format_updated": "Output format updated.",
             "status_saved": "Saved file: {name}",
+            "status_save_prepare_first": "Convert the file before trying to save it.",
             "status_clean": "Interface cleared: file, preview, prepared conversion and visible format selection were removed.",
             "status_converted_ready": "Conversion ready to {format}.",
             "ready_format_updated": "Format updated. Use Convert to prepare a new file in that format.",
@@ -269,6 +280,7 @@ UI_TEXTS: dict[str, dict[str, Any]] = {
             "column_label_plural": "columns",
             "row_label_singular": "row",
             "row_label_plural": "rows",
+            "without_extension": "no extension",
         },
     },
 }

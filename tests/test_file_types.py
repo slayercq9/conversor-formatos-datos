@@ -24,3 +24,9 @@ def test_file_dialog_filters_include_all_formats() -> None:
     assert ("Excel (.xlsx)", "*.xlsx") in filters
     assert ("OpenDocument Spreadsheet (.ods)", "*.ods") in filters
     assert ("XML tabular (.xml)", "*.xml") in filters
+
+
+def test_file_dialog_filters_are_localized_for_english() -> None:
+    filters = get_file_dialog_filters("en")
+    assert filters[0][0] == "Tabular files"
+    assert filters[-1] == ("All files", "*.*")

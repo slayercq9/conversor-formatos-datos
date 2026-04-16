@@ -130,15 +130,17 @@ def get_supported_format_labels() -> dict[str, str]:
     }
 
 
-def get_file_dialog_filters() -> list[tuple[str, str]]:
+def get_file_dialog_filters(language_code: str = "es") -> list[tuple[str, str]]:
     """Construye filtros reutilizables para dialogs de seleccion."""
+    group_label = "Tabular files" if language_code == "en" else "Archivos tabulares"
+    all_files_label = "All files" if language_code == "en" else "Todos los archivos"
     wildcard_group = " ".join(
         definition.file_pattern for definition in FORMAT_DEFINITIONS.values()
     )
-    filters = [("Archivos tabulares", wildcard_group)]
+    filters = [(group_label, wildcard_group)]
     filters.extend(
         (definition.label, definition.file_pattern)
         for definition in FORMAT_DEFINITIONS.values()
     )
-    filters.append(("Todos los archivos", "*.*"))
+    filters.append((all_files_label, "*.*"))
     return filters

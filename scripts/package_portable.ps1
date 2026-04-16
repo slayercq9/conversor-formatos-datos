@@ -1,5 +1,5 @@
 param(
-    [string]$Version = "5.0.0"
+    [string]$Version = "5.1.0"
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,7 +12,7 @@ $packageDir = Join-Path $portableRoot $packageName
 $zipPath = Join-Path $portableRoot "$packageName.zip"
 
 if (-not (Test-Path -LiteralPath $sourceDist)) {
-    throw "No se encontró la salida de PyInstaller en '$sourceDist'. Ejecuta primero .\\scripts\\build.ps1 o pyinstaller ConversorFormatos.spec."
+    throw "No se encontró la salida de PyInstaller en '$sourceDist'. Ejecuta primero .\\scripts\\build.ps1."
 }
 
 if (-not (Test-Path -LiteralPath $portableRoot)) {

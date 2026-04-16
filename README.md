@@ -1,27 +1,28 @@
 # Conversor de Formatos Tabulares
 
-Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto está orientado a una experiencia ligera, portable y fácil de mantener, con interfaz bilingüe, vista previa rápida y dos vías de distribución para Windows.
+Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto prioriza una experiencia ligera, portable y mantenible, con vista previa rápida, soporte multidioma básico y dos vías de distribución para Windows.
 
-Versión actual: 5.1.0
+Versión actual: `5.1.0`
 
-Fecha de última actualización: 2026-04-15
+Fecha de última actualización: `2026-04-15`
 
-Autor: Fernando Corrales Quirós
+Autor: `Fernando Corrales Quirós`
 
 Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
 
-## Qué hace la app actualmente
+## Qué hace la aplicación
 
-- Convierte archivos tabulares entre formatos comunes.
-- Permite cargar archivos con selección manual o drag and drop.
-- Muestra una vista previa ligera antes de convertir.
-- Permite elegir idioma visible de la interfaz en español o inglés.
+- Carga archivos mediante selección manual o drag and drop.
+- Muestra una vista previa ligera para inspección rápida.
+- Convierte entre formatos tabulares soportados.
+- Guarda el resultado como un archivo nuevo.
+- Permite cambiar el idioma visible entre español e inglés.
 - Conserva preferencias simples entre sesiones.
 - Puede distribuirse como versión portable o como instalador de Windows.
 
 ## Formatos soportados
 
-Formatos de entrada y salida actualmente soportados:
+Formatos de entrada y salida:
 
 - CSV (`.csv`)
 - TSV (`.tsv`)
@@ -35,15 +36,7 @@ Notas de compatibilidad:
 
 - `XML` se soporta cuando puede representarse razonablemente como tabla.
 - `JSON` funciona mejor con listas de registros o estructuras tabulares compatibles.
-- `ODS` usa la dependencia ligera `odfpy`.
-
-## Interfaz y experiencia actual
-
-- Interfaz bilingüe: español e inglés.
-- Selector visible de idioma en la ventana principal.
-- Preferencia de idioma persistente entre sesiones.
-- Vista previa mejorada con resumen de columnas, filas visibles y aviso de parcialidad.
-- Ventanas informativas de `Cómo usar` y `Acerca de`.
+- `ODS` requiere la dependencia ligera `odfpy`.
 
 ## Requisitos
 
@@ -51,7 +44,7 @@ Notas de compatibilidad:
 - Tkinter disponible en el sistema
 - Dependencias instaladas desde [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt)
 
-Instalación de dependencias:
+Instalación recomendada:
 
 ```powershell
 python -m venv .venv
@@ -59,25 +52,25 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## Cómo ejecutar la app
-
-Desde la raíz del proyecto:
+## Ejecución en desarrollo
 
 ```powershell
 python app.py
 ```
 
+El punto de entrada principal es [app.py](/C:/Users/Fernando/Documents/Conversor_formatos/app.py).
+
 ## Scripts disponibles
 
-En [scripts](/C:/Users/Fernando/Documents/Conversor_formatos/scripts) hay tres scripts principales:
+Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Conversor_formatos/scripts):
 
-- [build.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build.ps1): genera la aplicación empaquetada con `python -m PyInstaller`.
-- [package_portable.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/package_portable.ps1): prepara la distribución portable y genera un ZIP.
-- [build_installer.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build_installer.ps1): compila el instalador de Windows a partir de la salida de PyInstaller.
+- [build.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build.ps1): genera la app empaquetada con `python -m PyInstaller`.
+- [package_portable.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/package_portable.ps1): arma la carpeta portable y genera un ZIP compartible.
+- [build_installer.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build_installer.ps1): compila el instalador de Windows con Inno Setup.
 
-## Build portable
+## Distribución portable
 
-1. Genera la aplicación empaquetada:
+1. Genera la salida empaquetada:
 
 ```powershell
 .\scripts\build.ps1
@@ -97,27 +90,28 @@ portable/
 `-- ConversorFormatos-5.1.0-portable.zip
 ```
 
-## Build instalador de Windows
+Un paquete portable debe incluir al menos:
+
+- el contenido de `dist/ConversorFormatos/`
+- `README.md`
+- `MANUAL_USUARIO.md`
+- `LICENSE`
+- `CHANGELOG.md`
+
+## Instalador de Windows
 
 Herramienta elegida:
 
 - `Inno Setup 6`
 
-Base de configuración:
+Archivo base:
 
 - [installer/ConversorFormatos.iss](/C:/Users/Fernando/Documents/Conversor_formatos/installer/ConversorFormatos.iss)
 
 Pasos:
 
-1. Genera la aplicación empaquetada:
-
 ```powershell
 .\scripts\build.ps1
-```
-
-2. Compila el instalador:
-
-```powershell
 .\scripts\build_installer.ps1 -Version 5.1.0
 ```
 
@@ -128,21 +122,17 @@ installer-output/
 `-- ConversorFormatos-5.1.0-setup.exe
 ```
 
-## Distribución
+## Cómo compartir la aplicación
 
 ### Versión portable
 
-- No requiere instalación.
-- Puede ejecutarse desde carpeta local, USB o ZIP descomprimido.
-- Es útil para distribución directa o uso portátil.
+- Comparte el ZIP generado en `portable/`.
+- El usuario solo debe descomprimir la carpeta y ejecutar `ConversorFormatos.exe`.
 
 ### Versión instalable
 
-- Ofrece una instalación tradicional en Windows.
-- Puede crear accesos directos y desinstalación estándar.
-- Usa Inno Setup sobre la salida de PyInstaller.
-
-Ambas vías siguen siendo oficiales y compatibles con el estado actual del proyecto.
+- Comparte el ejecutable generado en `installer-output/`.
+- El usuario instala la app con el asistente tradicional de Windows.
 
 ## Estructura general del proyecto
 
@@ -169,6 +159,12 @@ Ambas vías siguen siendo oficiales y compatibles con el estado actual del proye
 `-- tests/
 ```
 
-## Estado del proyecto
+## Estado técnico actual
 
-La versión 5.1.0 deja la documentación alineada con el estado real de la aplicación: formatos soportados, interfaz bilingüe, vista previa mejorada, persistencia ligera y dos modalidades de distribución para Windows.
+La versión `5.1.0` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, vista previa ligera y preparación seria para distribución en Windows.
+
+Recomendaciones técnicas futuras no implementadas en esta fase:
+
+- centralizar aún más los mensajes del dominio para reducir texto literal repetido
+- introducir una pequeña capa de utilidades compartidas para ventanas secundarias
+- ampliar la cobertura automatizada de GUI sin comprometer ligereza ni portabilidad

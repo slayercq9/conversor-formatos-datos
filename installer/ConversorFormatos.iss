@@ -1,7 +1,9 @@
 #define MyAppName "Conversor de Formatos Tabulares"
 #define MyAppExeName "ConversorFormatos.exe"
 #define MyAppPublisher "Fernando Corrales Quirós"
-#define MyAppVersion "4.2.0"
+#ifndef MyAppVersion
+  #define MyAppVersion "5.1.0"
+#endif
 #define MyAppURL "https://github.com/"
 #define MySourceDir "..\\dist\\ConversorFormatos"
 
@@ -42,4 +44,3 @@ Name: "{autodesktop}\Conversor de Formatos Tabulares"; Filename: "{app}\{#MyAppE
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Abrir Conversor de Formatos Tabulares"; Flags: nowait postinstall skipifsilent
-

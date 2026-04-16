@@ -68,6 +68,13 @@ def apply_theme(root: tk.Misc, theme_code: str) -> dict[str, str]:
     style.configure("TFrame", background=palette["bg"])
     style.configure("Surface.TFrame", background=palette["surface"])
     style.configure("Toolbar.TFrame", background=palette["surface"])
+    style.configure("SelectorCard.TFrame", background=palette["surface"])
+    style.configure(
+        "PillGroup.TFrame",
+        background=palette["surface_alt"],
+        borderwidth=1,
+        relief="solid",
+    )
     style.configure(
         "Hero.TFrame",
         background=palette["surface"],
@@ -123,6 +130,12 @@ def apply_theme(root: tk.Misc, theme_code: str) -> dict[str, str]:
         background=palette["surface"],
         foreground=palette["text"],
         font=("Segoe UI", 9),
+    )
+    style.configure(
+        "PillTitle.TLabel",
+        background=palette["surface"],
+        foreground=palette["muted"],
+        font=("Segoe UI", 8, "bold"),
     )
     style.configure(
         "SectionHint.TLabel",
@@ -186,6 +199,28 @@ def apply_theme(root: tk.Misc, theme_code: str) -> dict[str, str]:
     style.map(
         "Secondary.TButton",
         background=[("active", palette["surface_alt"]), ("disabled", palette["surface_alt"])],
+    )
+
+    style.configure(
+        "Pill.TRadiobutton",
+        background=palette["surface_alt"],
+        foreground=palette["text"],
+        borderwidth=0,
+        relief="flat",
+        font=("Segoe UI", 9, "bold"),
+        padding=(12, 6),
+    )
+    style.map(
+        "Pill.TRadiobutton",
+        background=[
+            ("selected", palette["accent"]),
+            ("active", palette["surface_soft"]),
+            ("!selected", palette["surface_alt"]),
+        ],
+        foreground=[
+            ("selected", palette["accent_text"]),
+            ("!selected", palette["text"]),
+        ],
     )
 
     style.configure(

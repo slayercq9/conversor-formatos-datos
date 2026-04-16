@@ -20,6 +20,7 @@ class AppPreferences:
 
     last_target_format: str = ""
     language_code: str = "es"
+    theme_code: str = "light"
     window_width: int | None = None
     window_height: int | None = None
     window_x: int | None = None
@@ -55,6 +56,7 @@ class PreferencesManager:
         return AppPreferences(
             last_target_format=self._coerce_str(payload.get("last_target_format")),
             language_code=self._coerce_language(payload.get("language_code")),
+            theme_code=self._coerce_theme(payload.get("theme_code")),
             window_width=self._coerce_int(payload.get("window_width")),
             window_height=self._coerce_int(payload.get("window_height")),
             window_x=self._coerce_int(payload.get("window_x")),
@@ -93,6 +95,13 @@ class PreferencesManager:
         if isinstance(value, str) and value in {"es", "en"}:
             return value
         return "es"
+
+    def _coerce_theme(self, value: Any) -> str:
+        """Normaliza el tema guardado y cae a claro por defecto."""
+
+        if isinstance(value, str) and value in {"light", "dark"}:
+            return value
+        return "light"
 
     def _coerce_int(self, value: Any) -> int | None:
         """Normaliza enteros opcionales provenientes del JSON."""

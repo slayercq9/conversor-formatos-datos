@@ -44,7 +44,11 @@ class MainWindow(get_main_window_base()):
         self.preferences_manager = PreferencesManager()
         self.preferences = self.preferences_manager.load()
         self.translator = build_translator(self.preferences.language_code)
-        self.theme_code = DEFAULT_THEME
+        self.theme_code = (
+            self.preferences.theme_code
+            if self.preferences.theme_code in SUPPORTED_THEMES
+            else DEFAULT_THEME
+        )
 
         self.source_path_var = tk.StringVar()
         self.source_label_var = tk.StringVar()
@@ -55,9 +59,9 @@ class MainWindow(get_main_window_base()):
         self.status_var = tk.StringVar()
         self.ready_to_save_var = tk.StringVar()
         self.language_var = tk.StringVar(
-            value=self.translator.language_display_name(self.translator.language_code)
+            value=self.translator.language_code
         )
-        self.theme_var = tk.StringVar()
+        self.theme_var = tk.StringVar(value=self.theme_code)
 
         self.last_target_format = self.target_format_var.get().strip()
         self.save_button: ttk.Button | None = None
@@ -76,9 +80,13 @@ class MainWindow(get_main_window_base()):
         self.hero_title_label: ttk.Label | None = None
         self.hero_subtitle_label: ttk.Label | None = None
         self.language_label: ttk.Label | None = None
-        self.language_selector: ttk.Combobox | None = None
+        self.language_pill_frame: ttk.Frame | None = None
+        self.language_es_button: ttk.Radiobutton | None = None
+        self.language_en_button: ttk.Radiobutton | None = None
         self.theme_label: ttk.Label | None = None
-        self.theme_selector: ttk.Combobox | None = None
+        self.theme_pill_frame: ttk.Frame | None = None
+        self.theme_light_button: ttk.Radiobutton | None = None
+        self.theme_dark_button: ttk.Radiobutton | None = None
         self.output_format_selector: ttk.Combobox | None = None
 
         self._configure_styles()
@@ -115,31 +123,56 @@ class MainWindow(get_main_window_base()):
 
         quick_access = ttk.Frame(header, style="Toolbar.TFrame")
         quick_access.grid(row=0, column=1, sticky="e", padx=(18, 0))
-        self.language_label = ttk.Label(quick_access, style="Surface.TLabel")
-        self.language_label.grid(row=0, column=0, padx=(0, 8))
-        self.language_selector = ttk.Combobox(
-            quick_access,
-            textvariable=self.language_var,
-            values=list(SUPPORTED_LANGUAGES.values()),
-            state="readonly",
-            width=10,
+        language_card = ttk.Frame(quick_access, style="SelectorCard.TFrame")
+        language_card.grid(row=0, column=0, padx=(0, 12))
+        self.language_label = ttk.Label(language_card, style="PillTitle.TLabel")
+        self.language_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
+        self.language_pill_frame = ttk.Frame(language_card, style="PillGroup.TFrame", padding=3)
+        self.language_pill_frame.grid(row=1, column=0, sticky="w")
+        self.language_es_button = ttk.Radiobutton(
+            self.language_pill_frame,
+            variable=self.language_var,
+            value="es",
+            style="Pill.TRadiobutton",
+            command=self._on_language_changed,
         )
-        self.language_selector.grid(row=0, column=1, padx=(0, 12))
-        self.language_selector.bind("<<ComboboxSelected>>", self._on_language_changed)
-        self.theme_label = ttk.Label(quick_access, style="Surface.TLabel")
-        self.theme_label.grid(row=0, column=2, padx=(0, 8))
-        self.theme_selector = ttk.Combobox(
-            quick_access,
-            textvariable=self.theme_var,
-            state="readonly",
-            width=10,
+        self.language_es_button.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        self.language_en_button = ttk.Radiobutton(
+            self.language_pill_frame,
+            variable=self.language_var,
+            value="en",
+            style="Pill.TRadiobutton",
+            command=self._on_language_changed,
         )
-        self.theme_selector.grid(row=0, column=3, padx=(0, 12))
-        self.theme_selector.bind("<<ComboboxSelected>>", self._on_theme_changed)
+        self.language_en_button.grid(row=0, column=1, sticky="ew")
+
+        theme_card = ttk.Frame(quick_access, style="SelectorCard.TFrame")
+        theme_card.grid(row=0, column=1, padx=(0, 12))
+        self.theme_label = ttk.Label(theme_card, style="PillTitle.TLabel")
+        self.theme_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
+        self.theme_pill_frame = ttk.Frame(theme_card, style="PillGroup.TFrame", padding=3)
+        self.theme_pill_frame.grid(row=1, column=0, sticky="w")
+        self.theme_light_button = ttk.Radiobutton(
+            self.theme_pill_frame,
+            variable=self.theme_var,
+            value="light",
+            style="Pill.TRadiobutton",
+            command=self._on_theme_changed,
+        )
+        self.theme_light_button.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        self.theme_dark_button = ttk.Radiobutton(
+            self.theme_pill_frame,
+            variable=self.theme_var,
+            value="dark",
+            style="Pill.TRadiobutton",
+            command=self._on_theme_changed,
+        )
+        self.theme_dark_button.grid(row=0, column=1, sticky="ew")
+
         self.help_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_help)
-        self.help_button.grid(row=0, column=4, padx=(0, 10))
+        self.help_button.grid(row=0, column=2, padx=(0, 10))
         self.about_button = ttk.Button(quick_access, style="Secondary.TButton", width=12, command=self.open_about)
-        self.about_button.grid(row=0, column=5)
+        self.about_button.grid(row=0, column=3)
 
         top_sections = ttk.Frame(container)
         top_sections.grid(row=1, column=0, sticky="ew", pady=(18, 14))
@@ -259,7 +292,9 @@ class MainWindow(get_main_window_base()):
         assert self.help_button and self.about_button and self.select_button
         assert self.preview_button and self.convert_button and self.clear_button and self.save_button
         assert self.output_format_label and self.load_hint_label and self.config_hint_label
-        assert self.language_label and self.theme_label and self.theme_selector
+        assert self.language_label and self.theme_label
+        assert self.language_es_button and self.language_en_button
+        assert self.theme_light_button and self.theme_dark_button
 
         self.hero_title_label.config(text=self.translator.t("app.title"))
         self.hero_subtitle_label.config(text=self.translator.t("app.subtitle"))
@@ -267,8 +302,12 @@ class MainWindow(get_main_window_base()):
         self.theme_label.config(text=self.translator.t("app.theme_label"))
         self.help_button.config(text=self.translator.t("buttons.help"))
         self.about_button.config(text=self.translator.t("buttons.about"))
-        self.theme_selector.config(values=self._theme_display_values())
-        self.theme_var.set(self._theme_display_name())
+        self.language_es_button.config(text=self._language_button_label("es"))
+        self.language_en_button.config(text=self._language_button_label("en"))
+        self.theme_light_button.config(text=self.translator.t("themes.light"))
+        self.theme_dark_button.config(text=self.translator.t("themes.dark"))
+        self.language_var.set(self.translator.language_code)
+        self.theme_var.set(self.theme_code)
         self.drop_area.configure(text=self.translator.t("sections.load"))
         self.config_frame.configure(text=self.translator.t("sections.config"))
         self.preview_frame.configure(text=self.translator.t("sections.preview"))
@@ -301,15 +340,9 @@ class MainWindow(get_main_window_base()):
                         name=Path(self.source_path_var.get()).name,
                     )
                 )
-        self.language_var.set(self.translator.language_display_name(self.translator.language_code))
-
-    def _theme_display_values(self) -> list[str]:
-        """Devuelve las etiquetas visibles de temas en el idioma actual."""
-        return [self.translator.t("themes.light"), self.translator.t("themes.dark")]
-
-    def _theme_display_name(self) -> str:
-        """Devuelve la etiqueta visible del tema actualmente activo."""
-        return self.translator.t(f"themes.{self.theme_code}")
+    def _language_button_label(self, language_code: str) -> str:
+        """Devuelve una etiqueta compacta para el selector segmentado de idioma."""
+        return "ES" if language_code == "es" else "EN"
 
     def _apply_empty_state_texts(self) -> None:
         """Restablece textos visibles cuando no hay archivo cargado."""
@@ -339,28 +372,23 @@ class MainWindow(get_main_window_base()):
             self.geometry(geometry)
 
     def _on_language_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
-        language_code = self.translator.resolve_language_code(self.language_var.get())
+        language_code = self.language_var.get().strip()
+        if language_code not in SUPPORTED_LANGUAGES:
+            language_code = "es"
         self.translator = build_translator(language_code)
         self._apply_translations()
         if self.source_path_var.get().strip():
             self._refresh_preview_from_source()
 
     def _on_theme_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
-        selected_theme = self._resolve_theme_code(self.theme_var.get())
+        selected_theme = self.theme_var.get().strip()
         self._apply_selected_theme(selected_theme)
-
-    def _resolve_theme_code(self, display_name: str) -> str:
-        """Resuelve el codigo interno del tema a partir de su etiqueta visible."""
-        for theme_code in SUPPORTED_THEMES:
-            if self.translator.t(f"themes.{theme_code}") == display_name:
-                return theme_code
-        return DEFAULT_THEME
 
     def _apply_selected_theme(self, theme_code: str) -> None:
         """Actualiza la paleta activa sin alterar la logica funcional."""
         self.theme_code = theme_code if theme_code in SUPPORTED_THEMES else DEFAULT_THEME
         self._palette = apply_theme(self, self.theme_code)
-        self.theme_var.set(self._theme_display_name())
+        self.theme_var.set(self.theme_code)
         self._apply_theme_to_open_windows()
 
     def _apply_theme_to_open_windows(self) -> None:
@@ -669,6 +697,7 @@ class MainWindow(get_main_window_base()):
         return AppPreferences(
             last_target_format=self.last_target_format,
             language_code=self.translator.language_code,
+            theme_code=self.theme_code,
             window_width=self.winfo_width(),
             window_height=self.winfo_height(),
             window_x=self.winfo_x(),

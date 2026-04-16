@@ -12,7 +12,7 @@ Permitir que una persona cargue un archivo tabular, revise una vista previa ráp
 
 ## Versión actual
 
-`5.1.1`
+`5.1.2`
 
 ## Fecha de última actualización
 
@@ -71,7 +71,8 @@ La interfaz ofrece dos temas:
 - claro
 - oscuro
 
-Puedes cambiar el tema desde la ventana principal. En esta fase, el tema activo no se guarda entre sesiones.
+Puedes cambiar el tema desde la ventana principal.
+La aplicación recuerda el último tema usado al volver a abrirse.
 
 ## Cómo convertir y guardar
 
@@ -164,6 +165,11 @@ Sí. La ventana principal permite alternar entre tema claro y tema oscuro.
 - mejorar reutilización de utilidades compartidas en la interfaz
 
 ## Historial de versiones del manual
+
+### Versión 5.1.2
+
+- Se agrega persistencia del tema entre sesiones.
+- Se rediseñan los controles de idioma y tema con un selector segmentado más compacto.
 
 ### Versión 5.1.1
 

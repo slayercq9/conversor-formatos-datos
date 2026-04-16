@@ -2,6 +2,17 @@
 
 Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
+## [5.1.2] - 2026-04-15
+
+### Añadido
+
+- Persistencia del tema visual entre sesiones usando el archivo ligero de preferencias.
+
+### Mejorado
+
+- Controles de idioma y tema rediseñados con una apariencia segmentada más compacta y coherente.
+- Integración del selector de tema con restauración segura al iniciar la aplicación.
+
 ## [5.1.1] - 2026-04-15
 
 ### Añadido

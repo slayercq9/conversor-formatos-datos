@@ -2,7 +2,7 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto prioriza una experiencia ligera, portable y mantenible, con vista previa rápida, soporte multidioma básico y dos vías de distribución para Windows.
 
-Versión actual: `5.1.1`
+Versión actual: `5.1.2`
 
 Fecha de última actualización: `2026-04-15`
 
@@ -18,7 +18,7 @@ Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_fo
 - Guarda el resultado como un archivo nuevo.
 - Permite cambiar el idioma visible entre español e inglés.
 - Permite alternar entre tema claro y tema oscuro.
-- Conserva preferencias simples entre sesiones.
+- Conserva preferencias simples entre sesiones, incluido el tema visual.
 - Puede distribuirse como versión portable o como instalador de Windows.
 
 ## Formatos soportados
@@ -80,15 +80,15 @@ Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Convers
 2. Prepara el paquete portable:
 
 ```powershell
-.\scripts\package_portable.ps1 -Version 5.1.1
+.\scripts\package_portable.ps1 -Version 5.1.2
 ```
 
 Salida esperada:
 
 ```text
 portable/
-|-- ConversorFormatos-5.1.1-portable/
-`-- ConversorFormatos-5.1.1-portable.zip
+|-- ConversorFormatos-5.1.2-portable/
+`-- ConversorFormatos-5.1.2-portable.zip
 ```
 
 Un paquete portable debe incluir al menos:
@@ -113,14 +113,14 @@ Pasos:
 
 ```powershell
 .\scripts\build.ps1
-.\scripts\build_installer.ps1 -Version 5.1.1
+.\scripts\build_installer.ps1 -Version 5.1.2
 ```
 
 Salida esperada:
 
 ```text
 installer-output/
-`-- ConversorFormatos-5.1.1-setup.exe
+`-- ConversorFormatos-5.1.2-setup.exe
 ```
 
 ## Cómo compartir la aplicación
@@ -162,7 +162,7 @@ installer-output/
 
 ## Estado técnico actual
 
-La versión `5.1.1` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, vista previa ligera y preparación seria para distribución en Windows.
+La versión `5.1.2` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, persistencia ligera de preferencias, vista previa ligera y preparación seria para distribución en Windows.
 
 Recomendaciones técnicas futuras no implementadas en esta fase:
 

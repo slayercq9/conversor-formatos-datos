@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 APP_TITLE = "Conversor de Formatos Tabulares"
-APP_VERSION = "5.0.0"
+APP_VERSION = "5.1.0"
 APP_LAST_UPDATED = "2026-04-15"
 APP_LAST_UPDATED_LABEL = "Miércoles, 15 de abril de 2026"
 APP_AUTHOR = "Fernando Corrales Quirós"

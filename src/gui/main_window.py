@@ -125,10 +125,8 @@ class MainWindow(get_main_window_base()):
         quick_access.grid(row=0, column=1, sticky="e", padx=(18, 0))
         language_card = ttk.Frame(quick_access, style="SelectorCard.TFrame")
         language_card.grid(row=0, column=0, padx=(0, 12))
-        self.language_label = ttk.Label(language_card, style="PillTitle.TLabel")
-        self.language_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
         self.language_pill_frame = ttk.Frame(language_card, style="PillGroup.TFrame", padding=3)
-        self.language_pill_frame.grid(row=1, column=0, sticky="w")
+        self.language_pill_frame.grid(row=0, column=0, sticky="w")
         self.language_es_button = ttk.Radiobutton(
             self.language_pill_frame,
             variable=self.language_var,
@@ -148,10 +146,8 @@ class MainWindow(get_main_window_base()):
 
         theme_card = ttk.Frame(quick_access, style="SelectorCard.TFrame")
         theme_card.grid(row=0, column=1, padx=(0, 12))
-        self.theme_label = ttk.Label(theme_card, style="PillTitle.TLabel")
-        self.theme_label.grid(row=0, column=0, sticky="w", pady=(0, 5))
         self.theme_pill_frame = ttk.Frame(theme_card, style="PillGroup.TFrame", padding=3)
-        self.theme_pill_frame.grid(row=1, column=0, sticky="w")
+        self.theme_pill_frame.grid(row=0, column=0, sticky="w")
         self.theme_light_button = ttk.Radiobutton(
             self.theme_pill_frame,
             variable=self.theme_var,
@@ -292,14 +288,11 @@ class MainWindow(get_main_window_base()):
         assert self.help_button and self.about_button and self.select_button
         assert self.preview_button and self.convert_button and self.clear_button and self.save_button
         assert self.output_format_label and self.load_hint_label and self.config_hint_label
-        assert self.language_label and self.theme_label
         assert self.language_es_button and self.language_en_button
         assert self.theme_light_button and self.theme_dark_button
 
         self.hero_title_label.config(text=self.translator.t("app.title"))
         self.hero_subtitle_label.config(text=self.translator.t("app.subtitle"))
-        self.language_label.config(text=self.translator.t("app.language_label"))
-        self.theme_label.config(text=self.translator.t("app.theme_label"))
         self.help_button.config(text=self.translator.t("buttons.help"))
         self.about_button.config(text=self.translator.t("buttons.about"))
         self.language_es_button.config(text=self._language_button_label("es"))

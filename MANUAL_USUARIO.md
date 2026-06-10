@@ -12,11 +12,11 @@ Permitir que una persona cargue un archivo tabular, revise una vista previa ráp
 
 ## Versión actual
 
-`5.2.0`
+`1.0.0`
 
 ## Fecha de última actualización
 
-`2026-04-16`
+`2026-06-10`
 
 ## Requisitos de uso
 
@@ -166,30 +166,11 @@ Sí. La ventana principal permite alternar entre tema claro y tema oscuro.
 
 ## Historial de versiones del manual
 
-### Versión 5.2.0
+### Versión 1.0.0
 
-- Se revisa y alinea la documentación final del proyecto antes de una futura publicación.
-- Se deja consistente la información sobre scripts, tema persistente y modalidades de distribución.
+- Primera versión pública estable del manual y de la aplicación.
+- Se documentan formatos, vista previa, drag and drop, interfaz ES/EN, temas, preferencias y distribución para Windows.
 
-### Versión 5.1.2
+### Historial interno de 0.1.0 a 0.5.8
 
-- Se agrega persistencia del tema entre sesiones.
-- Se rediseñan los controles de idioma y tema con un selector segmentado más compacto.
-
-### Versión 5.1.1
-
-- Se agrega soporte para tema claro y tema oscuro.
-- Se incorpora un selector de tema en la ventana principal.
-
-### Versión 5.1.0
-
-- Se alinea el manual con el estado real actual de la aplicación.
-- Se documentan formatos soportados, vista previa mejorada, multidioma y modalidades de distribución.
-
-### Versión 5.0.0
-
-- Se incorpora la interfaz bilingüe en español e inglés.
-
-### Versión 4.x
-
-- Se añaden nuevos formatos, vista previa mejorada y preparación de instalador para Windows.
+- Las revisiones anteriores del manual acompañaron el desarrollo interno de la aplicación antes de su primera publicación estable.

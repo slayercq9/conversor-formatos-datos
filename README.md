@@ -2,9 +2,9 @@
 
 Aplicación de escritorio desarrollada con Python y Tkinter para convertir archivos tabulares entre formatos comunes. El proyecto prioriza una experiencia ligera, portable y mantenible, con vista previa rápida, soporte multidioma básico y dos vías de distribución para Windows.
 
-Versión actual: `5.2.0`
+Versión pública estable: `1.0.0`
 
-Fecha de última actualización: `2026-04-16`
+Fecha de última actualización: `2026-06-10`
 
 Autor: `Fernando Corrales Quirós`
 
@@ -80,15 +80,15 @@ Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Convers
 2. Prepara el paquete portable:
 
 ```powershell
-.\scripts\package_portable.ps1 -Version 5.2.0
+.\scripts\package_portable.ps1 -Version 1.0.0
 ```
 
 Salida esperada:
 
 ```text
 portable/
-|-- ConversorFormatos-5.2.0-portable/
-`-- ConversorFormatos-5.2.0-portable.zip
+|-- ConversorFormatos-1.0.0-portable/
+`-- ConversorFormatos-1.0.0-portable.zip
 ```
 
 Un paquete portable debe incluir al menos:
@@ -113,14 +113,14 @@ Pasos:
 
 ```powershell
 .\scripts\build.ps1
-.\scripts\build_installer.ps1 -Version 5.2.0
+.\scripts\build_installer.ps1 -Version 1.0.0
 ```
 
 Salida esperada:
 
 ```text
 installer-output/
-`-- ConversorFormatos-5.2.0-setup.exe
+`-- ConversorFormatos-1.0.0-setup.exe
 ```
 
 ## Cómo compartir la aplicación
@@ -162,7 +162,7 @@ installer-output/
 
 ## Estado técnico actual
 
-La versión `5.2.0` deja la base lista para seguir creciendo con una arquitectura modular, soporte multiformato, interfaz bilingüe, tema claro/oscuro, persistencia ligera de preferencias, vista previa ligera y preparación seria para distribución en Windows.
+La versión `1.0.0` es la primera versión pública estable del proyecto. A partir de esta publicación se usa versionado semántico `MAJOR.MINOR.PATCH`; el desarrollo anterior se conserva como historial interno, desde `0.1.0` hasta `0.5.8`, en [CHANGELOG.md](/C:/Users/Fernando/Documents/Conversor_formatos/CHANGELOG.md).
 
 Recomendaciones técnicas futuras no implementadas en esta fase:
 

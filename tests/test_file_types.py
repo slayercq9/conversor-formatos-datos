@@ -1,8 +1,13 @@
+import pytest
+
 from src.core.file_types import (
     TabularFileType,
     get_file_dialog_filters,
     get_supported_extensions,
 )
+from src.core.reader import TabularReader
+from src.core.writer import TabularWriter
+from src.utils.errors import UnsupportedFormatError
 
 
 def test_from_extension_accepts_dot_prefix() -> None:
@@ -30,3 +35,17 @@ def test_file_dialog_filters_are_localized_for_english() -> None:
     filters = get_file_dialog_filters("en")
     assert filters[0][0] == "Tabular files"
     assert filters[-1] == ("All files", "*.*")
+
+
+def test_reader_and_writer_register_every_supported_format() -> None:
+    reader = TabularReader()
+    writer = TabularWriter()
+
+    for file_type in TabularFileType:
+        assert reader.supports(file_type)
+        assert writer.supports(file_type)
+
+
+def test_from_extension_rejects_unknown_format() -> None:
+    with pytest.raises(UnsupportedFormatError, match="Formato no soportado"):
+        TabularFileType.from_extension(".parquet")

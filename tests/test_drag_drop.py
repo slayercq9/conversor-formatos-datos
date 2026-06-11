@@ -25,3 +25,7 @@ def test_split_drop_paths_supports_single_plain_path() -> None:
     paths = split_drop_paths(raw_data)
 
     assert paths == [Path(r"C:\datos\entrada.xlsx")]
+
+
+def test_split_drop_paths_returns_empty_list_for_empty_payload() -> None:
+    assert split_drop_paths("   ") == []

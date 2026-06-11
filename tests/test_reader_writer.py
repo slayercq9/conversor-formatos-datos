@@ -8,14 +8,26 @@ from src.core.writer import TabularWriter
 from src.utils.errors import ReadError, WriteError
 
 
-def test_reader_loads_tsv_as_dataframe(tmp_path: Path) -> None:
-    source = tmp_path / "datos.tsv"
-    source.write_text("nombre\tedad\nAna\t30\nLuis\t28\n", encoding="utf-8")
+@pytest.mark.parametrize(
+    "extension",
+    ["csv", "xlsx", "json", "txt", "tsv", "xml", "ods"],
+)
+def test_supported_formats_roundtrip_dataframe(
+    tmp_path: Path,
+    extension: str,
+) -> None:
+    expected = pd.DataFrame(
+        {
+            "nombre": ["Ana", "Luis"],
+            "edad": [30, 28],
+        }
+    )
+    target = tmp_path / f"datos.{extension}"
 
-    data_frame = TabularReader().read(source)
+    TabularWriter().write(expected, target)
+    loaded = TabularReader().read(target)
 
-    assert list(data_frame.columns) == ["nombre", "edad"]
-    assert data_frame.iloc[0]["nombre"] == "Ana"
+    pd.testing.assert_frame_equal(loaded, expected, check_dtype=False)
 
 
 def test_reader_uses_odf_engine_for_ods(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -107,23 +119,6 @@ def test_reader_reports_json_not_tabular(monkeypatch: pytest.MonkeyPatch) -> Non
         TabularReader()._read_json(Path("datos.json"))
 
     assert "JSON" in str(exc_info.value)
-
-
-def test_writer_exports_xml_and_reader_loads_it_back(tmp_path: Path) -> None:
-    data_frame = pd.DataFrame(
-        {
-            "nombre": ["Ana", "Luis"],
-            "edad": [30, 28],
-        }
-    )
-    target = tmp_path / "salida.xml"
-
-    writer = TabularWriter()
-    writer.write(data_frame, target)
-    loaded = TabularReader().read(target)
-
-    assert list(loaded.columns) == ["nombre", "edad"]
-    assert loaded.iloc[1]["nombre"] == "Luis"
 
 
 def test_reader_raises_clear_error_for_invalid_xml(tmp_path: Path) -> None:

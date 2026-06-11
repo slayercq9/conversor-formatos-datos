@@ -12,7 +12,13 @@ from src.core.validators import (
     validate_target_format,
 )
 from src.utils.helpers import build_output_path, normalize_extension
-from src.utils.errors import EmptyFileError, MissingTargetFormatError, ValidationError
+from src.utils.errors import (
+    EmptyFileError,
+    MissingFileError,
+    MissingTargetFormatError,
+    UnsupportedFormatError,
+    ValidationError,
+)
 
 
 def test_validate_distinct_formats_raises_for_same_type() -> None:
@@ -59,3 +65,23 @@ def test_validate_source_path_rejects_empty_file(tmp_path: Path) -> None:
 
     with pytest.raises(EmptyFileError):
         validate_source_path(empty_file)
+
+
+def test_validate_source_path_rejects_missing_file(tmp_path: Path) -> None:
+    missing_file = tmp_path / "missing.csv"
+
+    with pytest.raises(MissingFileError, match="no existe"):
+        validate_source_path(missing_file)
+
+
+def test_validate_source_path_rejects_unsupported_extension(tmp_path: Path) -> None:
+    unsupported_file = tmp_path / "datos.parquet"
+    unsupported_file.write_text("contenido", encoding="utf-8")
+
+    with pytest.raises(UnsupportedFormatError, match="no es soportado"):
+        validate_source_path(unsupported_file)
+
+
+def test_validate_target_format_rejects_unsupported_extension() -> None:
+    with pytest.raises(UnsupportedFormatError, match="no es soportado"):
+        validate_target_format("parquet")

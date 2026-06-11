@@ -72,3 +72,26 @@ def test_preview_service_preserves_clear_domain_message(tmp_path: Path) -> None:
         service.load_preview(source)
 
     assert "estructura tabular compatible" in str(exc_info.value)
+
+
+def test_preview_service_replaces_missing_values_with_empty_text(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "datos.csv"
+    source.write_text("ok", encoding="utf-8")
+    service = PreviewService(
+        reader=FakePreviewReader(pd.DataFrame({"nombre": ["Ana", None]}))
+    )
+
+    preview = service.load_preview(source)
+
+    assert preview.rows == [("Ana",), ("",)]
+
+
+def test_preview_service_wraps_unexpected_reader_errors(tmp_path: Path) -> None:
+    source = tmp_path / "datos.csv"
+    source.write_text("ok", encoding="utf-8")
+    service = PreviewService(reader=FakePreviewReader(error=RuntimeError("boom")))
+
+    with pytest.raises(PreviewError, match="No se pudo cargar"):
+        service.load_preview(source)

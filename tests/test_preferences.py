@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from src.utils.preferences import AppPreferences, PreferencesManager
 
 
@@ -59,3 +61,36 @@ def test_save_and_load_roundtrip_preferences(tmp_path: Path) -> None:
     manager.save(expected)
 
     assert manager.load() == expected
+
+
+@pytest.mark.parametrize(
+    ("payload", "expected_language", "expected_theme"),
+    [
+        ('{"language_code": "fr", "theme_code": "neon"}', "es", "light"),
+        ('{"language_code": 123, "theme_code": false}', "es", "light"),
+        ("[]", "es", "light"),
+    ],
+)
+def test_load_normalizes_invalid_preference_values(
+    tmp_path: Path,
+    payload: str,
+    expected_language: str,
+    expected_theme: str,
+) -> None:
+    file_path = tmp_path / "preferences.json"
+    file_path.write_text(payload, encoding="utf-8")
+
+    preferences = PreferencesManager(file_path).load()
+
+    assert preferences.language_code == expected_language
+    assert preferences.theme_code == expected_theme
+
+
+def test_manager_uses_only_the_explicit_temporary_path(tmp_path: Path) -> None:
+    file_path = tmp_path / "nested" / "preferences.json"
+    manager = PreferencesManager(file_path)
+
+    manager.save(AppPreferences(last_target_format="xml"))
+
+    assert manager.file_path == file_path
+    assert file_path.exists()

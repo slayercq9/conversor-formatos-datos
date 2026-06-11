@@ -300,25 +300,31 @@ class Translator:
     """Resuelve textos visibles y traduce mensajes del dominio en tiempo real."""
 
     def __init__(self, language_code: str) -> None:
+        """Inicializa el traductor con un código soportado o español."""
         self.language_code = language_code if language_code in UI_TEXTS else "es"
 
     def t(self, key: str, **kwargs: Any) -> str:
+        """Resuelve una clave jerárquica y aplica sus variables de formato."""
         value: Any = UI_TEXTS[self.language_code]
         for part in key.split("."):
             value = value[part]
-        assert isinstance(value, str)
+        if not isinstance(value, str):
+            raise TypeError(f"La clave de traducción no contiene texto: {key}")
         return value.format(**kwargs)
 
     def language_display_name(self, code: str) -> str:
+        """Devuelve el nombre visible asociado a un código de idioma."""
         return SUPPORTED_LANGUAGES.get(code, SUPPORTED_LANGUAGES["es"])
 
     def resolve_language_code(self, display_name: str) -> str:
+        """Obtiene el código interno correspondiente a un nombre visible."""
         for code, label in SUPPORTED_LANGUAGES.items():
             if label == display_name:
                 return code
         return "es"
 
     def translate_runtime_message(self, message: str) -> str:
+        """Traduce al inglés mensajes controlados producidos por el dominio."""
         if self.language_code == "es":
             return message
 
@@ -363,4 +369,5 @@ class Translator:
 
 
 def build_translator(language_code: str) -> Translator:
+    """Construye un traductor aplicando el fallback de idioma centralizado."""
     return Translator(language_code)

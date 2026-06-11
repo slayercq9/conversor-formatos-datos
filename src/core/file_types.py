@@ -28,10 +28,12 @@ class TabularFileType(str, Enum):
     def from_extension(cls, extension: str) -> "TabularFileType":
         """Convierte una extension cruda en un valor del enum."""
         normalized = extension.strip().lower().removeprefix(".")
-        for item in cls:
-            if item.value == normalized:
-                return item
-        raise UnsupportedFormatError(f"Formato no soportado: {extension}")
+        try:
+            return cls(normalized)
+        except ValueError as exc:
+            raise UnsupportedFormatError(
+                f"Formato no soportado: {extension}"
+            ) from exc
 
     @classmethod
     def from_path(cls, file_path: str | Path) -> "TabularFileType":

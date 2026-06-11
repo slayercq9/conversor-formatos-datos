@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from src.core.file_types import TabularFileType
 from src.services.file_service import FileService
 from src.utils.errors import MissingTargetFormatError, PendingConversionError
 
@@ -49,3 +50,14 @@ def test_prepare_conversion_requires_target_format() -> None:
 
     with pytest.raises(MissingTargetFormatError):
         service.prepare_conversion("datos/ventas.xlsx", "")
+
+
+def test_build_default_output_path_accepts_typed_format() -> None:
+    service = FileService(converter=FakeConverter())
+
+    result = service.build_default_output_path(
+        "datos/ventas.csv",
+        TabularFileType.JSON,
+    )
+
+    assert result == Path("datos/ventas.json")

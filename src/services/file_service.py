@@ -8,12 +8,15 @@ preparado, sin filtrar detalles internos de la capa core.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TypeAlias
 
 from src.core.converter import ConversionRequest, PreparedConversion, TabularConverter
 from src.core.file_types import TabularFileType
 from src.core.validators import validate_target_format
 from src.utils.errors import PendingConversionError
 from src.utils.helpers import build_output_path
+
+TargetFormat: TypeAlias = str | TabularFileType
 
 
 class FileService:
@@ -27,27 +30,19 @@ class FileService:
     def build_default_output_path(
         self,
         source_path: str | Path,
-        target_format: str | TabularFileType,
+        target_format: TargetFormat,
     ) -> Path:
         """Construye una ruta sugerida segun el formato de salida elegido."""
-        target_type = (
-            target_format
-            if isinstance(target_format, TabularFileType)
-            else validate_target_format(target_format)
-        )
+        target_type = self._resolve_target_format(target_format)
         return build_output_path(Path(source_path), target_type)
 
     def prepare_conversion(
         self,
         source_path: str | Path,
-        target_format: str | TabularFileType,
+        target_format: TargetFormat,
     ) -> PreparedConversion:
         """Prepara la conversion y conserva el resultado en memoria."""
-        target_type = (
-            target_format
-            if isinstance(target_format, TabularFileType)
-            else validate_target_format(target_format)
-        )
+        target_type = self._resolve_target_format(target_format)
         self._prepared_conversion = self._converter.prepare_conversion(
             source_path=source_path,
             target_format=target_type,
@@ -82,17 +77,20 @@ class FileService:
         self,
         source_path: str | Path,
         target_path: str | Path,
-        target_format: str | TabularFileType,
+        target_format: TargetFormat,
     ) -> Path:
         """Ejecuta el flujo completo en un solo llamado cuando se necesita."""
-        target_type = (
-            target_format
-            if isinstance(target_format, TabularFileType)
-            else validate_target_format(target_format)
-        )
+        target_type = self._resolve_target_format(target_format)
         request = ConversionRequest(
             source_path=Path(source_path),
             target_path=Path(target_path),
             target_format=target_type,
         )
         return self._converter.convert(request)
+
+    @staticmethod
+    def _resolve_target_format(target_format: TargetFormat) -> TabularFileType:
+        """Normaliza formatos textuales sin reprocesar valores ya tipados."""
+        if isinstance(target_format, TabularFileType):
+            return target_format
+        return validate_target_format(target_format)

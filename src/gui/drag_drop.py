@@ -68,6 +68,7 @@ class NullDragDropManager:
         drop_target: tk.Misc | None = None,
         on_drop_file: DropHandler | None = None,
     ) -> None:
+        """Mantiene una API uniforme cuando tkdnd no está disponible."""
         _ = window
         _ = drop_target
         _ = on_drop_file

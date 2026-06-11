@@ -25,7 +25,7 @@ from src.gui.dialogs import (
 from src.gui.help_window import HelpWindow
 from src.gui.preview_table import PreviewTable
 from src.gui.theme import DEFAULT_THEME, SUPPORTED_THEMES, apply_theme, apply_toplevel_theme
-from src.i18n.translations import SUPPORTED_LANGUAGES, Translator, build_translator
+from src.i18n.translations import SUPPORTED_LANGUAGES, build_translator
 from src.services.file_service import FileService
 from src.services.preview_service import PreviewData, PreviewService
 from src.utils.constants import APP_MIN_SIZE
@@ -101,7 +101,7 @@ class MainWindow(get_main_window_base()):
 
     def _configure_styles(self) -> None:
         """Aplica el tema visual activo a la ventana principal."""
-        self._palette = apply_theme(self, self.theme_code)
+        apply_theme(self, self.theme_code)
 
     def _configure_layout(self) -> None:
         """Define la rejilla base para que la ventana sea redimensionable."""
@@ -391,7 +391,7 @@ class MainWindow(get_main_window_base()):
     def _apply_selected_theme(self, theme_code: str) -> None:
         """Actualiza la paleta activa sin alterar la logica funcional."""
         self.theme_code = theme_code if theme_code in SUPPORTED_THEMES else DEFAULT_THEME
-        self._palette = apply_theme(self, self.theme_code)
+        apply_theme(self, self.theme_code)
         self.theme_var.set(self.theme_code)
         self._apply_theme_to_open_windows()
 
@@ -402,6 +402,7 @@ class MainWindow(get_main_window_base()):
                 apply_toplevel_theme(child, self.theme_code)
 
     def _on_target_format_changed(self, _: tk.Event[tk.Misc] | None = None) -> None:
+        """Invalida la conversión preparada cuando cambia el formato destino."""
         self.last_target_format = self.target_format_var.get().strip()
         self.file_service.clear_prepared_conversion()
         self._set_save_enabled(False)
@@ -409,6 +410,7 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(self.translator.t("messages.status_format_updated"))
 
     def select_source_file(self) -> None:
+        """Solicita un archivo de entrada mediante el diálogo del sistema."""
         path = ask_open_path(
             format_file_dialog_types(self.translator.language_code),
             title=self.translator.t("titles.open_file"),
@@ -423,6 +425,7 @@ class MainWindow(get_main_window_base()):
             self.status_var.set(self.translator.t("messages.status_selection_canceled"))
 
     def load_dropped_file(self, source_path: Path) -> None:
+        """Carga un archivo recibido por drag and drop."""
         try:
             self._load_source_file(source_path, refresh_preview=True)
             self.status_var.set(
@@ -437,6 +440,7 @@ class MainWindow(get_main_window_base()):
             self.status_var.set(self.translator.t("messages.status_drop_invalid"))
 
     def _load_source_file(self, source_path: str | Path, refresh_preview: bool) -> None:
+        """Valida y refleja en la interfaz un nuevo archivo de entrada."""
         validated_path = validate_source_path(source_path)
         path_text = str(validated_path)
 
@@ -459,6 +463,7 @@ class MainWindow(get_main_window_base()):
             )
 
     def preview_file(self) -> None:
+        """Genera y muestra la vista previa del archivo seleccionado."""
         if not self._ensure_source_selected():
             return
 
@@ -477,6 +482,7 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(self._build_preview_summary(preview))
 
     def convert_file(self) -> None:
+        """Prepara en memoria la conversión solicitada por el usuario."""
         if not self._ensure_source_selected():
             return
         if not self._ensure_target_format_selected():
@@ -503,9 +509,10 @@ class MainWindow(get_main_window_base()):
                 format=prepared_conversion.target_format.value.upper(),
             )
         )
-        self._refresh_preview_after_conversion()
+        self._refresh_preview_from_source()
 
     def save_converted_file(self) -> None:
+        """Solicita un destino y guarda la conversión preparada."""
         if not self.file_service.has_prepared_conversion():
             show_info(
                 self.translator.t("titles.save"),
@@ -551,12 +558,15 @@ class MainWindow(get_main_window_base()):
         self.ready_to_save_var.set(self.translator.t("messages.ready_conversion_saved"))
 
     def open_about(self) -> None:
+        """Abre la ventana informativa de la aplicación."""
         AboutWindow(self, self.translator, self.theme_code)
 
     def open_help(self) -> None:
+        """Abre la guía breve de uso."""
         HelpWindow(self, self.translator, self.theme_code)
 
     def _ensure_source_selected(self) -> bool:
+        """Comprueba el estado de entrada y guía al usuario si está vacío."""
         if self.source_path_var.get().strip():
             return True
 
@@ -572,6 +582,7 @@ class MainWindow(get_main_window_base()):
         return False
 
     def _ensure_target_format_selected(self) -> bool:
+        """Comprueba que exista un formato destino visible."""
         if self.target_format_var.get().strip():
             return True
 
@@ -582,10 +593,8 @@ class MainWindow(get_main_window_base()):
         self.status_var.set(self.translator.t("messages.status_waiting_format"))
         return False
 
-    def _refresh_preview_after_conversion(self) -> None:
-        self._refresh_preview_from_source()
-
     def _refresh_preview_from_source(self) -> None:
+        """Actualiza la vista previa sin interrumpir la interfaz si falla."""
         try:
             preview = self.preview_service.load_preview(self.source_path_var.get())
         except AppError:
@@ -599,6 +608,7 @@ class MainWindow(get_main_window_base()):
         self._render_preview(preview)
 
     def _render_preview(self, preview: PreviewData) -> None:
+        """Adapta los datos de vista previa a textos localizados."""
         self.preview_table.update_data(
             preview,
             summary_text=self._build_preview_summary(preview),
@@ -609,6 +619,7 @@ class MainWindow(get_main_window_base()):
         )
 
     def _build_preview_summary(self, preview: PreviewData) -> str:
+        """Construye el resumen localizado de filas y columnas visibles."""
         column_label = self._pluralize(
             preview.total_columns,
             "meta.column_label_singular",
@@ -635,24 +646,29 @@ class MainWindow(get_main_window_base()):
         return summary
 
     def _build_preview_note(self, preview: PreviewData) -> str:
+        """Explica si la muestra visible es completa o parcial."""
         if preview.is_partial:
             return self.translator.t("messages.preview_note_partial")
         return self.translator.t("messages.preview_note_complete")
 
     def _pluralize(self, value: int, singular_key: str, plural_key: str) -> str:
+        """Selecciona una etiqueta singular o plural del catálogo activo."""
         if value == 1:
             return self.translator.t(singular_key)
         return self.translator.t(plural_key)
 
     def _localize_error(self, error: AppError) -> str:
+        """Traduce un error controlado al idioma visible."""
         return self.translator.translate_runtime_message(str(error))
 
     def _set_save_enabled(self, enabled: bool) -> None:
+        """Actualiza de forma segura el estado del botón de guardado."""
         if self.save_button is None:
             return
         self.save_button.config(state="normal" if enabled else "disabled")
 
     def clear_interface(self) -> None:
+        """Restablece el estado visual sin cerrar la aplicación."""
         self.source_path_var.set("")
         self.target_format_var.set("")
         self.file_service.clear_prepared_conversion()
@@ -680,6 +696,7 @@ class MainWindow(get_main_window_base()):
         return " | ".join(details)
 
     def _try_get_row_count(self, source_path: Path) -> int | None:
+        """Obtiene el total de filas o devuelve ``None`` si no puede leerse."""
         try:
             data_frame = self.reader.read(source_path)
         except AppError:
@@ -687,6 +704,7 @@ class MainWindow(get_main_window_base()):
         return len(data_frame.index)
 
     def _format_file_size(self, size_in_bytes: int) -> str:
+        """Convierte bytes en una representación compacta y legible."""
         size = float(size_in_bytes)
         units = ("B", "KB", "MB", "GB")
         for unit in units:
@@ -698,6 +716,7 @@ class MainWindow(get_main_window_base()):
         return f"{size_in_bytes} B"
 
     def _capture_preferences(self) -> AppPreferences:
+        """Recopila las preferencias persistentes del estado actual."""
         self.update_idletasks()
         return AppPreferences(
             last_target_format=self.last_target_format,
@@ -710,5 +729,6 @@ class MainWindow(get_main_window_base()):
         )
 
     def _on_close(self) -> None:
+        """Persiste preferencias antes de destruir la ventana principal."""
         self.preferences_manager.save(self._capture_preferences())
         self.destroy()

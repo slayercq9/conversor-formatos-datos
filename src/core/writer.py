@@ -7,7 +7,7 @@ estable para que la capa superior no dependa de detalles de pandas.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, TypeAlias
 
 import pandas as pd
 
@@ -17,16 +17,15 @@ from src.utils.constants import DEFAULT_TEXT_DELIMITER
 from src.utils.errors import WriteError
 from src.utils.helpers import ensure_parent_directory
 
+WriterHandler: TypeAlias = Callable[[pd.DataFrame, Path], None]
+
 
 class TabularWriter:
     """Escribe DataFrames a disco segun el formato de salida requerido."""
 
     def __init__(self) -> None:
         """Registra los escritores por defecto disponibles en la aplicacion."""
-        self._writers: dict[
-            TabularFileType,
-            Callable[[pd.DataFrame, Path], None],
-        ] = {
+        self._writers: dict[TabularFileType, WriterHandler] = {
             TabularFileType.CSV: self._write_csv,
             TabularFileType.TSV: self._write_tsv,
             TabularFileType.XLSX: self._write_xlsx,
@@ -39,7 +38,7 @@ class TabularWriter:
     def register_writer(
         self,
         file_type: TabularFileType,
-        writer: Callable[[pd.DataFrame, Path], None],
+        writer: WriterHandler,
     ) -> None:
         """Agrega o reemplaza el escritor asociado a un formato dado."""
         self._writers[file_type] = writer
@@ -64,9 +63,9 @@ class TabularWriter:
                 f"No hay escritor configurado para: {resolved_target_type.value}"
             )
 
-        ensure_parent_directory(path)
         # Se crea el directorio de salida antes de escribir para evitar fallos
         # cuando el usuario elige una carpeta nueva.
+        ensure_parent_directory(path)
 
         try:
             writer(data_frame, path)

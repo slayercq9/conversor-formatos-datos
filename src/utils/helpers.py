@@ -1,3 +1,5 @@
+"""Funciones auxiliares pequeñas compartidas entre capas de la aplicación."""
+
 from __future__ import annotations
 
 from pathlib import Path

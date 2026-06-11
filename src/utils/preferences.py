@@ -31,6 +31,7 @@ class PreferencesManager:
     """Carga y guarda preferencias en un archivo JSON portable."""
 
     def __init__(self, file_path: Path | None = None) -> None:
+        """Usa una ruta explícita o la ubicación portable predeterminada."""
         self._file_path = file_path or self._resolve_default_path()
 
     @property
@@ -75,7 +76,8 @@ class PreferencesManager:
         except OSError:
             return
 
-    def _resolve_default_path(self) -> Path:
+    @staticmethod
+    def _resolve_default_path() -> Path:
         """Ubica el archivo junto a la app para mantener el modo portable."""
 
         if getattr(sys, "frozen", False):
@@ -84,26 +86,30 @@ class PreferencesManager:
             base_dir = Path(__file__).resolve().parents[2]
         return base_dir / "preferences.json"
 
-    def _coerce_str(self, value: Any) -> str:
+    @staticmethod
+    def _coerce_str(value: Any) -> str:
         """Normaliza cadenas opcionales provenientes del JSON."""
 
         return value if isinstance(value, str) else ""
 
-    def _coerce_language(self, value: Any) -> str:
+    @staticmethod
+    def _coerce_language(value: Any) -> str:
         """Normaliza el idioma guardado y cae a español por defecto."""
 
         if isinstance(value, str) and value in {"es", "en"}:
             return value
         return "es"
 
-    def _coerce_theme(self, value: Any) -> str:
+    @staticmethod
+    def _coerce_theme(value: Any) -> str:
         """Normaliza el tema guardado y cae a claro por defecto."""
 
         if isinstance(value, str) and value in {"light", "dark"}:
             return value
         return "light"
 
-    def _coerce_int(self, value: Any) -> int | None:
+    @staticmethod
+    def _coerce_int(value: Any) -> int | None:
         """Normaliza enteros opcionales provenientes del JSON."""
 
         return value if isinstance(value, int) else None

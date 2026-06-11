@@ -65,6 +65,7 @@ class HelpWindow(tk.Toplevel):
         self._center_on_parent(master)
 
     def _center_on_parent(self, master: tk.Misc) -> None:
+        """Centra la ventana después de calcular su tamaño efectivo."""
         self.update_idletasks()
         parent_x = master.winfo_rootx()
         parent_y = master.winfo_rooty()

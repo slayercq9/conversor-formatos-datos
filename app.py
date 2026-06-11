@@ -1,7 +1,7 @@
-"""Punto de entrada de la aplicacion de escritorio.
+"""Punto de entrada de la aplicación de escritorio.
 
 Este archivo solo crea la ventana principal y arranca el loop de Tkinter.
-Mantenerlo pequeno facilita localizar el inicio real de la app.
+Mantenerlo pequeño facilita localizar el inicio real de la app.
 """
 
 from __future__ import annotations
@@ -14,16 +14,13 @@ from src.gui.main_window import MainWindow
 
 def resolve_asset_path(relative_path: str) -> Path:
     """Resuelve rutas de assets tanto en desarrollo como en ejecutable empaquetado."""
-    if hasattr(sys, "_MEIPASS"):
-        base_path = Path(sys._MEIPASS)
-    else:
-        base_path = Path(__file__).resolve().parent
+    bundle_path = getattr(sys, "_MEIPASS", None)
+    base_path = Path(bundle_path) if bundle_path else Path(__file__).resolve().parent
     return base_path / relative_path
 
 
 def main() -> None:
     """Crea la ventana principal y entrega el control a Tkinter."""
-    # La app usa `assets/icon.ico` como icono principal si el archivo esta disponible.
     icon_path = resolve_asset_path("assets/icon.ico")
     app = MainWindow(icon_path=icon_path)
     app.mainloop()

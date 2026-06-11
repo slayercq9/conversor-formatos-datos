@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import Callable
+from typing import Callable, TypeAlias
 
 import pandas as pd
 
@@ -17,13 +17,15 @@ from src.core.validators import validate_dataframe_not_empty, validate_source_pa
 from src.utils.constants import DEFAULT_TEXT_DELIMITER
 from src.utils.errors import ReadError
 
+ReaderHandler: TypeAlias = Callable[[Path], pd.DataFrame]
+
 
 class TabularReader:
     """Lee archivos soportados y los entrega como DataFrames de pandas."""
 
     def __init__(self) -> None:
         """Registra los lectores por defecto disponibles en la aplicacion."""
-        self._readers: dict[TabularFileType, Callable[[Path], pd.DataFrame]] = {
+        self._readers: dict[TabularFileType, ReaderHandler] = {
             TabularFileType.CSV: self._read_csv,
             TabularFileType.TSV: self._read_tsv,
             TabularFileType.XLSX: self._read_xlsx,
@@ -36,7 +38,7 @@ class TabularReader:
     def register_reader(
         self,
         file_type: TabularFileType,
-        reader: Callable[[Path], pd.DataFrame],
+        reader: ReaderHandler,
     ) -> None:
         """Agrega o reemplaza el lector asociado a un formato dado."""
         self._readers[file_type] = reader

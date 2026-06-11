@@ -1,16 +1,58 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test/cache artifacts
+.pytest_cache/
+.pytest_tmp/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Build artifacts
 build/
 dist/
 portable/
 installer-output/
+*.egg-info/
 
-__pycache__/
-.pytest_cache/
-.pytest_tmp/
-
+# Temporary validation folders
 test_run_temp/
 manual_checks/
 manual_preview_checks/
 manual_preview_v41/
 
+# Local preferences
 preferences.json
 manual_i18n_prefs.json
+
+# Binary artifacts
+*.exe
+*.zip
+*.msi
+
+# Temporary and log files
+*.log
+*.tmp
+*.bak
+*.swp
+~$*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/

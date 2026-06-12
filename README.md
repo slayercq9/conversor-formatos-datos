@@ -8,7 +8,7 @@ Fecha de última actualización: `2026-06-10`
 
 Autor: `Fernando Corrales Quirós`
 
-Manual de usuario: [MANUAL_USUARIO.md](/C:/Users/Fernando/Documents/Conversor_formatos/MANUAL_USUARIO.md)
+Manual de usuario: [MANUAL_USUARIO.md](MANUAL_USUARIO.md)
 
 ## Qué hace la aplicación
 
@@ -43,7 +43,7 @@ Notas de compatibilidad:
 
 - Python 3.11 o superior
 - Tkinter disponible en el sistema
-- Dependencias instaladas desde [requirements.txt](/C:/Users/Fernando/Documents/Conversor_formatos/requirements.txt)
+- Dependencias instaladas desde [requirements.txt](requirements.txt)
 
 Instalación recomendada:
 
@@ -59,28 +59,28 @@ pip install -r requirements.txt
 python app.py
 ```
 
-El punto de entrada principal es [app.py](/C:/Users/Fernando/Documents/Conversor_formatos/app.py).
+El punto de entrada principal es [app.py](app.py).
 
 ## Scripts disponibles
 
-Los scripts principales están en [scripts](/C:/Users/Fernando/Documents/Conversor_formatos/scripts):
+Los scripts principales están en [scripts](scripts/):
 
-- [build.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build.ps1): genera la app empaquetada con `python -m PyInstaller`.
-- [package_portable.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/package_portable.ps1): arma la carpeta portable y genera un ZIP compartible.
-- [build_installer.ps1](/C:/Users/Fernando/Documents/Conversor_formatos/scripts/build_installer.ps1): compila el instalador de Windows con Inno Setup.
+- [build.ps1](scripts/build.ps1): genera la app empaquetada con `python -m PyInstaller`.
+- [package_portable.ps1](scripts/package_portable.ps1): arma la carpeta portable y genera un ZIP compartible.
+- [build_installer.ps1](scripts/build_installer.ps1): compila el instalador de Windows con Inno Setup.
 
 ## Distribución portable
 
 1. Genera la salida empaquetada:
 
 ```powershell
-.\scripts\build.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
 ```
 
 2. Prepara el paquete portable:
 
 ```powershell
-.\scripts\package_portable.ps1 -Version 1.0.0
+powershell -ExecutionPolicy Bypass -File .\scripts\package_portable.ps1 -Version 1.0.0
 ```
 
 Salida esperada:
@@ -107,13 +107,13 @@ Herramienta elegida:
 
 Archivo base:
 
-- [installer/ConversorFormatos.iss](/C:/Users/Fernando/Documents/Conversor_formatos/installer/ConversorFormatos.iss)
+- [installer/ConversorFormatos.iss](installer/ConversorFormatos.iss)
 
 Pasos:
 
 ```powershell
-.\scripts\build.ps1
-.\scripts\build_installer.ps1 -Version 1.0.0
+powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\build_installer.ps1 -Version 1.0.0
 ```
 
 Salida esperada:
@@ -162,11 +162,10 @@ installer-output/
 
 ## Estado técnico actual
 
-La versión `1.0.0` es la primera versión pública estable del proyecto. A partir de esta publicación se usa versionado semántico `MAJOR.MINOR.PATCH`; el desarrollo anterior se conserva como historial interno, desde `0.1.0` hasta `0.5.8`, en [CHANGELOG.md](/C:/Users/Fernando/Documents/Conversor_formatos/CHANGELOG.md).
+La versión `1.0.0` es la primera versión pública estable del proyecto. A partir de esta publicación se usa versionado semántico `MAJOR.MINOR.PATCH`; el desarrollo anterior se conserva como historial interno, desde `0.1.0` hasta `0.5.8`, en [CHANGELOG.md](CHANGELOG.md).
 
 Recomendaciones técnicas futuras no implementadas en esta fase:
 
 - centralizar aún más los mensajes del dominio para reducir texto literal repetido
 - introducir una pequeña capa de utilidades compartidas para ventanas secundarias
 - ampliar la cobertura automatizada de GUI sin comprometer ligereza ni portabilidad
-- excluir de control de versiones las salidas generadas de `portable/` e `installer-output/` para mantener el repositorio más limpio antes de publicar

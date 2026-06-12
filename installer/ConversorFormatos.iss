@@ -4,7 +4,7 @@
 #ifndef MyAppVersion
   #define MyAppVersion "1.0.0"
 #endif
-#define MyAppURL "https://github.com/"
+#define MyAppURL "https://github.com/slayercq9/conversor-formatos-datos"
 #define MySourceDir "..\\dist\\ConversorFormatos"
 
 [Setup]

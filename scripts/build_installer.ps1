@@ -37,5 +37,8 @@ if (-not (Test-Path -LiteralPath $installerOutput)) {
 
 Write-Host "Compilando instalador con Inno Setup..."
 & $iscc "/DMyAppVersion=$Version" $issPath
+if ($LASTEXITCODE -ne 0) {
+    throw "Inno Setup finalizó con el código de error $LASTEXITCODE."
+}
 
 Write-Host "Instalador listo. Revisa la carpeta installer-output."

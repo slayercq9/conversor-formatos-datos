@@ -2,14 +2,39 @@
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files
 
 
-hiddenimports = (
-    collect_submodules("pandas")
-    + collect_submodules("openpyxl")
-    + collect_submodules("tkinterdnd2")
-)
+# pandas descubre los motores de Excel de forma dinámica. Declarar únicamente
+# esos módulos evita empaquetar sus suites de pruebas y dependencias opcionales.
+hiddenimports = [
+    "openpyxl",
+    "odf.config",
+    "odf.element",
+    "odf.namespaces",
+    "odf.office",
+    "odf.opendocument",
+    "odf.style",
+    "odf.table",
+    "odf.text",
+    "pandas.io.excel._odfreader",
+    "pandas.io.excel._odswriter",
+    "pandas.io.excel._openpyxl",
+    "tkinterdnd2",
+]
+excludes = [
+    "IPython",
+    "PySide6",
+    "ipykernel",
+    "jupyter_client",
+    "jupyter_core",
+    "matplotlib",
+    "numba",
+    "pytest",
+    "scipy",
+    "sklearn",
+    "zmq",
+]
 icon_file = Path("assets/icon.ico")
 datas = collect_data_files("tkinterdnd2")
 
@@ -28,7 +53,7 @@ a = Analysis(
     hookspath=["."],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=excludes,
     noarchive=False,
 )
 pyz = PYZ(a.pure)

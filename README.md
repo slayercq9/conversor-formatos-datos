@@ -167,6 +167,9 @@ publicarse como archivos adjuntos de una versión.
 - [Manual de usuario](MANUAL_USUARIO.md)
 - [Historial de cambios](CHANGELOG.md)
 - [Licencia MIT](LICENSE)
+- [Resumen del proyecto](docs/project-summary.md)
+- [Descripción técnica](docs/technical-overview.md)
+- [Checklist de publicación](docs/release-checklist.md)
 
 ## Estado del proyecto
 

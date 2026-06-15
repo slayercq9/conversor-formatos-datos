@@ -82,7 +82,9 @@ por las ventanas y mensajes visibles.
 
 Contiene metadatos, constantes, excepciones de dominio, helpers y persistencia
 de preferencias. `preferences.py` guarda un JSON pequeño y utiliza valores
-seguros cuando el archivo no existe o no puede interpretarse.
+seguros cuando el archivo no existe o no puede interpretarse. En la instalación
+tradicional utiliza `%APPDATA%\ConversorFormatos\preferences.json`; el paquete
+portable conserva el archivo junto al ejecutable mediante un marcador propio.
 
 ### `tests/`
 
@@ -152,6 +154,6 @@ de GitHub Releases.
 - Temas ttk centralizados.
 - Integración opcional con una biblioteca nativa de drag and drop.
 - Pruebas parametrizadas y uso de rutas temporales.
-- Empaquetado reproducible y dos modalidades de distribución.
+- Empaquetado automatizado y dos modalidades de distribución.
 
 [Volver al README](../README.md)

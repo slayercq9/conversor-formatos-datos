@@ -74,8 +74,8 @@ La versión `1.0.0` es la primera versión pública estable. Incluye:
   aplicación ligera.
 - Los archivos se cargan en memoria, por lo que conjuntos muy grandes dependen
   de los recursos disponibles en el equipo.
-- La persistencia de preferencias requiere permiso de escritura en la carpeta
-  donde se ejecuta la aplicación.
+- En modo portable, la persistencia requiere permiso de escritura en la carpeta
+  descomprimida. La versión instalada utiliza la carpeta de datos del usuario.
 
 ## Mejoras futuras realistas
 

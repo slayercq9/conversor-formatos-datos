@@ -1,17 +1,24 @@
 """Persistencia simple de preferencias locales de la aplicación.
 
-Este módulo guarda un JSON pequeño junto a la app para mantener la
-portabilidad. Si el archivo no existe o está dañado, se usan valores
-por defecto sin interrumpir la ejecución.
+El modo instalado usa la carpeta escribible del usuario, mientras que el
+paquete portable conserva el JSON junto al ejecutable. Durante el desarrollo,
+el archivo permanece en la raíz del proyecto. Si no existe o está dañado, se
+usan valores por defecto sin interrumpir la ejecución.
 """
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any
+
+
+PREFERENCES_FILENAME = "preferences.json"
+PORTABLE_MARKER_FILENAME = "portable.mode"
+APP_DATA_DIRECTORY = "ConversorFormatos"
 
 
 @dataclass(slots=True)
@@ -28,10 +35,10 @@ class AppPreferences:
 
 
 class PreferencesManager:
-    """Carga y guarda preferencias en un archivo JSON portable."""
+    """Carga y guarda preferencias en un archivo JSON local y escribible."""
 
     def __init__(self, file_path: Path | None = None) -> None:
-        """Usa una ruta explícita o la ubicación portable predeterminada."""
+        """Usa una ruta explícita o la ubicación apropiada para la ejecución."""
         self._file_path = file_path or self._resolve_default_path()
 
     @property
@@ -78,13 +85,26 @@ class PreferencesManager:
 
     @staticmethod
     def _resolve_default_path() -> Path:
-        """Ubica el archivo junto a la app para mantener el modo portable."""
+        """Selecciona una ruta segura para código fuente, portable o instalado."""
 
-        if getattr(sys, "frozen", False):
-            base_dir = Path(sys.executable).resolve().parent
-        else:
-            base_dir = Path(__file__).resolve().parents[2]
-        return base_dir / "preferences.json"
+        if not getattr(sys, "frozen", False):
+            project_root = Path(__file__).resolve().parents[2]
+            return project_root / PREFERENCES_FILENAME
+
+        executable_dir = Path(sys.executable).resolve().parent
+        if (executable_dir / PORTABLE_MARKER_FILENAME).is_file():
+            return executable_dir / PREFERENCES_FILENAME
+
+        app_data_root = os.environ.get("APPDATA")
+        if app_data_root:
+            return (
+                Path(app_data_root)
+                / APP_DATA_DIRECTORY
+                / PREFERENCES_FILENAME
+            )
+
+        roaming_fallback = Path.home() / "AppData" / "Roaming"
+        return roaming_fallback / APP_DATA_DIRECTORY / PREFERENCES_FILENAME
 
     @staticmethod
     def _coerce_str(value: Any) -> str:

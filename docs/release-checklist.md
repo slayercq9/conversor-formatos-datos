@@ -59,10 +59,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\package_portable.ps1
 ```
 
 - [ ] Existe `portable/ConversorFormatos-<versión>-portable.zip`.
-- [ ] El ZIP incluye el ejecutable, `_internal/` y la documentación.
+- [ ] El ZIP incluye el ejecutable, `_internal/`, `docs/` y la documentación principal.
+- [ ] El ZIP incluye `portable.mode` junto al ejecutable.
 - [ ] El paquete se descomprime en una carpeta nueva sin errores.
 - [ ] La aplicación funciona desde la carpeta descomprimida.
-- [ ] Las preferencias pueden crearse cuando la carpeta tiene permisos de escritura.
+- [ ] Las preferencias se crean junto al ejecutable cuando la carpeta tiene permisos de escritura.
 
 ## 6. Instalador de Windows
 
@@ -77,6 +78,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build_installer.ps1
 - [ ] La instalación funciona en una ubicación limpia.
 - [ ] Los accesos directos opcionales apuntan al ejecutable correcto.
 - [ ] La aplicación inicia después de instalarse.
+- [ ] La instalación incluye `docs/` y sus enlaces desde el README funcionan.
+- [ ] Las preferencias se guardan en `%APPDATA%\ConversorFormatos\preferences.json`.
 - [ ] La desinstalación elimina los archivos instalados.
 
 ## 7. Validación de Git

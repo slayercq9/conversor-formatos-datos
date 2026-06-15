@@ -104,6 +104,7 @@ git ls-files
 - [ ] Se adjuntan el ZIP portable y el instalador correctos.
 - [ ] Los nombres de los assets contienen la versión esperada.
 - [ ] No se adjuntan builds intermedios, cachés o preferencias locales.
+- [ ] Los hashes SHA-256 oficiales se incluyen en las notas o en `SHA256SUMS.txt`.
 
 ## 9. Verificación de descargas
 
@@ -113,9 +114,23 @@ git ls-files
 - [ ] Ejecutar el instalador descargado en un entorno limpio o máquina virtual.
 - [ ] Confirmar que Windows muestra la versión correcta en las propiedades.
 - [ ] Verificar al menos una conversión con cada formato soportado.
-- [ ] Registrar opcionalmente hashes SHA-256 para futuras comprobaciones.
 
-## 10. Cierre
+## 10. Verificación SHA-256
+
+Calcular los hashes de los assets finales:
+
+```powershell
+Get-FileHash .\portable\ConversorFormatos-<versión>-portable.zip -Algorithm SHA256
+Get-FileHash .\installer-output\ConversorFormatos-<versión>-setup.exe -Algorithm SHA256
+```
+
+- [ ] Registrar los valores SHA-256 de ambos assets antes de publicarlos.
+- [ ] Publicar los valores en las notas del release o en `SHA256SUMS.txt`.
+- [ ] Calcular nuevamente los hashes de los archivos descargados desde GitHub.
+- [ ] Confirmar que cada descarga coincide exactamente con su hash oficial.
+- [ ] Consultar [la guía de verificación](hash-verification.md) ante cualquier diferencia.
+
+## 11. Cierre
 
 - [ ] Confirmar que los enlaces del README y la documentación funcionan.
 - [ ] Eliminar artefactos locales que ya no sean necesarios.

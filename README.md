@@ -170,6 +170,7 @@ publicarse como archivos adjuntos de una versión.
 - [Resumen del proyecto](docs/project-summary.md)
 - [Descripción técnica](docs/technical-overview.md)
 - [Checklist de publicación](docs/release-checklist.md)
+- [Verificación de integridad SHA-256](docs/hash-verification.md)
 
 ## Estado del proyecto
 

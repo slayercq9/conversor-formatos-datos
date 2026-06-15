@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
 
-from src.utils.preferences import AppPreferences, PreferencesManager
+from src.utils.preferences import (
+    APP_DATA_DIRECTORY,
+    PORTABLE_MARKER_FILENAME,
+    AppPreferences,
+    PreferencesManager,
+)
 
 
 def test_load_returns_defaults_when_file_is_missing(tmp_path: Path) -> None:
@@ -94,3 +100,59 @@ def test_manager_uses_only_the_explicit_temporary_path(tmp_path: Path) -> None:
 
     assert manager.file_path == file_path
     assert file_path.exists()
+
+
+def test_default_path_uses_project_root_when_running_from_source(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """La ejecución con Python debe conservar la preferencia en el proyecto."""
+
+    monkeypatch.delattr(sys, "frozen", raising=False)
+
+    manager = PreferencesManager()
+
+    expected_root = Path(__file__).resolve().parents[1]
+    assert manager.file_path == expected_root / "preferences.json"
+
+
+def test_default_path_uses_executable_directory_in_portable_mode(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """El marcador portable debe mantener las preferencias junto a la app."""
+
+    executable_dir = tmp_path / "portable"
+    executable_dir.mkdir()
+    executable_path = executable_dir / "ConversorFormatos.exe"
+    (executable_dir / PORTABLE_MARKER_FILENAME).write_text(
+        "Portable distribution marker.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "executable", str(executable_path))
+    monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
+
+    manager = PreferencesManager()
+
+    assert manager.file_path == executable_dir / "preferences.json"
+
+
+def test_default_path_uses_appdata_in_installed_mode(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Un ejecutable sin marcador portable debe usar el perfil del usuario."""
+
+    executable_dir = tmp_path / "installed"
+    executable_dir.mkdir()
+    executable_path = executable_dir / "ConversorFormatos.exe"
+    app_data_dir = tmp_path / "appdata"
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "executable", str(executable_path))
+    monkeypatch.setenv("APPDATA", str(app_data_dir))
+
+    manager = PreferencesManager()
+
+    assert manager.file_path == (
+        app_data_dir / APP_DATA_DIRECTORY / "preferences.json"
+    )
